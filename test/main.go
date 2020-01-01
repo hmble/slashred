@@ -5,7 +5,7 @@ import (
 	"log"
 
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/hmble/slashred/slashred"
+	"github.com/hmble/slashred"
 )
 
 func main() {
