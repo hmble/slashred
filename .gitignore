@@ -1,3 +1,5 @@
 .env
 vendor/
 test_data
+
+*.json
