@@ -1,10 +1,8 @@
 WORK IN PROGRESS
 
-Temporarily slashred is in directory slashred because for 
-there can be only one package under the directory alongside main
-When we will do testing the main package will move one step up
 
-now import will be github.com/hmble/slashred/slashred
+To use package use following path
+`go get github.com/hmble/slashred`
 
-After it will become github.com/hmble/slashred
+
 
