@@ -4,30 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/joho/godotenv/autoload"
 	"github.com/hmble/slashred"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
-
-	// url := internal.RedditClient.GetUrl()
-
-	// fmt.Printf("\nUrl is: \n%s", url)
-
-	// fmt.Println("\nEnter code here: ")
-	// var code string
-
-	// fmt.Scan(&code)
-
-	// token, err := internal.RedditClient.GetToken(code)
-	// if err != nil {
-
-	// 	log.Fatal("Error in getting token")
-	// }
-
-	// internal.SaveToken("token.json", token)
-
-	// fmt.Println("token saved....")
 
 	u := &slashred.User{
 		Name:        "Samyak",
@@ -35,6 +16,7 @@ func main() {
 		IsPermanent: true,
 	}
 	token, er := slashred.TokenFromFile("token.json")
+	//	token, er := u.Authenticate()
 	if er != nil {
 		log.Fatal("Error in reading token")
 	}
