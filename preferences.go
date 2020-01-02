@@ -72,6 +72,10 @@ type Preferences struct {
 	VideoAutoplay                         bool        `json:"video_autoplay"`
 }
 
+// API https://www.reddit.com/dev/api/#GET_api_v1_me_prefs
+
+// TODO Patch method for preferences
+
 func (c *Client) GetMyPreferences() (*Preferences, error) {
 	resp, err := c.Get(API_PATH["preferences"])
 
@@ -81,8 +85,6 @@ func (c *Client) GetMyPreferences() (*Preferences, error) {
 	}
 
 	defer resp.Body.Close()
-
-	//	SaveResponse(resp.Body, "preferences.json")
 
 	var preferences Preferences
 
@@ -95,3 +97,102 @@ func (c *Client) GetMyPreferences() (*Preferences, error) {
 
 	return &preferences, nil
 }
+
+func (c *Client) PrefsFriends() {
+
+	resp, err := c.Get(API_PATH["prefs_friends"])
+
+	if err != nil {
+		log.Fatal("error in getting prefs friends response")
+	}
+
+	defer resp.Body.Close()
+
+	SaveResponse(resp.Body, "test_data/prefs_friends.json")
+
+	// out, _ := ioutil.ReadAll(resp.Body)
+	// fmt.Println(string(out))
+
+}
+
+func (c *Client) PrefsBlocked() {
+
+	resp, err := c.Get(API_PATH["prefs_blocked"])
+
+	if err != nil {
+		log.Fatal("error in getting prefs/blocked response")
+	}
+
+	defer resp.Body.Close()
+
+	SaveResponse(resp.Body, "test_data/prefs_blocked.json")
+
+	// out, _ := ioutil.ReadAll(resp.Body)
+	// fmt.Println(string(out))
+
+}
+func (c *Client) PrefsMessaging() {
+
+	resp, err := c.Get(API_PATH["prefs_messaging"])
+
+	if err != nil {
+		log.Fatal("error in getting prefs/messaging response")
+	}
+
+	defer resp.Body.Close()
+
+	SaveResponse(resp.Body, "test_data/prefs_messaging.json")
+
+	// out, _ := ioutil.ReadAll(resp.Body)
+	// fmt.Println(string(out))
+
+}
+func (c *Client) PrefsTrusted() {
+
+	resp, err := c.Get(API_PATH["prefs_trusted"])
+
+	if err != nil {
+		log.Fatal("error in getting prefs/trusted response")
+	}
+
+	defer resp.Body.Close()
+
+	SaveResponse(resp.Body, "test_data/prefs_trusted.json")
+
+	// out, _ := ioutil.ReadAll(resp.Body)
+	// fmt.Println(string(out))
+
+}
+func (c *Client) MeFriends() {
+
+	resp, err := c.Get(API_PATH["me_friends"])
+
+	if err != nil {
+		log.Fatal("error in getting me_friends response")
+	}
+
+	defer resp.Body.Close()
+
+	SaveResponse(resp.Body, "test_data/me_friends.json")
+
+	// out, _ := ioutil.ReadAll(resp.Body)
+	// fmt.Println(string(out))
+
+}
+func (c *Client) MeBlocked() {
+
+	resp, err := c.Get(API_PATH["me_blocked"])
+
+	if err != nil {
+		log.Fatal("error in getting me_blocked response")
+	}
+
+	defer resp.Body.Close()
+
+	SaveResponse(resp.Body, "test_data/me_blocked.json")
+
+	// out, _ := ioutil.ReadAll(resp.Body)
+	// fmt.Println(string(out))
+
+}
+

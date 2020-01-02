@@ -30,19 +30,12 @@ func main() {
 	// fmt.Println("Token saved")
 	var c *slashred.Client = u.UserClient(token)
 
-	trophies, err := c.Trophies()
+	c.PrefsBlocked()
+	c.PrefsTrusted()
+	c.PrefsMessaging()
+	c.MeBlocked()
+	c.MeFriends()
 
-	if err != nil {
-		log.Fatal("Error in trophies function")
-	}
-
-	for _, trophy := range trophies {
-		fmt.Println(trophy.Name)
-	}
-
-	// pref, _ := c.GetMyPreferences()
-
-	// fmt.Println(pref.VideoAutoplay)
 	fmt.Println("Success.........")
 
 }

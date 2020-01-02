@@ -1,7 +1,6 @@
 package slashred
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -22,25 +21,25 @@ func PrintHeader(resp *http.Response) {
 }
 
 func SaveResponse(r io.Reader, filepath string) {
-	var data map[string]interface{}
+	//var data map[string]interface{}
 	body, err := ioutil.ReadAll(r)
 	if err != nil {
 		log.Fatal("Error in reading response body")
 	}
-	er := json.Unmarshal([]byte(body), &data)
+	//er := json.Unmarshal([]byte(body), &data)
 
-	if er != nil {
-		log.Fatal("Error in printing json")
-	}
+	//if er != nil {
+	//	log.Fatal("Error in printing json")
+	//}
 
-	//j, jerr := json.MarshalIndent(&data, "", "    ")
-	j, jerr := json.Marshal(&data)
+	////j, jerr := json.MarshalIndent(&data, "", "    ")
+	//j, jerr := json.Marshal(&data)
 
-	if jerr != nil {
-		log.Fatal("Error in pretty printing json")
-	}
+	//if jerr != nil {
+	//	log.Fatal("Error in pretty printing json")
+	//}
 
-	ToFile(filepath, j)
+	ToFile(filepath, body)
 
 }
 

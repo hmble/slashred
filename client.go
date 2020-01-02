@@ -22,6 +22,15 @@ const (
 	BaseURL     = "http://reddit.com"
 )
 
+const (
+	CommentPrefix   = "t1_"
+	AccountPrefix   = "t2_"
+	LinkPrefix      = "t3_"
+	MessagePrefix   = "t4_"
+	SubredditPrefix = "t5_"
+	AwardPrefix     = "t6_"
+)
+
 // TODO : Make token a member of client so that we don't need
 // to pass token as parameter for every request we make.
 type Client struct {
