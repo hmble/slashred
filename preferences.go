@@ -74,7 +74,15 @@ type Preferences struct {
 
 // API https://www.reddit.com/dev/api/#GET_api_v1_me_prefs
 
-// TODO Patch method for preferences
+// TODO
+// 1. Patch method for preferences
+// 2. Other prefs endpoint response is not complete need to
+//    get that response and implement scheme and method accoring to
+//    response. For now this methods only save those response to
+//    test_data folder locally. Not commited to github.
+//
+// PRECAUSTION : DO NOT USE THIS METHODS FOR NOW
+//
 
 func (c *Client) GetMyPreferences() (*Preferences, error) {
 	resp, err := c.Get(API_PATH["preferences"])

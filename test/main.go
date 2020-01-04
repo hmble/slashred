@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/hmble/slashred"
 	_ "github.com/joho/godotenv/autoload"
@@ -30,12 +31,13 @@ func main() {
 	// fmt.Println("Token saved")
 	var c *slashred.Client = u.UserClient(token)
 
-	c.PrefsBlocked()
-	c.PrefsTrusted()
-	c.PrefsMessaging()
-	c.MeBlocked()
-	c.MeFriends()
+	//c.Listings()
+	//names := strings.Split("t3_eiuti6", "_")
+	names := strings.Split("t3_eioanh", "_")
 
+	//	c.ListingByID(names)
+	article := names[1]
+	c.GetComments(article)
 	fmt.Println("Success.........")
 
 }
