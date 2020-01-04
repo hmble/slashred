@@ -56,7 +56,7 @@ func (c *Client) GetComments(article string) {
 	}
 	defer resp.Body.Close()
 
-	//SaveResponse(resp.Body, "test_data/comments2.json")
+	//	SaveResponse(resp.Body, "test_data/comments2.json")
 
 	type ListSub struct {
 		Kind string `json:"kind"`
@@ -75,14 +75,18 @@ func (c *Client) GetComments(article string) {
 	comments := result[1].Data.Children
 
 	for _, comment := range comments {
-		//if comment.Data.Replies.Children != nil {
-		//	replies := comment.Data.Replies.Children
 
-		//	fmt.Println(len(replies))
-		//	//fmt.Println(comment.Data.Replies.Dist)
-		//}
+		//fmt.Println(comment.Data.Author)
+		fmt.Printf("%s -->  %s\n", comment.Data.Author, comment.Kind)
 
-		fmt.Println(comment.Data.Replies)
+		replies := comment.Data.Replies.Data.Children
+		for _, reply := range replies {
+
+			if reply.Kind == "t1" {
+				fmt.Println(reply.Data.Author)
+			}
+		}
+
 	}
 
 }

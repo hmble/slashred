@@ -14,35 +14,62 @@ type Submission struct {
 }
 
 type Comment struct {
-	Author string `json:"author"`
-	// Score   int     `json:"score"`
-	// Body    string  `json:"body"`
-	// Depth   int     `json:"depth"`
-	// Url     string  `json:"permalink"`
-	Replies ReplyData `json:"replies"`
+	Author  string  `json:"author"`
+	Score   int     `json:"score"`
+	Body    string  `json:"body"`
+	Depth   int     `json:"depth"`
+	Url     string  `json:"permalink"`
+	Replies Replies `json:"replies"`
 	//	Replies Replies `json:"replies"`
 }
 
-type RepliesListing struct {
-	Kind string
-	Data Reply `json:"data"`
-}
-type _Comment Comment
-type Reply struct {
-	Comment
+type Replies struct {
+	Data ReplyData `json:"data"`
 }
 
 type ReplyData struct {
-	Dist string
-	//	Children string
-	Children []RepliesListing
+	Children []RepliesArray
 }
 
-// type Replies struct {
-// 	*ReplyData
+type RepliesArray struct {
+	Kind string
+	Data Comment
+}
+
+// func (r *RepliesArray) UnmarshalJSON(b []byte) error {
+
+// 	var tmp map[string]json.RawMessage
+
+// 	if err := json.Unmarshal(b, &tmp); err != nil {
+// 		return err
+// 	}
+
+// 	var data interface{}
+// 	if r.Kind == "t1" {
+// 		data = Comment{}
+// 	} else {
+// 		data = More{}
+// 	}
+
+// 	if err := json.Unmarshal(b, &data); err != nil {
+// 		return err
+// 	}
+
+// 	r.Data = data
+// 	return nil
+
 // }
 
-func (r *ReplyData) UnmarshalJSON(b []byte) error {
+type More struct {
+	Count    int
+	Name     string
+	ParentID string
+	ID       string
+	Depth    int
+	Children []string
+}
+
+func (r *Replies) UnmarshalJSON(b []byte) error {
 	if string(b) == "\"\"" {
 		return nil
 	}
@@ -53,28 +80,34 @@ func (r *ReplyData) UnmarshalJSON(b []byte) error {
 		return errors.New("Error in unmarshaling raw message")
 	}
 
-	var children []RepliesListing
+	//for k, _ := range tmp {
+	//	//	fmt.Printf("%s : %s", k, string(v))
+	//	fmt.Println(k)
+	//}
 
-	if err := json.Unmarshal(tmp["children"], &children); err != nil {
-		return err
+	var data ReplyData
+
+	if err := json.Unmarshal(tmp["data"], &data); err != nil {
+		return errors.New("Data point does not exists")
+
 	}
 
-	r.Children = children
+	r.Data = data
+
 	return nil
 
 }
 
-//func (r *Replies) UnmarshalJSON(b []byte) error {
+//func (r *Replies2) UnmarshalJSON(b []byte) error {
 //	if string(b) == "\"\"" {
 //		return nil
 //	}
 
-//	r.ReplyData = &ReplyData{}
+//	r.Replies = &Replies{}
 //	//	var temp Replies
-//	if err := json.Unmarshal(b, r.ReplyData); err != nil {
+//	if err := json.Unmarshal(b, r.Replies); err != nil {
 //		return errors.New("error in unmarshaling replies")
 //	}
-//	fmt.Println(len(r.Children))
 //	return nil
 //}
 
