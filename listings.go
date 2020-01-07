@@ -56,7 +56,9 @@ func (c *Client) GetComments(article string) {
 	}
 	defer resp.Body.Close()
 
+	fmt.Println("-------Got Reponse of comments------------")
 	//	SaveResponse(resp.Body, "test_data/comments2.json")
+	PrintHeader(resp)
 
 	type ListSub struct {
 		Kind string `json:"kind"`
@@ -67,6 +69,7 @@ func (c *Client) GetComments(article string) {
 	result := make([]ListSub, 0)
 	er := json.NewDecoder(resp.Body).Decode(&result)
 
+	fmt.Println("----got here after decode")
 	if er != nil {
 		panic(er)
 		//log.Fatal("Error in decoding comments")
@@ -74,19 +77,23 @@ func (c *Client) GetComments(article string) {
 
 	comments := result[1].Data.Children
 
+	//commentReply := make([]Comment, 0)
+
 	for _, comment := range comments {
 
-		//fmt.Println(comment.Data.Author)
-		fmt.Printf("%s -->  %s\n", comment.Data.Author, comment.Kind)
+		fmt.Printf("Comment: %s  --> %s\n", comment.Data.Author, comment.Kind)
 
 		replies := comment.Data.Replies.Data.Children
+
 		for _, reply := range replies {
 
 			if reply.Kind == "t1" {
-				fmt.Println(reply.Data.Author)
+				fmt.Printf("\tReply: %s  --> %s\n", reply.Comment.Author, reply.Kind)
+			} else {
+				fmt.Printf("\t More: %s --> %s\n", reply.More.Name, reply.Kind)
 			}
 		}
-
 	}
 
 }
+

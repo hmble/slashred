@@ -5,6 +5,13 @@ import (
 	"errors"
 )
 
+type CommentListing struct {
+	Kind string
+	Data Comment `json:"data"`
+}
+type Data struct {
+	Children []CommentListing
+}
 type Submission struct {
 	SelfText    string `json:"selftext"`
 	Score       int    `json:"score"`
@@ -30,36 +37,6 @@ type Replies struct {
 type ReplyData struct {
 	Children []RepliesArray
 }
-
-type RepliesArray struct {
-	Kind string
-	Data Comment
-}
-
-// func (r *RepliesArray) UnmarshalJSON(b []byte) error {
-
-// 	var tmp map[string]json.RawMessage
-
-// 	if err := json.Unmarshal(b, &tmp); err != nil {
-// 		return err
-// 	}
-
-// 	var data interface{}
-// 	if r.Kind == "t1" {
-// 		data = Comment{}
-// 	} else {
-// 		data = More{}
-// 	}
-
-// 	if err := json.Unmarshal(b, &data); err != nil {
-// 		return err
-// 	}
-
-// 	r.Data = data
-// 	return nil
-
-// }
-
 type More struct {
 	Count    int
 	Name     string
@@ -67,6 +44,43 @@ type More struct {
 	ID       string
 	Depth    int
 	Children []string
+}
+type RepliesArray struct {
+	Kind    string
+	Data    json.RawMessage `json:"data"`
+	Comment Comment
+	More    More
+}
+
+func (r *RepliesArray) UnmarshalJSON(b []byte) error {
+
+	var tmp map[string]json.RawMessage
+
+	if err := json.Unmarshal(b, &tmp); err != nil {
+		return err
+	}
+
+	r.Kind = string(tmp["kind"])
+
+	// var comment Comment
+	// var more More
+
+	if string(tmp["kind"]) == "\"t1\"" {
+		var comment Comment
+		if err := json.Unmarshal(tmp["data"], &comment); err != nil {
+			return err
+		}
+		r.Comment = comment
+
+	} else {
+		var more More
+		if err := json.Unmarshal(tmp["data"], &more); err != nil {
+			return err
+		}
+		r.More = more
+	}
+
+	return nil
 }
 
 func (r *Replies) UnmarshalJSON(b []byte) error {
@@ -80,11 +94,6 @@ func (r *Replies) UnmarshalJSON(b []byte) error {
 		return errors.New("Error in unmarshaling raw message")
 	}
 
-	//for k, _ := range tmp {
-	//	//	fmt.Printf("%s : %s", k, string(v))
-	//	fmt.Println(k)
-	//}
-
 	var data ReplyData
 
 	if err := json.Unmarshal(tmp["data"], &data); err != nil {
@@ -96,25 +105,4 @@ func (r *Replies) UnmarshalJSON(b []byte) error {
 
 	return nil
 
-}
-
-//func (r *Replies2) UnmarshalJSON(b []byte) error {
-//	if string(b) == "\"\"" {
-//		return nil
-//	}
-
-//	r.Replies = &Replies{}
-//	//	var temp Replies
-//	if err := json.Unmarshal(b, r.Replies); err != nil {
-//		return errors.New("error in unmarshaling replies")
-//	}
-//	return nil
-//}
-
-type CommentListing struct {
-	Kind string
-	Data Comment `json:"data"`
-}
-type Data struct {
-	Children []CommentListing
 }

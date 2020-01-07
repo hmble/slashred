@@ -1,0 +1,17 @@
+How can i access the json unmarshaled with empty interface{}
+
+I have json response of
+
+{
+  "children": [
+    {
+      "kind": "comment",
+      "comment_author": "foo"
+    },
+    {
+      "kind": "reply",
+      "reply_author": "bar"
+    }
+  ]
+}
+
