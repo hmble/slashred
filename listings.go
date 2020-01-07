@@ -40,7 +40,7 @@ func (c *Client) ListingByID(names []string) {
 
 }
 
-func (c *Client) GetComments(article string) {
+func (c *Client) GetComments(article string) []CommentListing {
 	endpoint := fmt.Sprintf("/r/LifeProTips/comments/%s", article)
 	u, _ := url.Parse(endpoint)
 	q, _ := url.ParseQuery(u.RawQuery)
@@ -79,19 +79,56 @@ func (c *Client) GetComments(article string) {
 
 	//commentReply := make([]Comment, 0)
 
-	for _, comment := range comments {
+	return comments
+}
 
-		fmt.Printf("Comment: %s  --> %s\n", comment.Data.Author, comment.Kind)
+func (c *Client) GetCommentsID(article, comment string) {
+	endpoint := fmt.Sprintf("/r/LifeProTips/comments/%s", article)
+	u, _ := url.Parse(endpoint)
+	q, _ := url.ParseQuery(u.RawQuery)
+
+	q.Add("raw_json", "1")
+	q.Add("comment", comment)
+	q.Add("depth", "7")
+
+	u.RawQuery = q.Encode()
+
+	resp, err := c.Get(u.String())
+
+	if err != nil {
+		log.Fatal("Error in getting comments response")
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("-------Got Reponse of comments------------")
+	//SaveResponse(resp.Body, "test_data/commeny_by_id.json")
+	PrintHeader(resp)
+
+	fmt.Println("Respnse saved")
+	type ListSub struct {
+		Kind string `json:"kind"`
+		Data Data   `json:"data"`
+	}
+
+	result := make([]ListSub, 0)
+	er := json.NewDecoder(resp.Body).Decode(&result)
+
+	fmt.Println("----got here after decode")
+	if er != nil {
+		panic(er)
+		//log.Fatal("Error in decoding comments")
+	}
+
+	comments := result[1].Data.Children
+
+	for _, comment := range comments {
+		fmt.Printf("Author : %s\n", comment.Data.Author)
 
 		replies := comment.Data.Replies.Data.Children
 
 		for _, reply := range replies {
 
-			if reply.Kind == "t1" {
-				fmt.Printf("\tReply: %s  --> %s\n", reply.Comment.Author, reply.Kind)
-			} else {
-				fmt.Printf("\t More: %s --> %s\n", reply.More.Name, reply.Kind)
-			}
+			fmt.Printf("Author : %s\n", reply.Comment.Author)
 		}
 	}
 

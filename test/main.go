@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -37,7 +36,36 @@ func main() {
 
 	//	c.ListingByID(names)
 	article := names[1]
-	c.GetComments(article)
-	fmt.Println("Success.........")
+	comment := "fcsnxlf"
+
+	c.GetCommentsID(article, comment)
+
+	// comments := c.GetComments(article)
+
+	// for _, comment := range comments {
+
+	// 	fmt.Printf("Comment: %s %d\n", comment.Data.Author, comment.Data.Depth)
+
+	// 	replies := comment.Data.Replies.Data.Children
+
+	// 	for _, reply := range replies {
+
+	// 		if reply.Kind == "t1" {
+	// 			fmt.Printf("\tReply: %s  --> %d\n", reply.Comment.Author, reply.Comment.Depth)
+
+	// 			isEmpty := reply.Comment.Replies
+	// 			tempstruct := &slashred.Replies{}
+	// 			if &isEmpty != tempstruct {
+	// 				fmt.Printf("\t\t\t size is %d\n", len(isEmpty.Data.Children))
+
+	// 			}
+
+	// 			fmt.Printf("\t\tID : %s  %s --> url is %s\n", reply.Comment.ID, reply.Comment.Author, reply.Comment.Url)
+	// 		}
+	// 	}
+
+	// }
+	// fmt.Println("Success.........")
 
 }
+

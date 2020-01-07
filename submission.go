@@ -26,8 +26,11 @@ type Comment struct {
 	Body    string  `json:"body"`
 	Depth   int     `json:"depth"`
 	Url     string  `json:"permalink"`
-	Replies Replies `json:"replies"`
-	//	Replies Replies `json:"replies"`
+	LinkID string `json:"link_id"`
+  ID string `json:"id"`
+
+Replies Replies `json:"replies"`
+  	//	Replies Replies `json:"replies"`
 }
 
 type Replies struct {
@@ -60,7 +63,12 @@ func (r *RepliesArray) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	r.Kind = string(tmp["kind"])
+  kind := string(tmp["kind"])
+
+  r.Kind = kind[1:len(kind)-1]
+
+  //r.Kind = string(tmp["kind"])
+  
 
 	// var comment Comment
 	// var more More
