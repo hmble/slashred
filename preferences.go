@@ -85,7 +85,7 @@ type Preferences struct {
 //
 
 func (c *Client) GetMyPreferences() (*Preferences, error) {
-	resp, err := c.Get(API_PATH["preferences"])
+	resp, err := c.Get(API_PATH["preferences"], NoOptions)
 
 	if err != nil {
 
@@ -108,7 +108,7 @@ func (c *Client) GetMyPreferences() (*Preferences, error) {
 
 func (c *Client) PrefsFriends() {
 
-	resp, err := c.Get(API_PATH["prefs_friends"])
+	resp, err := c.Get(API_PATH["prefs_friends"], NoOptions)
 
 	if err != nil {
 		log.Fatal("error in getting prefs friends response")
@@ -125,7 +125,7 @@ func (c *Client) PrefsFriends() {
 
 func (c *Client) PrefsBlocked() {
 
-	resp, err := c.Get(API_PATH["prefs_blocked"])
+	resp, err := c.Get(API_PATH["prefs_blocked"], NoOptions)
 
 	if err != nil {
 		log.Fatal("error in getting prefs/blocked response")
@@ -141,7 +141,7 @@ func (c *Client) PrefsBlocked() {
 }
 func (c *Client) PrefsMessaging() {
 
-	resp, err := c.Get(API_PATH["prefs_messaging"])
+	resp, err := c.Get(API_PATH["prefs_messaging"], NoOptions)
 
 	if err != nil {
 		log.Fatal("error in getting prefs/messaging response")
@@ -157,7 +157,7 @@ func (c *Client) PrefsMessaging() {
 }
 func (c *Client) PrefsTrusted() {
 
-	resp, err := c.Get(API_PATH["prefs_trusted"])
+	resp, err := c.Get(API_PATH["prefs_trusted"], NoOptions)
 
 	if err != nil {
 		log.Fatal("error in getting prefs/trusted response")
@@ -173,7 +173,7 @@ func (c *Client) PrefsTrusted() {
 }
 func (c *Client) MeFriends() {
 
-	resp, err := c.Get(API_PATH["me_friends"])
+	resp, err := c.Get(API_PATH["me_friends"], NoOptions)
 
 	if err != nil {
 		log.Fatal("error in getting me_friends response")
@@ -189,7 +189,7 @@ func (c *Client) MeFriends() {
 }
 func (c *Client) MeBlocked() {
 
-	resp, err := c.Get(API_PATH["me_blocked"])
+	resp, err := c.Get(API_PATH["me_blocked"], NoOptions)
 
 	if err != nil {
 		log.Fatal("error in getting me_blocked response")

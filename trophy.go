@@ -21,7 +21,7 @@ type Listing struct {
 }
 
 func (c *Client) Trophies() ([]Trophy, error) {
-	resp, err := c.Get(API_PATH["trophies"])
+	resp, err := c.Get(API_PATH["trophies"], NoOptions)
 
 	if err != nil {
 		log.Fatal("Error in getting Trophies response")

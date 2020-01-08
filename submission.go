@@ -12,25 +12,18 @@ type CommentListing struct {
 type Data struct {
 	Children []CommentListing
 }
-type Submission struct {
-	SelfText    string `json:"selftext"`
-	Score       int    `json:"score"`
-	Author      string `json:"author"`
-	NumComments int    `json:"num_comments"`
-	Url         string `json:"url"`
-}
 
 type Comment struct {
-	Author  string  `json:"author"`
-	Score   int     `json:"score"`
-	Body    string  `json:"body"`
-	Depth   int     `json:"depth"`
-	Url     string  `json:"permalink"`
+	Author string `json:"author"`
+	Score  int    `json:"score"`
+	Body   string `json:"body"`
+	Depth  int    `json:"depth"`
+	Url    string `json:"permalink"`
 	LinkID string `json:"link_id"`
-  ID string `json:"id"`
+	ID     string `json:"id"`
 
-Replies Replies `json:"replies"`
-  	//	Replies Replies `json:"replies"`
+	Replies Replies `json:"replies"`
+	//	Replies Replies `json:"replies"`
 }
 
 type Replies struct {
@@ -63,12 +56,11 @@ func (r *RepliesArray) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-  kind := string(tmp["kind"])
+	kind := string(tmp["kind"])
 
-  r.Kind = kind[1:len(kind)-1]
+	r.Kind = kind[1 : len(kind)-1]
 
-  //r.Kind = string(tmp["kind"])
-  
+	//r.Kind = string(tmp["kind"])
 
 	// var comment Comment
 	// var more More

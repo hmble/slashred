@@ -10,7 +10,7 @@ import "log"
 // Scope: modposts
 // API https://www.reddit.com/dev/api/#POST_api_v1_collections_add_post_to_collection
 func (c *Client) Collection() {
-	resp, err := c.Get(API_PATH["collection"])
+	resp, err := c.Get(API_PATH["collection"], NoOptions)
 
 	if err != nil {
 		log.Fatal("Error in getting collection response")

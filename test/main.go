@@ -1,8 +1,8 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"strings"
 
 	"github.com/hmble/slashred"
 	_ "github.com/joho/godotenv/autoload"
@@ -30,42 +30,21 @@ func main() {
 	// fmt.Println("Token saved")
 	var c *slashred.Client = u.UserClient(token)
 
-	//c.Listings()
-	//names := strings.Split("t3_eiuti6", "_")
-	names := strings.Split("t3_eioanh", "_")
+	links := c.New("golang", slashred.Option{
+		"limit": "10",
+	})
 
-	//	c.ListingByID(names)
-	article := names[1]
-	comment := "fcsnxlf"
+	count := 0
+	for _, link := range links {
+		fmt.Printf("---------BODY--------\n\n")
+		fmt.Println(link.Data.Title)
+		fmt.Println("=====================")
+		fmt.Printf("Author : %s\t Score : %d\n\n", link.Data.Author, link.Data.Score)
+		count++
+		fmt.Println(link.Data.Edited)
+		fmt.Printf("-----------END--  %d  ---------\n", count)
 
-	c.GetCommentsID(article, comment)
-
-	// comments := c.GetComments(article)
-
-	// for _, comment := range comments {
-
-	// 	fmt.Printf("Comment: %s %d\n", comment.Data.Author, comment.Data.Depth)
-
-	// 	replies := comment.Data.Replies.Data.Children
-
-	// 	for _, reply := range replies {
-
-	// 		if reply.Kind == "t1" {
-	// 			fmt.Printf("\tReply: %s  --> %d\n", reply.Comment.Author, reply.Comment.Depth)
-
-	// 			isEmpty := reply.Comment.Replies
-	// 			tempstruct := &slashred.Replies{}
-	// 			if &isEmpty != tempstruct {
-	// 				fmt.Printf("\t\t\t size is %d\n", len(isEmpty.Data.Children))
-
-	// 			}
-
-	// 			fmt.Printf("\t\tID : %s  %s --> url is %s\n", reply.Comment.ID, reply.Comment.Author, reply.Comment.Url)
-	// 		}
-	// 	}
-
-	// }
-	// fmt.Println("Success.........")
+	}
 
 }
 

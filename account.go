@@ -71,7 +71,7 @@ func (c *Client) GetMe() (*Account, error) {
 
 	//url := fmt.Sprintf("%s/api/v1/me", BaseAuthURL)
 
-	resp, err := c.Get(API_PATH["me"])
+	resp, err := c.Get(API_PATH["me"], NoOptions)
 	if err != nil {
 		log.Fatal(err, "Error in response Do")
 		return nil, err
@@ -98,7 +98,7 @@ type Karma struct {
 }
 
 func (c *Client) GetKarma() ([]Karma, error) {
-	resp, err := c.Get(API_PATH["karma"])
+	resp, err := c.Get(API_PATH["karma"], NoOptions)
 
 	if err != nil {
 		log.Fatal("Error in getting karma response from /api/v1/me/karma")

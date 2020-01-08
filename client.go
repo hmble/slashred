@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 
 	"golang.org/x/oauth2"
 
@@ -88,11 +89,25 @@ func TokenFromFile(filepath string) (*oauth2.Token, error) {
 	return internal.TokenFromFile(filepath)
 }
 
-func (c *Client) Get(endpoint string) (res *http.Response, err error) {
+type Option map[string]string
 
-	url := BaseAuthURL + endpoint
+var NoOptions Option = Option{}
 
-	req, err := http.NewRequest("GET", url, nil)
+func (c *Client) Get(endpoint string, opts Option) (res *http.Response, err error) {
+
+	temp := BaseAuthURL + endpoint
+	u, _ := url.Parse(temp)
+	q, _ := url.ParseQuery(u.RawQuery)
+
+	q.Add("raw_json", "1")
+
+	for k, v := range opts {
+		q.Add(k, v)
+	}
+	u.RawQuery = q.Encode()
+
+	path := u.String()
+	req, err := http.NewRequest("GET", path, nil)
 
 	if err != nil {
 		log.Fatal("Error getting request")

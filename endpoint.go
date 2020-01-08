@@ -14,4 +14,5 @@ var API_PATH map[string]string = map[string]string{
 	"collection":          "/api/v1/collections/collection",
 	"trending_subreddits": "/api/trending_subreddits",
 	"by_id":               "/by_id/",
+	"best":                "/best",
 }

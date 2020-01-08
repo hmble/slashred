@@ -5,12 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/url"
 	"strings"
 )
 
 func (c *Client) Listings() {
-	resp, err := c.Get(API_PATH["trending_subreddits"])
+	resp, err := c.Get(API_PATH["trending_subreddits"], NoOptions)
 
 	if err != nil {
 		log.Fatal("Error in getting trending subreddits response")
@@ -19,7 +18,7 @@ func (c *Client) Listings() {
 
 	defer resp.Body.Close()
 
-	SaveResponse(resp.Body, "test_data/trending_subreddits.json")
+	//SaveResponse(resp.Body, "test_data/trending_subreddits.json")
 }
 
 func (c *Client) ListingByID(names []string) {
@@ -29,7 +28,7 @@ func (c *Client) ListingByID(names []string) {
 
 	url := buf.String()
 
-	resp, err := c.Get(url)
+	resp, err := c.Get(url, NoOptions)
 
 	if err != nil {
 		log.Fatal("Error in getting listings by name")
@@ -40,16 +39,10 @@ func (c *Client) ListingByID(names []string) {
 
 }
 
-func (c *Client) GetComments(article string) []CommentListing {
-	endpoint := fmt.Sprintf("/r/LifeProTips/comments/%s", article)
-	u, _ := url.Parse(endpoint)
-	q, _ := url.ParseQuery(u.RawQuery)
+func (c *Client) GetComments(subreddit, article string) []CommentListing {
+	endpoint := fmt.Sprintf("/r/%s/comments/%s", subreddit, article)
 
-	q.Add("raw_json", "1")
-
-	u.RawQuery = q.Encode()
-
-	resp, err := c.Get(u.String())
+	resp, err := c.Get(endpoint, NoOptions)
 
 	if err != nil {
 		log.Fatal("Error in getting comments response")
@@ -60,13 +53,13 @@ func (c *Client) GetComments(article string) []CommentListing {
 	//	SaveResponse(resp.Body, "test_data/comments2.json")
 	PrintHeader(resp)
 
-	type ListSub struct {
+	type listSub struct {
 		Kind string `json:"kind"`
 		Data Data   `json:"data"`
 	}
 
 	// https://coderwall.com/p/4c2zig/decode-top-level-json-array-into-a-slice-of-structs-in-golang
-	result := make([]ListSub, 0)
+	result := make([]listSub, 0)
 	er := json.NewDecoder(resp.Body).Decode(&result)
 
 	fmt.Println("----got here after decode")
@@ -84,16 +77,15 @@ func (c *Client) GetComments(article string) []CommentListing {
 
 func (c *Client) GetCommentsID(article, comment string) {
 	endpoint := fmt.Sprintf("/r/LifeProTips/comments/%s", article)
-	u, _ := url.Parse(endpoint)
-	q, _ := url.ParseQuery(u.RawQuery)
 
-	q.Add("raw_json", "1")
-	q.Add("comment", comment)
-	q.Add("depth", "7")
+	// q.Add("comment", comment)
+	// q.Add("depth", "7")
 
-	u.RawQuery = q.Encode()
-
-	resp, err := c.Get(u.String())
+	options := Option{
+		"comment": comment,
+		"depth":   "7",
+	}
+	resp, err := c.Get(endpoint, options)
 
 	if err != nil {
 		log.Fatal("Error in getting comments response")
@@ -104,7 +96,6 @@ func (c *Client) GetCommentsID(article, comment string) {
 	//SaveResponse(resp.Body, "test_data/commeny_by_id.json")
 	PrintHeader(resp)
 
-	fmt.Println("Respnse saved")
 	type ListSub struct {
 		Kind string `json:"kind"`
 		Data Data   `json:"data"`
@@ -133,4 +124,3 @@ func (c *Client) GetCommentsID(article, comment string) {
 	}
 
 }
-
