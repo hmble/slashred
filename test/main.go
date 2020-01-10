@@ -15,47 +15,15 @@ func main() {
 		IsPermanent: true,
 	}
 	token, er := slashred.TokenFromFile("token.json")
-	//	token, er := u.Authenticate()
 	if er != nil {
 		log.Fatal("Error in reading token")
 	}
 
-	//	var a *internal.Authenticator = internal.RedditClient
-
 	slashred.UpdateToken(token)
 
-	// internal.SaveToken("token.json", token)
-
-	// fmt.Println("Token saved")
 	var c *slashred.Client = u.UserClient(token)
 
-	// links := c.New("golang", slashred.Option{
-	// 	"limit": "10",
-	// })
+	//	c.Unspoiler("emn0zh")
 
-	// count := 0
-	// for _, link := range links {
-	// 	fmt.Printf("---------BODY--------\n\n")
-	// 	fmt.Println(link.Data.Title)
-	// 	fmt.Println("=====================")
-	// 	fmt.Printf("Author : %s\t Score : %d\n\n", link.Data.Author, link.Data.Score)
-	// 	count++
-	// 	fmt.Println(link.Data.Edited)
-	// 	fmt.Printf("-----------END--  %d  ---------\n", count)
-
-	// }
-
-	//c.MakePost()
-	// postdata := slashred.PostData{
-
-	// 	"kind":    "self",
-	// 	"text":    "Made url values with map[string]string",
-	// 	"sr":      "test",
-	// 	"title":   "Post of golang api wrapper go-reddit",
-	// 	"nsfw":    "true",
-	// 	"spoiler": "true",
-	// }
-	// c.LinkSubmit(postdata)
-
-	c.UnmarkNsfw("emn0zh")
+	c.Upvote(slashred.LinkPrefix + "emh2un")
 }

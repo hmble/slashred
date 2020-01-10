@@ -17,4 +17,9 @@ var API_PATH map[string]string = map[string]string{
 	"best":                "/best",
 	"submit":              "/api/submit",
 	"unmarknsfw":          "/api/unmarknsfw",
+	"unhide":              "/api/unhide",
+	"unlock":              "/api/unlock",
+	"unsave":              "/api/unsave",
+	"unspoiler":           "/api/unspoiler",
+	"vote":                "/api/vote",
 }

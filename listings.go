@@ -161,12 +161,13 @@ func (c *Client) LinkSubmit(postdata PostData) {
 	PrintHeader(resp)
 }
 
-func (c *Client) UnmarkNsfw(id string) {
+// Unmarknsfw
+func (c *Client) unlink(endpoint, id string) {
 	postdata := PostData{
 		"id": LinkPrefix + id,
 	}
 
-	resp, err := c.Post(API_PATH["unmarknsfw"], postdata)
+	resp, err := c.Post(endpoint, postdata)
 
 	if err != nil {
 		log.Fatal("Error in unmarking nsfw")
@@ -175,4 +176,52 @@ func (c *Client) UnmarkNsfw(id string) {
 	defer resp.Body.Close()
 
 	PrintHeader(resp)
+}
+
+func (c *Client) Unmarknsfw(id string) {
+	c.unlink(API_PATH["unmarknsfw"], id)
+}
+func (c *Client) Unhide(id string) {
+	c.unlink(API_PATH["unhide"], id)
+}
+
+func (c *Client) Unlock(id string) {
+	c.unlink(API_PATH["unlock"], id)
+}
+
+func (c *Client) Unsave(id string) {
+	c.unlink(API_PATH["unsave"], id)
+}
+
+func (c *Client) Unspoiler(id string) {
+	c.unlink(API_PATH["unspoiler"], id)
+}
+
+func (c *Client) vote(direction, fullname string) {
+	postdata := PostData{
+
+		"dir": direction,
+		"id":  fullname,
+	}
+
+	resp, err := c.Post(API_PATH["vote"], postdata)
+
+	if err != nil {
+		log.Fatal("Errro in casting vote")
+	}
+	defer resp.Body.Close()
+
+	PrintHeader(resp)
+}
+
+func (c *Client) Upvote(fullname string) {
+	c.vote("1", fullname)
+}
+
+func (c *Client) ClearVote(fullname string) {
+	c.vote("0", fullname)
+}
+
+func (c *Client) Downvote(fullname string) {
+	c.vote("-1", fullname)
 }
