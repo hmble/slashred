@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/hmble/slashred"
@@ -30,21 +29,33 @@ func main() {
 	// fmt.Println("Token saved")
 	var c *slashred.Client = u.UserClient(token)
 
-	links := c.New("golang", slashred.Option{
-		"limit": "10",
-	})
+	// links := c.New("golang", slashred.Option{
+	// 	"limit": "10",
+	// })
 
-	count := 0
-	for _, link := range links {
-		fmt.Printf("---------BODY--------\n\n")
-		fmt.Println(link.Data.Title)
-		fmt.Println("=====================")
-		fmt.Printf("Author : %s\t Score : %d\n\n", link.Data.Author, link.Data.Score)
-		count++
-		fmt.Println(link.Data.Edited)
-		fmt.Printf("-----------END--  %d  ---------\n", count)
+	// count := 0
+	// for _, link := range links {
+	// 	fmt.Printf("---------BODY--------\n\n")
+	// 	fmt.Println(link.Data.Title)
+	// 	fmt.Println("=====================")
+	// 	fmt.Printf("Author : %s\t Score : %d\n\n", link.Data.Author, link.Data.Score)
+	// 	count++
+	// 	fmt.Println(link.Data.Edited)
+	// 	fmt.Printf("-----------END--  %d  ---------\n", count)
 
-	}
+	// }
 
+	//c.MakePost()
+	// postdata := slashred.PostData{
+
+	// 	"kind":    "self",
+	// 	"text":    "Made url values with map[string]string",
+	// 	"sr":      "test",
+	// 	"title":   "Post of golang api wrapper go-reddit",
+	// 	"nsfw":    "true",
+	// 	"spoiler": "true",
+	// }
+	// c.LinkSubmit(postdata)
+
+	c.UnmarkNsfw("emn0zh")
 }
-

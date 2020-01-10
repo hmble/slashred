@@ -124,3 +124,55 @@ func (c *Client) GetCommentsID(article, comment string) {
 	}
 
 }
+
+type PostData map[string]string
+
+// Should provide PostData with following keys
+/*
+kind(string):    one of (link, self, image, video, videogif)
+nsfw:   true or false
+sr:     name of subreddit
+spoiler: true or false
+text: text body (string)
+title: string()
+send_replies: true or false
+
+// If kind is "link" then
+link : a valid url
+video_poster_url : url
+// If wanted flair then
+flair_id : a string no longer than 36 characters
+flair_text : a string no longer than 64 characters
+
+// Used for redirects
+extensions: used for redirects
+*/
+
+func (c *Client) LinkSubmit(postdata PostData) {
+
+	resp, er := c.Post(API_PATH["submit"], postdata)
+
+	if er != nil {
+		log.Fatal("Error in getting response of post body")
+	}
+
+	defer resp.Body.Close()
+
+	PrintHeader(resp)
+}
+
+func (c *Client) UnmarkNsfw(id string) {
+	postdata := PostData{
+		"id": LinkPrefix + id,
+	}
+
+	resp, err := c.Post(API_PATH["unmarknsfw"], postdata)
+
+	if err != nil {
+		log.Fatal("Error in unmarking nsfw")
+	}
+
+	defer resp.Body.Close()
+
+	PrintHeader(resp)
+}
