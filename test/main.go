@@ -23,7 +23,23 @@ func main() {
 
 	var c *slashred.Client = u.UserClient(token)
 
-	//	c.Unspoiler("emn0zh")
+	//c.Delete(slashred.CommentPrefix + "fdpzqgs")
 
-	c.Upvote(slashred.LinkPrefix + "emh2un")
+	text := `
+	Edited this posts data by api endpoint
+	From user /u/anyrandomuserwhichIdontknow
+
+	Edit :
+
+	Text is edited please IGNORE
+
+	**API ENDPOINT OF /api/editusertext
+	`
+	//commenttext := "Its a comment text"
+	//c.PostComment(slashred.LinkPrefix+"emmcy8", commenttext)
+	//c.EditUserText(slashred.CommentPrefix+"fdq0uck", text)
+	c.EditUserText(slashred.LinkPrefix+"emn0zh", text)
+	// emn0zh
+	//c.Upvote(slashred.LinkPrefix + "emh2un")
+
 }

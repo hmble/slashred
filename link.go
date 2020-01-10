@@ -207,3 +207,5 @@ func (c *Client) Controversial(subreddit string, opts Option) []SubmissionData {
 	return listSub.Data.Children
 
 }
+
+// TODO : Implement MoreChildren method

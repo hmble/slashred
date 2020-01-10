@@ -161,42 +161,28 @@ func (c *Client) LinkSubmit(postdata PostData) {
 	PrintHeader(resp)
 }
 
-// Unmarknsfw
-func (c *Client) unlink(endpoint, id string) {
-	postdata := PostData{
-		"id": LinkPrefix + id,
-	}
+// fullname of link with LinkPrefix
+func (c *Client) Unsave(fullname string) {
+	c.unlink(API_PATH["unsave"], fullname)
+}
 
-	resp, err := c.Post(endpoint, postdata)
+func (c *Client) Save(category, fullname string) {
+	postdata := PostData{
+		"category": category,
+		"id":       fullname,
+	}
+	resp, err := c.Post(API_PATH["vote"], postdata)
 
 	if err != nil {
-		log.Fatal("Error in unmarking nsfw")
+		log.Fatal("Errro in casting vote")
 	}
-
 	defer resp.Body.Close()
-
-	PrintHeader(resp)
 }
 
-func (c *Client) Unmarknsfw(id string) {
-	c.unlink(API_PATH["unmarknsfw"], id)
+// fullname of link or comment
+func (c *Client) Delete(fullname string) {
+	c.unlink(API_PATH["delete"], fullname)
 }
-func (c *Client) Unhide(id string) {
-	c.unlink(API_PATH["unhide"], id)
-}
-
-func (c *Client) Unlock(id string) {
-	c.unlink(API_PATH["unlock"], id)
-}
-
-func (c *Client) Unsave(id string) {
-	c.unlink(API_PATH["unsave"], id)
-}
-
-func (c *Client) Unspoiler(id string) {
-	c.unlink(API_PATH["unspoiler"], id)
-}
-
 func (c *Client) vote(direction, fullname string) {
 	postdata := PostData{
 
@@ -225,3 +211,83 @@ func (c *Client) ClearVote(fullname string) {
 func (c *Client) Downvote(fullname string) {
 	c.vote("-1", fullname)
 }
+
+func (c *Client) edit(endpoint, thingId, text string) {
+	postdata := PostData{
+
+		"thing_id": thingId,
+		"text":     text,
+	}
+
+	resp, err := c.Post(endpoint, postdata)
+
+	if err != nil {
+		log.Fatal("Error in posting comment")
+	}
+
+	defer resp.Body.Close()
+	PrintHeader(resp)
+
+}
+
+func (c *Client) PostComment(thingId, text string) {
+	c.edit(API_PATH["comment"], thingId, text)
+}
+func (c *Client) EditUserText(thingId, text string) {
+	c.edit(API_PATH["editusertext"], thingId, text)
+
+}
+
+// Test remained
+func (c *Client) EventPostTime(start, end, timezone, fullname string) {
+	postdata := PostData{
+		"event_start": start,
+		"event_end":   end,
+		"event_tz":    timezone,
+		"id":          fullname,
+	}
+
+	resp, err := c.Post(API_PATH["event_post_time"], postdata)
+
+	if err != nil {
+		log.Fatal("Error in editing event post time")
+	}
+
+	defer resp.Body.Close()
+
+}
+
+// Test remained
+
+// follow : string(bool) [true/false]
+func (c *Client) FollowPost(follow, fullname string) {
+	postdata := PostData{
+		"follow":   follow,
+		"fullname": fullname,
+	}
+	resp, err := c.Post(API_PATH["follow_post"], postdata)
+
+	if err != nil {
+		log.Fatal("Error in following post")
+	}
+
+	defer resp.Body.Close()
+
+}
+
+// Test Remained
+// state is bool
+func (c *Client) SendReplies(fullname, state string) {
+	postdata := PostData{
+		"id":    fullname,
+		"state": state,
+	}
+	resp, err := c.Post(API_PATH["sendreplies"], postdata)
+
+	if err != nil {
+		log.Fatal("Error in sendreplies")
+	}
+
+	defer resp.Body.Close()
+}
+
