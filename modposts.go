@@ -5,13 +5,17 @@ import (
 	"strings"
 )
 
-func (c *Client) SetContestMode(fullname, state string) {
+//
+
+type ModpostService service
+
+func (m *ModpostService) SetContestMode(fullname, state string) {
 
 	postdata := PostData{
 		"id":    fullname,
 		"state": state,
 	}
-	resp, err := c.Post(API_PATH["set_contest_mode"], postdata)
+	resp, err := m.client.Post(API_PATH["set_contest_mode"], postdata)
 
 	if err != nil {
 		log.Fatal("Error in setting contest mode")

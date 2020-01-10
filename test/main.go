@@ -26,20 +26,18 @@ func main() {
 	//c.Delete(slashred.CommentPrefix + "fdpzqgs")
 
 	text := `
-	Edited this posts data by api endpoint
-	From user /u/anyrandomuserwhichIdontknow
 
-	Edit :
+  [RANDOM] test number 5
+  `
 
-	Text is edited please IGNORE
+	postdata := slashred.PostData{
+		"kind": "self",
+		//"nsfw": "false",
+		"sr":    "test",
+		"text":  text,
+		"title": "[RANODM] test made with some changes",
+	}
 
-	**API ENDPOINT OF /api/editusertext
-	`
-	//commenttext := "Its a comment text"
-	//c.PostComment(slashred.LinkPrefix+"emmcy8", commenttext)
-	//c.EditUserText(slashred.CommentPrefix+"fdq0uck", text)
-	c.EditUserText(slashred.LinkPrefix+"emn0zh", text)
-	// emn0zh
-	//c.Upvote(slashred.LinkPrefix + "emh2un")
+	c.Listing.LinkSubmit(postdata)
 
 }

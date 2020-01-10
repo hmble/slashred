@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+type ListingService service
+
 func (c *Client) Listings() {
 	resp, err := c.Get(API_PATH["trending_subreddits"], NoOptions)
 
@@ -148,9 +150,9 @@ flair_text : a string no longer than 64 characters
 extensions: used for redirects
 */
 
-func (c *Client) LinkSubmit(postdata PostData) {
+func (l *ListingService) LinkSubmit(postdata PostData) {
 
-	resp, er := c.Post(API_PATH["submit"], postdata)
+	resp, er := l.client.Post(API_PATH["submit"], postdata)
 
 	if er != nil {
 		log.Fatal("Error in getting response of post body")
@@ -290,4 +292,3 @@ func (c *Client) SendReplies(fullname, state string) {
 
 	defer resp.Body.Close()
 }
-

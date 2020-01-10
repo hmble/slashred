@@ -40,6 +40,15 @@ type Client struct {
 	Http      *http.Client
 	Useragent string
 	Token     *oauth2.Token
+
+	common service // Reuse same struct instead of creating
+
+	Modpost *ModpostService
+	Listing *ListingService
+}
+
+type service struct {
+	client *Client
 }
 
 var NoAuthClient = &Client{
@@ -49,11 +58,17 @@ var NoAuthClient = &Client{
 var auth *internal.Authenticator = internal.DefaultClient
 
 func (u *User) UserClient(token *oauth2.Token) *Client {
-	return &Client{
+	c := &Client{
 		Http:      auth.Config.Client(oauth2.NoContext, token),
 		Useragent: auth.Useragent,
 		Token:     token,
 	}
+
+	c.common.client = c
+	c.Modpost = (*ModpostService)(&c.common)
+	c.Listing = (*ListingService)(&c.common)
+
+	return c
 }
 
 func (u *User) Authenticate() (*oauth2.Token, error) {
