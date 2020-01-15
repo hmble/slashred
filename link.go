@@ -8,6 +8,8 @@ import (
 
 // Need to look at this api schema afterwords for confirmations
 //
+
+type LinkService service
 type Submission struct {
 	ApprovedBy          string  `json:"approved_by"`
 	Archived            bool    `json:"archived"`
@@ -78,10 +80,10 @@ var listSub struct {
 	}
 }
 
-func (c *Client) Best(opts Option) []SubmissionData {
+func (l *ListingService) Best(opts Option) []SubmissionData {
 
 	endpoint := API_PATH["best"]
-	resp, err := c.Get(endpoint, opts)
+	resp, err := l.client.Get(endpoint, opts)
 
 	if err != nil {
 		log.Fatal("Error in getting best response")
@@ -99,11 +101,11 @@ func (c *Client) Best(opts Option) []SubmissionData {
 	return listSub.Data.Children
 }
 
-func (c *Client) Hot(subreddit string, opts Option) []SubmissionData {
+func (l *ListingService) Hot(subreddit string, opts Option) []SubmissionData {
 
 	endpoint := fmt.Sprintf("/r/%s/hot", subreddit)
 
-	resp, err := c.Get(endpoint, opts)
+	resp, err := l.client.Get(endpoint, opts)
 
 	if err != nil {
 		log.Fatal(err)
@@ -121,11 +123,11 @@ func (c *Client) Hot(subreddit string, opts Option) []SubmissionData {
 }
 
 // Test remained
-func (c *Client) New(subreddit string, opts Option) []SubmissionData {
+func (l *ListingService) New(subreddit string, opts Option) []SubmissionData {
 
 	endpoint := fmt.Sprintf("/r/%s/new", subreddit)
 
-	resp, err := c.Get(endpoint, opts)
+	resp, err := l.client.Get(endpoint, opts)
 
 	if err != nil {
 		log.Fatal(err)
@@ -142,11 +144,11 @@ func (c *Client) New(subreddit string, opts Option) []SubmissionData {
 	return listSub.Data.Children
 }
 
-func (c *Client) Rising(subreddit string, opts Option) []SubmissionData {
+func (l *ListingService) Rising(subreddit string, opts Option) []SubmissionData {
 
 	endpoint := fmt.Sprintf("/r/%s/rising", subreddit)
 
-	resp, err := c.Get(endpoint, opts)
+	resp, err := l.client.Get(endpoint, opts)
 
 	if err != nil {
 		log.Fatal(err)
@@ -164,11 +166,11 @@ func (c *Client) Rising(subreddit string, opts Option) []SubmissionData {
 
 }
 
-func (c *Client) Top(subreddit string, opts Option) []SubmissionData {
+func (l *ListingService) Top(subreddit string, opts Option) []SubmissionData {
 
 	endpoint := fmt.Sprintf("/r/%s/top", subreddit)
 
-	resp, err := c.Get(endpoint, opts)
+	resp, err := l.client.Get(endpoint, opts)
 
 	if err != nil {
 		log.Fatal(err)
@@ -186,11 +188,11 @@ func (c *Client) Top(subreddit string, opts Option) []SubmissionData {
 
 }
 
-func (c *Client) Controversial(subreddit string, opts Option) []SubmissionData {
+func (l *ListingService) Controversial(subreddit string, opts Option) []SubmissionData {
 
 	endpoint := fmt.Sprintf("/r/%s/controversial", subreddit)
 
-	resp, err := c.Get(endpoint, opts)
+	resp, err := l.client.Get(endpoint, opts)
 
 	if err != nil {
 		log.Fatal(err)
