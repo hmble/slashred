@@ -45,6 +45,7 @@ type Client struct {
 
 	Modpost *ModpostService
 	Listing *ListingService
+	Account *AccountService
 }
 
 type service struct {
@@ -67,6 +68,7 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 	c.common.client = c
 	c.Modpost = (*ModpostService)(&c.common)
 	c.Listing = (*ListingService)(&c.common)
+	c.Account = (*AccountService)(&c.common)
 
 	return c
 }

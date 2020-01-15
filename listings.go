@@ -10,8 +10,8 @@ import (
 
 type ListingService service
 
-func (c *Client) Listings() {
-	resp, err := c.Get(API_PATH["trending_subreddits"], NoOptions)
+func (l *ListingService) Listings() {
+	resp, err := l.client.Get(API_PATH["trending_subreddits"], NoOptions)
 
 	if err != nil {
 		log.Fatal("Error in getting trending subreddits response")

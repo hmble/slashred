@@ -84,8 +84,8 @@ type Preferences struct {
 // PRECAUSTION : DO NOT USE THIS METHODS FOR NOW
 //
 
-func (c *Client) GetMyPreferences() (*Preferences, error) {
-	resp, err := c.Get(API_PATH["preferences"], NoOptions)
+func (a *AccountService) GetMyPreferences() (*Preferences, error) {
+	resp, err := a.client.Get(API_PATH["preferences"], NoOptions)
 
 	if err != nil {
 
@@ -106,9 +106,9 @@ func (c *Client) GetMyPreferences() (*Preferences, error) {
 	return &preferences, nil
 }
 
-func (c *Client) PrefsFriends() {
+func (a *AccountService) PrefsFriends() {
 
-	resp, err := c.Get(API_PATH["prefs_friends"], NoOptions)
+	resp, err := a.client.Get(API_PATH["prefs_friends"], NoOptions)
 
 	if err != nil {
 		log.Fatal("error in getting prefs friends response")
@@ -118,14 +118,11 @@ func (c *Client) PrefsFriends() {
 
 	SaveResponse(resp.Body, "test_data/prefs_friends.json")
 
-	// out, _ := ioutil.ReadAll(resp.Body)
-	// fmt.Println(string(out))
-
 }
 
-func (c *Client) PrefsBlocked() {
+func (a *AccountService) PrefsBlocked() {
 
-	resp, err := c.Get(API_PATH["prefs_blocked"], NoOptions)
+	resp, err := a.client.Get(API_PATH["prefs_blocked"], NoOptions)
 
 	if err != nil {
 		log.Fatal("error in getting prefs/blocked response")
@@ -134,14 +131,10 @@ func (c *Client) PrefsBlocked() {
 	defer resp.Body.Close()
 
 	SaveResponse(resp.Body, "test_data/prefs_blocked.json")
-
-	// out, _ := ioutil.ReadAll(resp.Body)
-	// fmt.Println(string(out))
-
 }
-func (c *Client) PrefsMessaging() {
+func (a *AccountService) PrefsMessaging() {
 
-	resp, err := c.Get(API_PATH["prefs_messaging"], NoOptions)
+	resp, err := a.client.Get(API_PATH["prefs_messaging"], NoOptions)
 
 	if err != nil {
 		log.Fatal("error in getting prefs/messaging response")
@@ -151,13 +144,10 @@ func (c *Client) PrefsMessaging() {
 
 	SaveResponse(resp.Body, "test_data/prefs_messaging.json")
 
-	// out, _ := ioutil.ReadAll(resp.Body)
-	// fmt.Println(string(out))
-
 }
-func (c *Client) PrefsTrusted() {
+func (a *AccountService) PrefsTrusted() {
 
-	resp, err := c.Get(API_PATH["prefs_trusted"], NoOptions)
+	resp, err := a.client.Get(API_PATH["prefs_trusted"], NoOptions)
 
 	if err != nil {
 		log.Fatal("error in getting prefs/trusted response")
@@ -167,13 +157,10 @@ func (c *Client) PrefsTrusted() {
 
 	SaveResponse(resp.Body, "test_data/prefs_trusted.json")
 
-	// out, _ := ioutil.ReadAll(resp.Body)
-	// fmt.Println(string(out))
-
 }
-func (c *Client) MeFriends() {
+func (a *AccountService) MeFriends() {
 
-	resp, err := c.Get(API_PATH["me_friends"], NoOptions)
+	resp, err := a.client.Get(API_PATH["me_friends"], NoOptions)
 
 	if err != nil {
 		log.Fatal("error in getting me_friends response")
@@ -183,13 +170,10 @@ func (c *Client) MeFriends() {
 
 	SaveResponse(resp.Body, "test_data/me_friends.json")
 
-	// out, _ := ioutil.ReadAll(resp.Body)
-	// fmt.Println(string(out))
-
 }
-func (c *Client) MeBlocked() {
+func (a *AccountService) MeBlocked() {
 
-	resp, err := c.Get(API_PATH["me_blocked"], NoOptions)
+	resp, err := a.client.Get(API_PATH["me_blocked"], NoOptions)
 
 	if err != nil {
 		log.Fatal("error in getting me_blocked response")
@@ -198,9 +182,6 @@ func (c *Client) MeBlocked() {
 	defer resp.Body.Close()
 
 	SaveResponse(resp.Body, "test_data/me_blocked.json")
-
-	// out, _ := ioutil.ReadAll(resp.Body)
-	// fmt.Println(string(out))
 
 }
 

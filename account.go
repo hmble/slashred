@@ -6,6 +6,7 @@ import (
 	"log"
 )
 
+type AccountService service
 type Account struct {
 	CommentKarma int     `json:"comment_karma"`
 	Created      float32 `json:"created"`
@@ -67,11 +68,11 @@ type Account struct {
 }
 
 // GetMe retrieves the user account for the currently authenticated user. Requires the 'identity' OAuth scope.
-func (c *Client) GetMe() (*Account, error) {
+func (a *AccountService) GetMe() (*Account, error) {
 
 	//url := fmt.Sprintf("%s/api/v1/me", BaseAuthURL)
 
-	resp, err := c.Get(API_PATH["me"], NoOptions)
+	resp, err := a.client.Get(API_PATH["me"], NoOptions)
 	if err != nil {
 		log.Fatal(err, "Error in response Do")
 		return nil, err
@@ -97,8 +98,8 @@ type Karma struct {
 	Subreddit    string `json:"sr"`
 }
 
-func (c *Client) GetKarma() ([]Karma, error) {
-	resp, err := c.Get(API_PATH["karma"], NoOptions)
+func (a *AccountService) GetKarma() ([]Karma, error) {
+	resp, err := a.client.Get(API_PATH["karma"], NoOptions)
 
 	if err != nil {
 		log.Fatal("Error in getting karma response from /api/v1/me/karma")
@@ -122,3 +123,4 @@ func (c *Client) GetKarma() ([]Karma, error) {
 
 	return karmaListing.KarmaList, nil
 }
+

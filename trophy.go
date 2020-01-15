@@ -15,13 +15,13 @@ type Trophy struct {
 	URL         interface{} `json:"url"`
 }
 
-type Listing struct {
-	Data interface{} `json:"data"`
-	Kind string      `json:"kind"`
-}
+// type Listing struct {
+// 	Data interface{} `json:"data"`
+// 	Kind string      `json:"kind"`
+// }
 
-func (c *Client) Trophies() ([]Trophy, error) {
-	resp, err := c.Get(API_PATH["trophies"], NoOptions)
+func (a *AccountService) Trophies() ([]Trophy, error) {
+	resp, err := a.client.Get(API_PATH["trophies"], NoOptions)
 
 	if err != nil {
 		log.Fatal("Error in getting Trophies response")
