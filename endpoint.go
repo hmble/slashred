@@ -58,4 +58,18 @@ var API_PATH map[string]string = map[string]string{
 	"remove":                "/api/remove",
 	"show_comment":          "/api/show_comment",
 	"stylesheet":            "/api/stylesheet",
+
+	//subreddits
+	"about_banned":           "/about/banned",
+	"about_muted":            "/about/muted",
+	"about_wikibanned":       "/about/wikibanned",
+	"about_contributors":     "/about/contributors",
+	"about_wikicontributors": "/about/wikicontributors",
+	"about_moderators":       "/about/moderators",
+	"delete_sr_banner":       "/api/delete_sr_banner",
+	"delete_sr_header":       "/api/delete_sr_header",
+	"delete_sr_icon":         "/api/delete_sr_icon",
+	"delete_sr_img":          "/api/delete_sr_img",
+	"search_reddit_names":    "/api/search_reddit_names",
+	"site_admin":             "/api/site_admin",
 }

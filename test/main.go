@@ -23,5 +23,4 @@ func main() {
 
 	var c *slashred.Client = u.UserClient(token)
 
-	c.Moderation.Stylesheet("LifeProTips")
 }

@@ -166,15 +166,3 @@ func UpdateToken(token *oauth2.Token) {
 
 }
 
-// GetAuthClient generates a new authenticated client using the supplied access token.
-// func getAuthClient(token *oauth2.Token) *Client {
-// 	return &Client{
-
-// 		Http:      DefaultClient.Config.Client(oauth2.NoContext, token),
-// 		Useragent: DefaultClient.Useragent,
-// 	}
-// }
-
-// func DefaultClient(token *oauth2.Token) *Client {
-// 	return getAuthClient(token)
-// }

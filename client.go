@@ -48,6 +48,7 @@ type Client struct {
 	Link       *LinkService
 	Moderation *ModerationService
 	Modpost    *ModpostService
+	Subreddit  *SubredditService
 }
 
 type service struct {
@@ -73,6 +74,7 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 	c.Listing = (*ListingService)(&c.common)
 	c.Moderation = (*ModerationService)(&c.common)
 	c.Modpost = (*ModpostService)(&c.common)
+	c.Subreddit = (*SubredditService)(&c.common)
 
 	return c
 }
