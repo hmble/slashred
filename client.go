@@ -43,10 +43,11 @@ type Client struct {
 
 	common service // Reuse same struct instead of creating
 
-	Account *AccountService
-	Listing *ListingService
-	Link    *LinkService
-	Modpost *ModpostService
+	Account    *AccountService
+	Listing    *ListingService
+	Link       *LinkService
+	Moderation *ModerationService
+	Modpost    *ModpostService
 }
 
 type service struct {
@@ -70,6 +71,7 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 	c.Account = (*AccountService)(&c.common)
 	c.Link = (*LinkService)(&c.common)
 	c.Listing = (*ListingService)(&c.common)
+	c.Moderation = (*ModerationService)(&c.common)
 	c.Modpost = (*ModpostService)(&c.common)
 
 	return c

@@ -39,4 +39,23 @@ var API_PATH map[string]string = map[string]string{
 	"set_contest_mode":     "/api/set_contest_mode",
 	"set_subreddit_sticky": "/api/set_subreddit_sticky",
 	"set_suggested_sort":   "/api/set_suggested_sort",
+
+	// Moderation
+	"about_edited":          "/about/edited",
+	"about_reports":         "/about/reports",
+	"about_spam":            "/about/spam",
+	"about_modqueue":        "/about/modqueue",
+	"about_unmoderated":     "/about/unmoderated",
+	"moderator_invite":      "/api/accept_moderator_invite",
+	"approve":               "/api/approve",
+	"distinguish":           "/api/distinguish",
+	"ignore_reports":        "/api/ignore_reports",
+	"unignore_reports":      "/api/unignore_reports",
+	"leave_contributor":     "/api/leavecontributor",
+	"leave_moderator":       "/api/leavemoderator",
+	"mute_message_author":   "/api/mute_message_author",
+	"unmute_message_author": "/api/unmute_message_author",
+	"remove":                "/api/remove",
+	"show_comment":          "/api/show_comment",
+	"stylesheet":            "/api/stylesheet",
 }

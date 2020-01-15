@@ -23,21 +23,5 @@ func main() {
 
 	var c *slashred.Client = u.UserClient(token)
 
-	//c.Delete(slashred.CommentPrefix + "fdpzqgs")
-
-	text := `
-
-  [RANDOM] test number 5
-  `
-
-	postdata := slashred.PostData{
-		"kind": "self",
-		//"nsfw": "false",
-		"sr":    "test",
-		"text":  text,
-		"title": "[RANODM] test made with some changes",
-	}
-
-	c.Listing.LinkSubmit(postdata)
-
+	c.Moderation.Stylesheet("LifeProTips")
 }
