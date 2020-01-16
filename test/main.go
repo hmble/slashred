@@ -23,4 +23,5 @@ func main() {
 
 	var c *slashred.Client = u.UserClient(token)
 
+	c.Users.AddFriend("astar0n", "workspc04")
 }

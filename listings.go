@@ -10,6 +10,17 @@ import (
 
 type ListingService service
 
+func (c *Client) getlisting(endpoint, logmsg string, opts Option) {
+	resp, err := c.Get(endpoint, opts)
+
+	if err != nil {
+		log.Fatal(logmsg)
+	}
+
+	defer resp.Body.Close()
+
+	PrintHeader(resp)
+}
 func (l *ListingService) Listings() {
 	resp, err := l.client.Get(API_PATH["trending_subreddits"], NoOptions)
 
@@ -182,7 +193,7 @@ func (c *Client) Save(category, fullname string) {
 }
 
 // fullname of link or comment
-func (c *Client) Delete(fullname string) {
+func (c *Client) DeleteLink(fullname string) {
 	c.unlink(API_PATH["delete"], fullname)
 }
 func (c *Client) vote(direction, fullname string) {

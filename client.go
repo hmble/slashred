@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"golang.org/x/oauth2"
 
@@ -49,6 +50,7 @@ type Client struct {
 	Moderation *ModerationService
 	Modpost    *ModpostService
 	Subreddit  *SubredditService
+	Users      *UsersService
 }
 
 type service struct {
@@ -75,6 +77,7 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 	c.Moderation = (*ModerationService)(&c.common)
 	c.Modpost = (*ModpostService)(&c.common)
 	c.Subreddit = (*SubredditService)(&c.common)
+	c.Users = (*UsersService)(&c.common)
 
 	return c
 }
@@ -169,6 +172,64 @@ func (c *Client) Post(endpoint string, postdata PostData) (*http.Response, error
 	req.Header.Add("User-Agent", c.Useragent)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
+
+	return c.Http.Do(req)
+
+}
+
+func (c *Client) Delete(endpoint string, opts Option) (res *http.Response, err error) {
+
+	temp := BaseAuthURL + endpoint
+	u, _ := url.Parse(temp)
+	q, _ := url.ParseQuery(u.RawQuery)
+
+	q.Add("raw_json", "1")
+
+	for k, v := range opts {
+		q.Add(k, v)
+	}
+	u.RawQuery = q.Encode()
+
+	path := u.String()
+	req, err := http.NewRequest("DELETE", path, nil)
+
+	if err != nil {
+		log.Fatal("Error getting request")
+		return nil, err
+	}
+
+	req.Header.Add("User-Agent", c.Useragent)
+
+	str := fmt.Sprintf("bearer %s", c.Token.AccessToken)
+	req.Header.Add("Authorization", str)
+
+	fmt.Println(req.Header)
+
+	return c.Http.Do(req)
+
+}
+
+func (c *Client) Put(endpoint string, data string) (*http.Response, error) {
+	//data := url.Values{}
+
+	fullurl := BaseAuthURL + endpoint
+	////data.Set("api_type", "json")
+
+	//for k, v := range postdata {
+	//	data.Set(k, v)
+	//}
+	//body := bytes.NewBufferString(data.Encode())
+
+	body := strings.NewReader(data)
+	req, err := http.NewRequest(http.MethodPut, fullurl, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("User-Agent", c.Useragent)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Content-Length", strconv.Itoa(len(data)))
 
 	return c.Http.Do(req)
 
