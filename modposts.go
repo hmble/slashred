@@ -29,7 +29,7 @@ func (m *ModpostService) SetContestMode(fullname, state string) {
 // state is bool
 // toProfile is bool
 // num parameter is optional
-func (c *Client) SetLinkSticky(fullname, num, state, toProfile string) {
+func (m *ModpostService) SetLinkSticky(fullname, num, state, toProfile string) {
 
 	number := ""
 	if num != "" {
@@ -41,7 +41,7 @@ func (c *Client) SetLinkSticky(fullname, num, state, toProfile string) {
 		"state":      state,
 		"to_profile": toProfile,
 	}
-	resp, err := c.Post(API_PATH["set_subreddit_sticky"], postdata)
+	resp, err := m.client.Post(API_PATH["set_subreddit_sticky"], postdata)
 
 	if err != nil {
 		log.Fatal("Error in setting contest mode")
@@ -53,12 +53,12 @@ func (c *Client) SetLinkSticky(fullname, num, state, toProfile string) {
 // Test Remained
 // sort : one of (confidence, top, new, controversial, old, random,
 // qa, live, blank)
-func (c *Client) SetSuggestedSort(fullname, sort string) {
+func (m *ModpostService) SetSuggestedSort(fullname, sort string) {
 	postdata := PostData{
 		"id":   fullname,
 		"sort": sort,
 	}
-	resp, err := c.Post(API_PATH["set_suggested_sort"], postdata)
+	resp, err := m.client.Post(API_PATH["set_suggested_sort"], postdata)
 
 	if err != nil {
 		log.Fatal("Error in setting suggested sort")
@@ -67,8 +67,8 @@ func (c *Client) SetSuggestedSort(fullname, sort string) {
 	defer resp.Body.Close()
 }
 
-func (c *Client) Spoiler(fullname string) {
-	c.unlink(API_PATH["spoiler"], fullname)
+func (m *ModpostService) Spoiler(fullname string) {
+	m.client.unlink(API_PATH["spoiler"], fullname)
 }
 
 // Unmarknsfw
@@ -89,35 +89,35 @@ func (c *Client) unlink(endpoint, fullname string) {
 }
 
 // fullname of link with LinkPrefix
-func (c *Client) Unmarknsfw(fullname string) {
-	c.unlink(API_PATH["unmarknsfw"], fullname)
+func (m *ModpostService) Unmarknsfw(fullname string) {
+	m.client.unlink(API_PATH["unmarknsfw"], fullname)
 }
 
 // fullname of link with LinkPrefix
-func (c *Client) Marknsfw(fullname string) {
-	c.unlink(API_PATH["marknsfw"], fullname)
+func (m *ModpostService) Marknsfw(fullname string) {
+	m.client.unlink(API_PATH["marknsfw"], fullname)
 }
 
 // fullname of link with LinkPrefix
-func (c *Client) Unhide(fullname string) {
-	c.unlink(API_PATH["unhide"], fullname)
+func (m *ModpostService) Unhide(fullname string) {
+	m.client.unlink(API_PATH["unhide"], fullname)
 }
 
 // fullname of link with LinkPrefix
-func (c *Client) Hide(listOfFullnames []string) {
+func (m *ModpostService) Hide(listOfFullnames []string) {
 	fullname := strings.Join(listOfFullnames, ",")
-	c.unlink(API_PATH["hide"], fullname)
+	m.client.unlink(API_PATH["hide"], fullname)
 }
 
 // fullname of link with LinkPrefix
-func (c *Client) Unlock(fullname string) {
-	c.unlink(API_PATH["unlock"], fullname)
+func (m *ModpostService) Unlock(fullname string) {
+	m.client.unlink(API_PATH["unlock"], fullname)
 }
-func (c *Client) Lock(fullname string) {
-	c.unlink(API_PATH["lock"], fullname)
+func (m *ModpostService) Lock(fullname string) {
+	m.client.unlink(API_PATH["lock"], fullname)
 }
 
 // fullname of link with LinkPrefix
-func (c *Client) Unspoiler(fullname string) {
-	c.unlink(API_PATH["unspoiler"], fullname)
+func (m *ModpostService) Unspoiler(fullname string) {
+	m.client.unlink(API_PATH["unspoiler"], fullname)
 }

@@ -211,3 +211,53 @@ func (l *ListingService) Controversial(subreddit string, opts Option) []Submissi
 }
 
 // TODO : Implement MoreChildren method
+
+func (l *LinkService) Unsave(fullname string) {
+	l.client.unlink(API_PATH["unsave"], fullname)
+}
+
+func (l *LinkService) Save(category, fullname string) {
+	postdata := PostData{
+		"category": category,
+		"id":       fullname,
+	}
+	resp, err := l.client.Post(API_PATH["vote"], postdata)
+
+	if err != nil {
+		log.Fatal("Errro in casting vote")
+	}
+	defer resp.Body.Close()
+}
+
+// fullname of link or comment
+func (l *LinkService) DeleteLink(fullname string) {
+	l.client.unlink(API_PATH["delete"], fullname)
+}
+func (c *Client) vote(direction, fullname string) {
+	postdata := PostData{
+
+		"dir": direction,
+		"id":  fullname,
+	}
+
+	resp, err := c.Post(API_PATH["vote"], postdata)
+
+	if err != nil {
+		log.Fatal("Errro in casting vote")
+	}
+	defer resp.Body.Close()
+
+	PrintHeader(resp)
+}
+
+func (l *LinkService) Upvote(fullname string) {
+	l.client.vote("1", fullname)
+}
+
+func (l *LinkService) ClearVote(fullname string) {
+	l.client.vote("0", fullname)
+}
+
+func (l *LinkService) Downvote(fullname string) {
+	l.client.vote("-1", fullname)
+}
