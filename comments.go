@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 )
 
 type CommentService service
@@ -24,23 +25,25 @@ type Comment struct {
 	Url    string `json:"permalink"`
 	LinkID string `json:"link_id"`
 	ID     string `json:"id"`
+	Parent string `json:"parent_id"`
 
 	Replies Replies `json:"replies"`
 	//	Replies Replies `json:"replies"`
 }
 
 type Replies struct {
-	Data ReplyData `json:"data"`
+	Data       ReplyData `json:"data"`
+	ReplyArray []Comment
 }
 
 type ReplyData struct {
 	Children []RepliesArray
 }
 type More struct {
-	Count    int
+	Count    int `json:"count"`
 	Name     string
-	ParentID string
-	ID       string
+	ParentID string `json:"parent_id"`
+	ID       string `json:"id"`
 	Depth    int
 	Children []string
 }
@@ -106,21 +109,38 @@ func (r *Replies) UnmarshalJSON(b []byte) error {
 
 	r.Data = data
 
+	replyArray := make([]Comment, 0)
+	for _, reply := range data.Children {
+
+		replyArray = append(replyArray, reply.Comment)
+
+	}
+
+	r.ReplyArray = replyArray
 	return nil
 
 }
-func (c *CommentService) GetComments(subreddit, article string) []CommentListing {
+
+// Methods
+func (c *CommentService) GetComments(subreddit, article string) []Comment {
 	endpoint := fmt.Sprintf("/r/%s/comments/%s", subreddit, article)
 
-	resp, err := c.client.Get(endpoint, NoOptions)
+	opt := Option{
+		"limit":   "100",
+		"context": "100",
+		"sort":    "best",
+		"depth":   "8",
+	}
+	//	resp, err := c.client.Get(endpoint, NoOptions)
+	resp, err := c.client.Get(endpoint, opt)
 
 	if err != nil {
 		log.Fatal("Error in getting comments response")
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("-------Got Reponse of comments------------")
-	//	SaveResponse(resp.Body, "test_data/comments2.json")
+	//fmt.Println("-------Got Reponse of comments------------")
+	//SaveResponse(resp.Body, "test_data/askreddit.json")
 	PrintHeader(resp)
 
 	type listSub struct {
@@ -132,13 +152,19 @@ func (c *CommentService) GetComments(subreddit, article string) []CommentListing
 	result := make([]listSub, 0)
 	er := json.NewDecoder(resp.Body).Decode(&result)
 
-	fmt.Println("----got here after decode")
+	//	fmt.Println("----got here after decode")
 	if er != nil {
 		panic(er)
 		//log.Fatal("Error in decoding comments")
 	}
 
-	comments := result[1].Data.Children
+	commentListing := result[1].Data.Children
+
+	comments := make([]Comment, 0)
+
+	for _, comment := range commentListing {
+		comments = append(comments, comment.Data)
+	}
 
 	//commentReply := make([]Comment, 0)
 
@@ -212,4 +238,55 @@ func (c *CommentService) SendReplies(fullname, state string) {
 	}
 
 	defer resp.Body.Close()
+}
+
+// TODO(hmble): Need to add this More method to Comments and More Response
+
+func (c *CommentService) ReplaceMore(more More,
+	linkId string) []Comment {
+	tempdata := PostData{}
+
+	//for k, v := range postdata {
+	//	tempdata[k] = v
+	//}
+	////tempdata["children"] = str
+	tempdata["children"] = strings.Join(more.Children[:4], ",")
+	tempdata["link_id"] = linkId
+	tempdata["limit_children"] = "false"
+	tempdata["depth"] = "8"
+	tempdata["sort"] = "best"
+
+	resp, err := c.client.Post(API_PATH["morechildren"], tempdata)
+
+	if err != nil {
+		log.Fatal("Error in getting more response")
+
+	}
+	defer resp.Body.Close()
+
+	//SaveResponse(resp.Body, "test_data/more3.json")
+	type moreReplies struct {
+		Json struct {
+			Data struct {
+				Things []CommentListing `json:"things"`
+			} `json:"data"`
+		} `json:"json"`
+	}
+
+	var response moreReplies
+	moreErr := json.NewDecoder(resp.Body).Decode(&response)
+
+	if moreErr != nil {
+		log.Fatal("Error in getting more replies response")
+	}
+
+	comments := response.Json.Data.Things
+
+	commentsArray := make([]Comment, 0)
+	for _, comment := range comments {
+		commentsArray = append(commentsArray, comment.Data)
+	}
+
+	return commentsArray
+
 }

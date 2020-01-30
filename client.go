@@ -141,6 +141,7 @@ func (c *Client) Get(endpoint string, opts Option) (res *http.Response, err erro
 	u.RawQuery = q.Encode()
 
 	path := u.String()
+	fmt.Println("Path is : ", path)
 	req, err := http.NewRequest("GET", path, nil)
 
 	if err != nil {
