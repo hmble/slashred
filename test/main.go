@@ -36,52 +36,35 @@ func main() {
 
 	test := commentsList[1]
 
-	// comments = append(comments, test.Comment)
-
-	// if test.Comment != nil {
-	// 	replies := test.Comment.Replies.Data.Children
-
-	// 	for _, reply := range replies {
-	// 		if reply.Comment != nil {
-	// 			comments = append(comments, reply.Comment)
-
-	// 		} else {
-
-	// 			moreReplies := c.Comment.ReplaceMore(reply.More, "ev67eq", "best")
-
-	// 			// for _, more := range moreReplies {
-	// 			// 	fmt.Println("From more ", more.Author)
-	// 			// }
-
-	// 			comments = append(comments, moreReplies...)
-
-	// 		}
-	// 	}
-	// }
-
-	// for _, comment := range comments {
-	// 	fmt.Println(comment.Author)
-	// }
-
 	if test.Comment != nil {
 		replies := test.Comment.Replies.Data.Children
 
 		//parent := slashred.CommentPrefix + test.Comment.ID
-		for _, reply := range replies {
-			if reply.Comment != nil {
-				fmt.Printf("\t %s Parent[%s], ID[%s]\n", reply.Comment.Author,
-					reply.Comment.Parent, reply.Comment.ID)
+		reply := replies[0]
 
-			} else {
-				moreReplies := c.Comment.ReplaceMore(reply.More, "ev67eq", "best", test.Comment.ID)
-				for _, more := range moreReplies {
-					//if more.Parent == parent {
-					fmt.Printf("\t %s Parent[%s], ID[%s]\n", more.Author,
-						more.Parent, more.ID)
-					//	}
+		if reply.Comment != nil {
+			fmt.Printf("\t%s Parent[%s] ID[%s]\n", reply.Comment.Author,
+				reply.Comment.Parent, reply.Comment.ID)
+			reply2 := reply.Comment.Replies.Data.Children
+
+			for _, r := range reply2 {
+				if r.Comment != nil {
+					fmt.Println(r.Comment.Author)
+				} else {
+					moreReplies := c.Comment.ReplaceMore(r.More, "ev67eq", "best", reply.Comment.ID)
+
+					for _, m := range moreReplies {
+						fmt.Printf("\t%s Parent[%s] ID[%s]\n", m.Author,
+							m.Parent, m.ID)
+					}
 				}
 
 			}
+
+		} else {
+			more := reply.More.Count
+
+			fmt.Println(more)
 		}
 
 	}
