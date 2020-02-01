@@ -297,7 +297,7 @@ func (c *CommentService) ReplaceMore(more *More,
 	//}
 	////tempdata["children"] = str
 	tempdata["children"] = strings.Join(more.Children, ",")
-	tempdata["link_id"] = LinkPrefix + linkId
+	tempdata["link_id"] = linkId
 	tempdata["limit_children"] = "false"
 	tempdata["depth"] = "8"
 	tempdata["sort"] = sort
@@ -339,4 +339,50 @@ func (c *CommentService) ReplaceMore(more *More,
 
 	return commentsArray
 
+}
+
+func (c *CommentService) List(list []CommentListing, sort string) []*Comment {
+	comments := make([]*Comment, 0)
+
+	for _, item := range list {
+		if item.Comment != nil {
+			comments = append(comments, item.Comment)
+
+			temp := c.getAllReplies(8, item.Comment, sort)
+
+			comments = append(comments, temp...)
+		}
+	}
+
+	return comments
+}
+
+func (c *CommentService) getAllReplies(depth int, comment *Comment, sort string) []*Comment {
+	moreReplies := make([]*Comment, 0)
+
+	replies := comment.Replies.Data.Children
+	if depth >= 0 {
+		for _, reply := range replies {
+
+			if reply.Comment != nil {
+				moreReplies = append(moreReplies, reply.Comment)
+				tempReply := c.getAllReplies(depth-1, reply.Comment, sort)
+
+				moreReplies = append(moreReplies, tempReply...)
+			} else {
+				fetchedMore := c.ReplaceMore(reply.More, comment.LinkID, sort, comment.ID)
+
+				for _, item := range fetchedMore {
+					moreReplies = append(moreReplies, item)
+
+					itemReplies := c.getAllReplies(depth-1, item, sort)
+
+					moreReplies = append(moreReplies, itemReplies...)
+				}
+			}
+		}
+
+	}
+
+	return moreReplies
 }
