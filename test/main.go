@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/hmble/slashred"
 	_ "github.com/joho/godotenv/autoload"
@@ -29,51 +28,69 @@ func main() {
 
 	//eva9qo
 
-	start := time.Now()
 	//comments := c.Comment.GetComments("golang", "eva9qo")
-	comments := c.Comment.GetComments("AskReddit", "ev67eq")
+	commentsList := c.Comment.GetComments("AskReddit", "ev67eq", "best")
 	////c.Comment.GetComments("AskReddit", "ev67eq")
 
-	for _, comment := range comments {
-		fmt.Printf("%s ID : [%s]\n", comment.Author, comment.ID)
+	comments := make([]*slashred.Comment, 0)
 
-		//replies := comment.Data.Replies
-		//if comment.Data.Replies != {
-		replies := comment.Replies.Data.Children
-		//	replies := comment.Replies.ReplyArray
+	test := commentsList[1]
 
-		fmt.Printf("Replies length := %d\n", len(replies))
+	// comments = append(comments, test.Comment)
+
+	// if test.Comment != nil {
+	// 	replies := test.Comment.Replies.Data.Children
+
+	// 	for _, reply := range replies {
+	// 		if reply.Comment != nil {
+	// 			comments = append(comments, reply.Comment)
+
+	// 		} else {
+
+	// 			moreReplies := c.Comment.ReplaceMore(reply.More, "ev67eq", "best")
+
+	// 			// for _, more := range moreReplies {
+	// 			// 	fmt.Println("From more ", more.Author)
+	// 			// }
+
+	// 			comments = append(comments, moreReplies...)
+
+	// 		}
+	// 	}
+	// }
+
+	// for _, comment := range comments {
+	// 	fmt.Println(comment.Author)
+	// }
+
+	if test.Comment != nil {
+		replies := test.Comment.Replies.Data.Children
+
+		//parent := slashred.CommentPrefix + test.Comment.ID
 		for _, reply := range replies {
-			if reply.Kind != "more" {
-				fmt.Printf("\t >> %s  Parent[%s]\n", reply.Comment.Author, reply.Comment.Parent)
+			if reply.Comment != nil {
+				fmt.Printf("\t %s Parent[%s], ID[%s]\n", reply.Comment.Author,
+					reply.Comment.Parent, reply.Comment.ID)
+
 			} else {
-
-				//fmt.Println(reply.More.ParentID)
-				comments := c.Comment.ReplaceMore(reply.More, slashred.LinkPrefix+"ev67eq")
-
-				for _, comment := range comments {
-
-					fmt.Printf("\t >> %s  Parent: [%s]\n", comment.Author, comment.Parent)
-
+				moreReplies := c.Comment.ReplaceMore(reply.More, "ev67eq", "best", test.Comment.ID)
+				for _, more := range moreReplies {
+					//if more.Parent == parent {
+					fmt.Printf("\t %s Parent[%s], ID[%s]\n", more.Author,
+						more.Parent, more.ID)
+					//	}
 				}
-				// fmt.Println("Index: ", i, children[:4])
-				// fmt.Println(strings.Join(children[:4], ","))
-			}
 
+			}
 		}
+
 	}
 
-	//str := "ffuv8u8,ffv2iku,ffvlk7l,ffv3mdv"
+	for _, comment := range comments {
+		fmt.Println(comment.Author)
+	}
 
-	//// c.Comment.ReplaceMore(str, slashred.NoOptions, "ev67eq")
-
-	//c.Comment.ReplaceMore(, slashred.PostData{}, slashred.LinkPrefix+"ev67eq")
-	////		break
-
-	//c.Comment.ReplaceMore(replies[)
-
-	elapesed := time.Since(start)
-
-	fmt.Printf("Time elapsed since making request ==> %s\n", elapesed)
+	fmt.Println("Comments length ", len(comments))
 
 }
+
