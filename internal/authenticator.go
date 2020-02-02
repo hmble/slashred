@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"github.com/google/uuid"
-	_ "github.com/joho/godotenv/autoload"
+	//	_ "github.com/joho/godotenv/autoload"
 	"golang.org/x/oauth2"
 )
 
@@ -23,28 +23,27 @@ var Endpoint = oauth2.Endpoint{
 
 // Returns Config file of oauth2.Config
 
-var reddit_config *oauth2.Config = &oauth2.Config{
+// var reddit_config *oauth2.Config = &oauth2.Config{
 
-	ClientID:     os.Getenv("CLIENT_ID"),
-	ClientSecret: os.Getenv("CLIENT_SECRET"),
-	Scopes:       Scopes,
-	Endpoint:     Endpoint,
-	RedirectURL:  "https://example.com/auth",
-}
+// 	ClientID:     os.Getenv("CLIENT_ID"),
+// 	ClientSecret: os.Getenv("CLIENT_SECRET"),
+// 	Scopes:       Scopes,
+// 	Endpoint:     Endpoint,
+// 	RedirectURL:  "https://example.com/auth",
+// }
 
 type Authenticator struct {
-	Config           *oauth2.Config
-	Useragent        string
-	IsTokenPermanent bool
+	Config    *oauth2.Config
+	Useragent string
 }
 
 // TODO: For now we use all scopes to while authentication
 // We need a method to dynamically set scopes and also token permanent
 // value
-var DefaultClient *Authenticator = &Authenticator{
-	Config:    reddit_config,
-	Useragent: os.Getenv("USER_AGENT"),
-}
+// var DefaultClient *Authenticator = &Authenticator{
+// 	Config:    reddit_config,
+// 	Useragent: os.Getenv("USER_AGENT"),
+// }
 
 type uaSetterTransport struct {
 	config    *oauth2.Config
@@ -62,7 +61,7 @@ func SaveToken(path string, token *oauth2.Token) {
 
 }
 
-func AuthUrl(isPermanent bool) string {
+func AuthUrl(isPermanent bool, authenticator *Authenticator) string {
 	var duration oauth2.AuthCodeOption
 	codeParam := oauth2.SetAuthURLParam("response_type", "code")
 	if isPermanent {
@@ -71,7 +70,7 @@ func AuthUrl(isPermanent bool) string {
 		duration = oauth2.SetAuthURLParam("duration", "temporary")
 	}
 
-	url := DefaultClient.Config.AuthCodeURL(uuid.New().String(), duration, codeParam)
+	url := authenticator.Config.AuthCodeURL(uuid.New().String(), duration, codeParam)
 	return url
 
 }
@@ -102,21 +101,21 @@ func TokenFromFile(file string) (*oauth2.Token, error) {
 	return tok, err
 }
 
-func GetToken(code string) (*oauth2.Token, error) {
+func GetToken(code string, authenticator *Authenticator) (*oauth2.Token, error) {
 	client := &http.Client{
 		Transport: &oauth2.Transport{
-			Source: DefaultClient.Config.TokenSource(oauth2.NoContext, &oauth2.Token{
+			Source: authenticator.Config.TokenSource(oauth2.NoContext, &oauth2.Token{
 				AccessToken: code,
 			}),
 			Base: &uaSetterTransport{
-				config:    DefaultClient.Config,
-				useragent: DefaultClient.Useragent,
+				config:    authenticator.Config,
+				useragent: authenticator.Useragent,
 			},
 		},
 	}
 	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, client)
 
-	return DefaultClient.Config.Exchange(ctx, code)
+	return authenticator.Config.Exchange(ctx, code)
 }
 
 type rfToken struct {
@@ -132,18 +131,18 @@ func (r *rfToken) RoundTrip(req *http.Request) (*http.Response, error) {
 
 // parameter token is token from cached file
 // used for refresh token
-func UpdateToken(token *oauth2.Token) {
+func UpdateToken(token *oauth2.Token, authenticator *Authenticator) {
 
 	client := &http.Client{
 		Transport: &rfToken{
-			config:    DefaultClient.Config,
-			useragent: DefaultClient.Useragent,
+			config:    authenticator.Config,
+			useragent: authenticator.Useragent,
 		},
 	}
 	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, client)
 
 	if !token.Valid() {
-		newtoken, err := DefaultClient.Config.TokenSource(ctx, &oauth2.Token{
+		newtoken, err := authenticator.Config.TokenSource(ctx, &oauth2.Token{
 			RefreshToken: token.RefreshToken,
 		}).Token()
 
@@ -165,4 +164,3 @@ func UpdateToken(token *oauth2.Token) {
 	}
 
 }
-

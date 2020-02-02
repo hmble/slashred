@@ -12,13 +12,36 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/hmble/slashred/internal"
-	_ "github.com/joho/godotenv/autoload"
+	//_ "github.com/joho/godotenv/autoload"
 )
 
+var Scopes = []string{
+	"edit",
+	"flair",
+	"history",
+	"identity",
+	"modconfig",
+	"modflair",
+	"modlog",
+	"modposts",
+	"modwiki",
+	"mysubreddits",
+	"privatemessages",
+	"read",
+	"report",
+	"save",
+	"submit",
+	"subscribe",
+	"vote",
+	"wikiedit",
+	"wikiread",
+}
+
 type User struct {
-	Name        string
-	ProfileUrl  string
-	IsPermanent bool
+	Name          string
+	ProfileUrl    string
+	IsPermanent   bool
+	Authenticator *internal.Authenticator
 }
 
 const (
@@ -35,8 +58,6 @@ const (
 	AwardPrefix     = "t6_"
 )
 
-// TODO : Make token a member of client so that we don't need
-// to pass token as parameter for every request we make.
 type Client struct {
 	Http      *http.Client
 	Useragent string
@@ -64,12 +85,12 @@ var NoAuthClient = &Client{
 	Http: new(http.Client),
 }
 
-var auth *internal.Authenticator = internal.DefaultClient
+//var defaultAuth *internal.Authenticator = internal.DefaultClient
 
 func (u *User) UserClient(token *oauth2.Token) *Client {
 	c := &Client{
-		Http:      auth.Config.Client(oauth2.NoContext, token),
-		Useragent: auth.Useragent,
+		Http:      u.Authenticator.Config.Client(oauth2.NoContext, token),
+		Useragent: u.Authenticator.Useragent,
 		Token:     token,
 	}
 
@@ -91,32 +112,32 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 func (u *User) Authenticate() (*oauth2.Token, error) {
 
 	fmt.Println("Authentication starts from here:  ")
-	fmt.Printf("Visit the url given below and paste the code given in url : \n %s", internal.AuthUrl(u.IsPermanent))
+	fmt.Printf("Visit the url given below and paste the code given in url : \n %s", internal.AuthUrl(true, u.Authenticator))
 
 	fmt.Println("\n Enter the code here : ")
 
 	var code string
 	fmt.Scan(&code)
 
-	token, err := internal.GetToken(code)
+	token, err := internal.GetToken(code, u.Authenticator)
 
 	if err != nil {
 		log.Fatal("Error in getting token")
 		return nil, err
 	}
 
-	SaveToken("token.json", token)
+	u.SaveToken("token.json", token)
 
 	return token, nil
 
 }
 
-func SaveToken(path string, token *oauth2.Token) {
+func (u *User) SaveToken(path string, token *oauth2.Token) {
 	internal.SaveToken(path, token)
 }
 
-func UpdateToken(token *oauth2.Token) {
-	internal.UpdateToken(token)
+func (u *User) UpdateToken(token *oauth2.Token) {
+	internal.UpdateToken(token, u.Authenticator)
 }
 
 func TokenFromFile(filepath string) (*oauth2.Token, error) {
