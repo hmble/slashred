@@ -39,14 +39,17 @@ func main() {
 
 	var c *slashred.Client = u.UserClient(token)
 	//commentsList := c.Comment.GetComments("golang", "ex18cx", "best")
-	commentsList := c.Comment.GetComments("AnimalsBeingBros", "ex4gzu", "best")
 
-	comments := c.Comment.List(commentsList, "best")
+	path := "https://www.reddit.com/r/memes/comments/exkw6j/its_the_thought_that_counts/"
+	commentsList := c.Comment.GetComments(path, "best")
+
+	// Use Depth as 0 for top level comment
+	comments := c.Comment.List(commentsList, 0, "best", true)
 
 	fmt.Println(len(comments))
 
 	for _, item := range comments {
-		fmt.Println(item.Author)
+		fmt.Println(item.Author, "  ", item.Parent)
 	}
 
 }

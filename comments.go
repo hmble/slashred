@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/url"
 	"strings"
 )
 
@@ -163,7 +164,17 @@ func (r *Replies) UnmarshalJSON(b []byte) error {
 }
 
 // Methods
-func (c *CommentService) GetComments(subreddit, article, sort string) []CommentListing {
+func (c *CommentService) GetComments(path, sort string) []CommentListing {
+	u, pathErr := url.Parse(path)
+
+	if pathErr != nil {
+		panic(pathErr)
+	}
+
+	pathArray := strings.Split(u.Path, "/")
+	subreddit := pathArray[2]
+	article := pathArray[4]
+
 	endpoint := fmt.Sprintf("/r/%s/comments/%s", subreddit, article)
 
 	opt := Option{
@@ -216,7 +227,17 @@ func (c *CommentService) GetComments(subreddit, article, sort string) []CommentL
 	return commentListing
 }
 
-func (c *CommentService) GetCommentsID(subreddit, article, comment, sort string) {
+func (c *CommentService) GetCommentsID(path, comment, sort string) {
+	u, pathErr := url.Parse(path)
+
+	if pathErr != nil {
+		panic(pathErr)
+	}
+
+	pathArray := strings.Split(u.Path, "/")
+	subreddit := pathArray[2]
+	article := pathArray[4]
+
 	endpoint := fmt.Sprintf("/r/%s/comments/%s", subreddit, article)
 
 	// q.Add("comment", comment)
@@ -310,6 +331,7 @@ func (c *CommentService) ReplaceMore(more *More,
 	}
 	defer resp.Body.Close()
 
+	//SaveResponse(resp.Body, "test_data/MoreError.json")
 	type moreReplies struct {
 		Json struct {
 			Data struct {
@@ -327,13 +349,24 @@ func (c *CommentService) ReplaceMore(more *More,
 
 	comments := response.Json.Data.Things
 
-	parent = CommentPrefix + parent
+	if !strings.Contains(parent, "t3") {
+
+		parent = CommentPrefix + parent
+	}
 	commentsArray := make([]*Comment, 0)
 	for _, comment := range comments {
 		if comment.Comment != nil {
 			if comment.Comment.Parent == parent {
 				commentsArray = append(commentsArray, comment.Comment)
 			}
+		} else {
+
+			fmt.Printf("Got request for more count is %d\n", comment.More.Count)
+			if comment.More.Count != 0 {
+				moreArray := c.ReplaceMore(comment.More, linkId, sort, parent)
+				commentsArray = append(commentsArray, moreArray...)
+			}
+
 		}
 	}
 
@@ -341,16 +374,32 @@ func (c *CommentService) ReplaceMore(more *More,
 
 }
 
-func (c *CommentService) List(list []CommentListing, sort string) []*Comment {
+func (c *CommentService) List(list []CommentListing, depth int, sort string, fetchMore bool) []*Comment {
 	comments := make([]*Comment, 0)
 
+	if depth > 8 {
+		log.Fatal("Depth should be less than 8")
+	}
+
+	var linkId, parent string
 	for _, item := range list {
+
 		if item.Comment != nil {
+			linkId = item.Comment.LinkID
+			parent = item.Comment.Parent
 			comments = append(comments, item.Comment)
 
-			temp := c.getAllReplies(8, item.Comment, sort)
+			temp := c.getAllReplies(depth-1, item.Comment, sort)
 
 			comments = append(comments, temp...)
+		}
+		if fetchMore {
+			if item.More != nil {
+				moreComment := c.ReplaceMore(item.More, linkId, sort, parent)
+
+				comments = append(comments, moreComment...)
+
+			}
 		}
 	}
 
