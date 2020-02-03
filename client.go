@@ -62,6 +62,7 @@ type Client struct {
 	Http      *http.Client
 	Useragent string
 	Token     *oauth2.Token
+	x         ratelimit
 
 	common service // Reuse same struct instead of creating
 
@@ -77,6 +78,11 @@ type Client struct {
 	Users      *UsersService
 }
 
+type ratelimit struct {
+	used      int
+	remaining int
+	reset     int
+}
 type service struct {
 	client *Client
 }
@@ -162,6 +168,11 @@ func (c *Client) Get(endpoint string, opts Option) (res *http.Response, err erro
 	u.RawQuery = q.Encode()
 
 	path := u.String()
+
+	// if c.x.remaining < 10 {
+	// 	log.Fatal("---YOUR LIMIT HAS EXTENDED Wait for ", c.x.reset)
+	// }
+
 	req, err := http.NewRequest("GET", path, nil)
 
 	if err != nil {
@@ -260,4 +271,27 @@ func (c *Client) Put(endpoint string, data string) (*http.Response, error) {
 
 	return c.Http.Do(req)
 
+}
+
+func (c *Client) savelimit(resp *http.Response) {
+	used, errUser := strconv.Atoi(resp.Header.Get("X-Ratelimit-Used"))
+	if errUser != nil {
+		log.Fatal("Error in converting ratelimit used")
+	}
+
+	remaining, errRemaining := strconv.ParseFloat(resp.Header.Get("X-Ratelimit-Remaining"), 32)
+	if errRemaining != nil {
+		log.Fatal("Error in converting ratelimit remaining")
+	}
+
+	reset, errReset := strconv.Atoi(resp.Header.Get("X-Ratelimit-Reset"))
+	if errReset != nil {
+		log.Fatal("Error in converting ratelimit reset")
+	}
+
+	c.x = ratelimit{
+		used:      used,
+		remaining: int(remaining),
+		reset:     reset,
+	}
 }

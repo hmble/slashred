@@ -64,7 +64,7 @@ type Comment struct {
 	Depth  int    `json:"depth"`
 	Url    string `json:"permalink"`
 	LinkID string `json:"link_id"`
-	ID     string `json:"id"`
+	Id     string `json:"id"`
 	Parent string `json:"parent_id"`
 
 	Replies Replies `json:"replies"`
@@ -192,9 +192,11 @@ func (c *CommentService) GetComments(path, sort string) []CommentListing {
 	defer resp.Body.Close()
 
 	//fmt.Println("-------Got Reponse of comments------------")
-	//SaveResponse(resp.Body, "test_data/askreddit.json")
+
 	PrintHeader(resp)
 
+	c.client.savelimit(resp)
+	fmt.Println(c.client.x.used)
 	type listComment struct {
 		Kind string      `json:"kind"`
 		Data CommentData `json:"data"`
@@ -276,7 +278,7 @@ func (c *CommentService) GetCommentsID(path, comment, sort string) {
 	comments := result[1].Data.Children
 
 	for _, comment := range comments {
-		fmt.Printf("Author : %s ID[%s]\n", comment.Comment.Author, comment.Comment.ID)
+		fmt.Printf("Author : %s ID[%s]\n", comment.Comment.Author, comment.Comment.Id)
 
 		replies := comment.Comment.Replies.Data.Children
 
@@ -319,7 +321,7 @@ func (c *CommentService) ReplaceMore(more *More,
 	////tempdata["children"] = str
 	tempdata["children"] = strings.Join(more.Children, ",")
 	tempdata["link_id"] = linkId
-	tempdata["limit_children"] = "false"
+	tempdata["limit_children"] = "true"
 	tempdata["depth"] = "8"
 	tempdata["sort"] = sort
 
@@ -349,7 +351,7 @@ func (c *CommentService) ReplaceMore(more *More,
 
 	comments := response.Json.Data.Things
 
-	if !strings.Contains(parent, "t3") {
+	if !strings.Contains(parent, "t3_") {
 
 		parent = CommentPrefix + parent
 	}
@@ -359,6 +361,7 @@ func (c *CommentService) ReplaceMore(more *More,
 			if comment.Comment.Parent == parent {
 				commentsArray = append(commentsArray, comment.Comment)
 			}
+
 		} else {
 
 			fmt.Printf("Got request for more count is %d\n", comment.More.Count)
@@ -395,6 +398,8 @@ func (c *CommentService) List(list []CommentListing, depth int, sort string, fet
 		}
 		if fetchMore {
 			if item.More != nil {
+				fmt.Printf("------Count :== %d FETCHING REPLACE MORE OF LINK PARENT -----\n", item.More.Count)
+
 				moreComment := c.ReplaceMore(item.More, linkId, sort, parent)
 
 				comments = append(comments, moreComment...)
@@ -419,7 +424,7 @@ func (c *CommentService) getAllReplies(depth int, comment *Comment, sort string)
 
 				moreReplies = append(moreReplies, tempReply...)
 			} else {
-				fetchedMore := c.ReplaceMore(reply.More, comment.LinkID, sort, comment.ID)
+				fetchedMore := c.ReplaceMore(reply.More, comment.LinkID, sort, comment.Id)
 
 				for _, item := range fetchedMore {
 					moreReplies = append(moreReplies, item)

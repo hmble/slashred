@@ -26,11 +26,7 @@ func SaveResponse(r io.Reader, filepath string) {
 	if err != nil {
 		log.Fatal("Error in reading response body")
 	}
-	ToFile(filepath, body)
-
-}
-
-func ToFile(filepath string, b []byte) {
+	//	ToFile(filepath, body)
 	f, err := os.Create(filepath)
 
 	if err != nil {
@@ -39,12 +35,14 @@ func ToFile(filepath string, b []byte) {
 
 	defer f.Close()
 
-	out, err := f.Write(b)
+	out, err := f.Write(body)
 
 	if err != nil {
 		log.Fatal("Error in writing bytes to file")
 	}
 
-	fmt.Printf("Wrote %d files\n", out)
+	fmt.Printf("Wrote %d bytes\n", out)
 
+	//return f.Close
 }
+
