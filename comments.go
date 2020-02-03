@@ -32,11 +32,6 @@ func (c *CommentListing) UnmarshalJSON(b []byte) error {
 
 	c.Kind = kind[1 : len(kind)-1]
 
-	//r.Kind = string(tmp["kind"])
-
-	// var comment Comment
-	// var more More
-
 	if string(tmp["kind"]) == "\"t1\"" {
 		var comment Comment
 		if err := json.Unmarshal(tmp["data"], &comment); err != nil {
@@ -68,7 +63,6 @@ type Comment struct {
 	Parent string `json:"parent_id"`
 
 	Replies Replies `json:"replies"`
-	//	Replies Replies `json:"replies"`
 }
 
 type Replies struct {
@@ -105,11 +99,6 @@ func (r *RepliesArray) UnmarshalJSON(b []byte) error {
 	kind := string(tmp["kind"])
 
 	r.Kind = kind[1 : len(kind)-1]
-
-	//r.Kind = string(tmp["kind"])
-
-	// var comment Comment
-	// var more More
 
 	if string(tmp["kind"]) == "\"t1\"" {
 		var comment Comment
@@ -183,15 +172,12 @@ func (c *CommentService) GetComments(path, sort string) []CommentListing {
 		"sort":    sort,
 		"depth":   "8",
 	}
-	//	resp, err := c.client.Get(endpoint, NoOptions)
 	resp, err := c.client.Get(endpoint, opt)
 
 	if err != nil {
 		log.Fatal("Error in getting comments response")
 	}
 	defer resp.Body.Close()
-
-	//fmt.Println("-------Got Reponse of comments------------")
 
 	PrintHeader(resp)
 
@@ -206,30 +192,16 @@ func (c *CommentService) GetComments(path, sort string) []CommentListing {
 	result := make([]listComment, 0)
 	er := json.NewDecoder(resp.Body).Decode(&result)
 
-	//	fmt.Println("----got here after decode")
 	if er != nil {
 		panic(er)
-		//log.Fatal("Error in decoding comments")
 	}
 
 	commentListing := result[1].Data.Children
 
-	//comments := make([]Comment, 0)
-	//more := make([]More, 0)
-
-	//for _, comment := range commentListing {
-	//	comments = append(comments, comment.Comment)
-	//	more = append(more, comment.More)
-	//}
-
-	////commentReply := make([]Comment, 0)
-
-	//return comments, more
-
 	return commentListing
 }
 
-func (c *CommentService) GetCommentsID(path, comment, sort string) {
+func (c *CommentService) GetCommentsId(path, comment, sort string, depth int) []*Comment {
 	u, pathErr := url.Parse(path)
 
 	if pathErr != nil {
@@ -237,13 +209,11 @@ func (c *CommentService) GetCommentsID(path, comment, sort string) {
 	}
 
 	pathArray := strings.Split(u.Path, "/")
+
 	subreddit := pathArray[2]
 	article := pathArray[4]
 
 	endpoint := fmt.Sprintf("/r/%s/comments/%s", subreddit, article)
-
-	// q.Add("comment", comment)
-	// q.Add("depth", "7")
 
 	options := Option{
 		"comment": comment,
@@ -260,7 +230,7 @@ func (c *CommentService) GetCommentsID(path, comment, sort string) {
 	defer resp.Body.Close()
 
 	//SaveResponse(resp.Body, "test_data/commeny_by_id.json")
-	PrintHeader(resp)
+	//PrintHeader(resp)
 
 	type ListSub struct {
 		Kind string      `json:"kind"`
@@ -272,21 +242,23 @@ func (c *CommentService) GetCommentsID(path, comment, sort string) {
 
 	if er != nil {
 		panic(er)
-		//log.Fatal("Error in decoding comments")
 	}
 
-	comments := result[1].Data.Children
+	commentArray := result[1].Data.Children
 
-	for _, comment := range comments {
-		fmt.Printf("Author : %s ID[%s]\n", comment.Comment.Author, comment.Comment.Id)
+	comments := make([]*Comment, 0)
+	for _, comment := range commentArray {
 
-		replies := comment.Comment.Replies.Data.Children
+		if comment.Comment != nil {
+			comments = append(comments, comment.Comment)
 
-		for _, reply := range replies {
+			replies := c.getAllReplies(depth, comment.Comment, sort, path)
 
-			fmt.Printf("\t Author : %s Parent[%s]\n", reply.Comment.Author, reply.Comment.Parent)
+			comments = append(comments, replies...)
 		}
 	}
+
+	return comments
 
 }
 func (c *CommentService) PostComment(thingId, text string) {
@@ -312,16 +284,14 @@ func (c *CommentService) SendReplies(fullname, state string) {
 // TODO(hmble): Need to add this More method to Comments and More Response
 
 func (c *CommentService) ReplaceMore(more *More,
-	linkId, sort, parent string) []*Comment {
+	linkId, sort, path string) []*Comment {
 	tempdata := PostData{}
 
-	//for k, v := range postdata {
-	//	tempdata[k] = v
-	//}
-	////tempdata["children"] = str
 	tempdata["children"] = strings.Join(more.Children, ",")
 	tempdata["link_id"] = linkId
-	tempdata["limit_children"] = "true"
+	// false option gives more object in response after ReplaceMore method
+	// true option limits that more object on parent node
+	tempdata["limit_children"] = "false"
 	tempdata["depth"] = "8"
 	tempdata["sort"] = sort
 
@@ -333,7 +303,7 @@ func (c *CommentService) ReplaceMore(more *More,
 	}
 	defer resp.Body.Close()
 
-	//SaveResponse(resp.Body, "test_data/MoreError.json")
+	//SaveResponse(resp.Body, "test_data/MemesResponse.json")
 	type moreReplies struct {
 		Json struct {
 			Data struct {
@@ -351,23 +321,24 @@ func (c *CommentService) ReplaceMore(more *More,
 
 	comments := response.Json.Data.Things
 
-	if !strings.Contains(parent, "t3_") {
-
-		parent = CommentPrefix + parent
-	}
 	commentsArray := make([]*Comment, 0)
 	for _, comment := range comments {
+
 		if comment.Comment != nil {
-			if comment.Comment.Parent == parent {
-				commentsArray = append(commentsArray, comment.Comment)
-			}
+			commentsArray = append(commentsArray, comment.Comment)
 
 		} else {
 
-			fmt.Printf("Got request for more count is %d\n", comment.More.Count)
 			if comment.More.Count != 0 {
-				moreArray := c.ReplaceMore(comment.More, linkId, sort, parent)
+				moreArray := c.ReplaceMore(comment.More, linkId, sort, path)
 				commentsArray = append(commentsArray, moreArray...)
+			} else {
+				// count 0 case will go here
+				continueParent := strings.Split(comment.More.ParentID, "_")
+
+				contComments := c.GetCommentsId(path, continueParent[1], sort, 8)
+
+				commentsArray = append(commentsArray, contComments...)
 			}
 
 		}
@@ -377,30 +348,28 @@ func (c *CommentService) ReplaceMore(more *More,
 
 }
 
-func (c *CommentService) List(list []CommentListing, depth int, sort string, fetchMore bool) []*Comment {
+func (c *CommentService) List(list []CommentListing, depth int, sort, path string, fetchMore bool) []*Comment {
 	comments := make([]*Comment, 0)
 
-	if depth > 8 {
+	if depth > 20 {
 		log.Fatal("Depth should be less than 8")
 	}
 
-	var linkId, parent string
+	var linkId string
 	for _, item := range list {
 
 		if item.Comment != nil {
 			linkId = item.Comment.LinkID
-			parent = item.Comment.Parent
 			comments = append(comments, item.Comment)
 
-			temp := c.getAllReplies(depth-1, item.Comment, sort)
+			temp := c.getAllReplies(depth-1, item.Comment, sort, path)
 
 			comments = append(comments, temp...)
 		}
 		if fetchMore {
 			if item.More != nil {
-				fmt.Printf("------Count :== %d FETCHING REPLACE MORE OF LINK PARENT -----\n", item.More.Count)
 
-				moreComment := c.ReplaceMore(item.More, linkId, sort, parent)
+				moreComment := c.ReplaceMore(item.More, linkId, sort, path)
 
 				comments = append(comments, moreComment...)
 
@@ -411,7 +380,7 @@ func (c *CommentService) List(list []CommentListing, depth int, sort string, fet
 	return comments
 }
 
-func (c *CommentService) getAllReplies(depth int, comment *Comment, sort string) []*Comment {
+func (c *CommentService) getAllReplies(depth int, comment *Comment, sort, path string) []*Comment {
 	moreReplies := make([]*Comment, 0)
 
 	replies := comment.Replies.Data.Children
@@ -420,16 +389,16 @@ func (c *CommentService) getAllReplies(depth int, comment *Comment, sort string)
 
 			if reply.Comment != nil {
 				moreReplies = append(moreReplies, reply.Comment)
-				tempReply := c.getAllReplies(depth-1, reply.Comment, sort)
+				tempReply := c.getAllReplies(depth-1, reply.Comment, sort, path)
 
 				moreReplies = append(moreReplies, tempReply...)
 			} else {
-				fetchedMore := c.ReplaceMore(reply.More, comment.LinkID, sort, comment.Id)
+				fetchedMore := c.ReplaceMore(reply.More, comment.LinkID, sort, path)
 
 				for _, item := range fetchedMore {
 					moreReplies = append(moreReplies, item)
 
-					itemReplies := c.getAllReplies(depth-1, item, sort)
+					itemReplies := c.getAllReplies(depth-1, item, sort, path)
 
 					moreReplies = append(moreReplies, itemReplies...)
 				}

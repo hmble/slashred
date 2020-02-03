@@ -38,19 +38,17 @@ func main() {
 	u.UpdateToken(token)
 
 	var c *slashred.Client = u.UserClient(token)
-	//commentsList := c.Comment.GetComments("golang", "ex18cx", "best")
 
 	path := "https://www.reddit.com/r/memes/comments/exkw6j/its_the_thought_that_counts/"
+
 	commentsList := c.Comment.GetComments(path, "best")
+	comments := c.Comment.List(commentsList, 20, "best", path, true)
 
-	// Use Depth as 0 for top level comment
-	comments := c.Comment.List(commentsList, 1, "best", true)
+	for _, comment := range comments {
 
-	fmt.Println(len(comments))
+		fmt.Println(comment.Author)
 
-	for _, item := range comments {
-		//fmt.Println(item.Author, "  ", item.Parent)
-		fmt.Printf("%s\tId[%s]\tParent[%s]\n", item.Author, item.Id, item.Parent)
 	}
 
+	fmt.Println("Got total comments ", len(comments))
 }
