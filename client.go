@@ -10,8 +10,6 @@ import (
 	"strings"
 
 	"golang.org/x/oauth2"
-
-	"github.com/hmble/slashred/internal"
 	//_ "github.com/joho/godotenv/autoload"
 )
 
@@ -41,7 +39,7 @@ type User struct {
 	Name          string
 	ProfileUrl    string
 	IsPermanent   bool
-	Authenticator *internal.Authenticator
+	Authenticator *Authenticator
 }
 
 const (
@@ -118,14 +116,14 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 func (u *User) Authenticate() (*oauth2.Token, error) {
 
 	fmt.Println("Authentication starts from here:  ")
-	fmt.Printf("Visit the url given below and paste the code given in url : \n %s", internal.AuthUrl(true, u.Authenticator))
+	fmt.Printf("Visit the url given below and paste the code given in url : \n %s", AuthUrl(true, u.Authenticator))
 
 	fmt.Println("\n Enter the code here : ")
 
 	var code string
 	fmt.Scan(&code)
 
-	token, err := internal.GetToken(code, u.Authenticator)
+	token, err := GetToken(code, u.Authenticator)
 
 	if err != nil {
 		log.Fatal("Error in getting token")
@@ -139,16 +137,16 @@ func (u *User) Authenticate() (*oauth2.Token, error) {
 }
 
 func (u *User) SaveToken(path string, token *oauth2.Token) {
-	internal.SaveToken(path, token)
+	SaveToken(path, token)
 }
 
 func (u *User) UpdateToken(token *oauth2.Token) {
-	internal.UpdateToken(token, u.Authenticator)
+	UpdateToken(token, u.Authenticator)
 }
 
-func TokenFromFile(filepath string) (*oauth2.Token, error) {
-	return internal.TokenFromFile(filepath)
-}
+// func TokenFromFile(filepath string) (*oauth2.Token, error) {
+// 	return TokenFromFile(filepath)
+// }
 
 type Option map[string]string
 

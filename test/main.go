@@ -6,19 +6,19 @@ import (
 	"os"
 
 	"github.com/hmble/slashred"
-	"github.com/hmble/slashred/internal"
+//	"github.com/hmble/slashred/internal"
 	_ "github.com/joho/godotenv/autoload"
 	"golang.org/x/oauth2"
 )
 
 func main() {
 
-	authenticator := &internal.Authenticator{
+	authenticator := &Authenticator{
 		Config: &oauth2.Config{
 			ClientID:     os.Getenv("CLIENT_ID"),
 			ClientSecret: os.Getenv("CLIENT_SECRET"),
 			Scopes:       slashred.Scopes,
-			Endpoint:     internal.Endpoint,
+			Endpoint:     Endpoint,
 			RedirectURL:  "https://example.com/auth",
 		},
 		Useragent: os.Getenv("USER_AGENT"),
