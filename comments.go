@@ -182,7 +182,7 @@ func (c *CommentService) GetComments(path, sort string) []CommentListing {
 	PrintHeader(resp)
 
 	c.client.savelimit(resp)
-	fmt.Println(c.client.x.used)
+	fmt.Println("Current Comment is ", c.client.x.used)
 	type listComment struct {
 		Kind string      `json:"kind"`
 		Data CommentData `json:"data"`
@@ -232,6 +232,7 @@ func (c *CommentService) GetCommentsId(path, comment, sort string, depth int) []
 	//SaveResponse(resp.Body, "test_data/commeny_by_id.json")
 	//PrintHeader(resp)
 
+	c.client.savelimit(resp)
 	type ListSub struct {
 		Kind string      `json:"kind"`
 		Data CommentData `json:"data"`
@@ -297,6 +298,7 @@ func (c *CommentService) ReplaceMore(more *More,
 
 	resp, err := c.client.Post(API_PATH["morechildren"], tempdata)
 
+	c.client.savelimit(resp)
 	if err != nil {
 		log.Fatal("Error in getting more response")
 
@@ -348,7 +350,7 @@ func (c *CommentService) ReplaceMore(more *More,
 
 }
 
-func (c *CommentService) List(list []CommentListing, depth int, sort, path string, fetchMore bool) []*Comment {
+func (c *CommentService) List(list []CommentListing, depth int, sort, path string, fetchMore bool) ([]*Comment, int) {
 	comments := make([]*Comment, 0)
 
 	if depth > 20 {
@@ -376,8 +378,10 @@ func (c *CommentService) List(list []CommentListing, depth int, sort, path strin
 			}
 		}
 	}
+	usedLimit := c.client.x.used
 
-	return comments
+	return comments, usedLimit
+
 }
 
 func (c *CommentService) getAllReplies(depth int, comment *Comment, sort, path string) []*Comment {

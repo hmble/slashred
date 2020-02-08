@@ -41,22 +41,29 @@ func main() {
 
 	//	path := "https://www.reddit.com/r/memes/comments/exkw6j/its_the_thought_that_counts/"
 
-	path := "https://www.reddit.com/r/dailyprogrammer/comments/dv0231/20191111_challenge_381_easy_yahtzee_upper_section"
+	//path := "https://www.reddit.com/r/dailyprogrammer/comments/dv0231/20191111_challenge_381_easy_yahtzee_upper_section"
+	path := "https://www.reddit.com/r/golang/comments/7pnw2e/fun_golang_projects/"
 	commentsList := c.Comment.GetComments(path, "best")
-	comments := c.Comment.List(commentsList, 20, "best", path, true)
+	comments, usedLimit := c.Comment.List(commentsList, 20, "best", path, true)
 
 	deleteCount := 0
+	validCount := 0
 	for _, comment := range comments {
 
 		fmt.Println(comment.Author)
 
 		if comment.Author == "[deleted]" {
 			deleteCount++
+		} else {
+
+			validCount++
 		}
 
 	}
 
 	fmt.Println("Got total comments ", len(comments))
 	fmt.Println("Total delete count is ", deleteCount)
+	fmt.Println("Total valid comment count is ", validCount)
+	fmt.Println("Used limit is ", usedLimit)
 
 }
