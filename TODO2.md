@@ -11,7 +11,7 @@
 - [ ] /api/v1/me/prefs GET (identity)
 - [ ] /api/v1/me/prefs PATCH (account)
 - [ ] /api/v1/me/trophies GET (identity)
-- [ ] /prefs/_where_ GET (read) (rss support)
+- [ ] /prefs/_*where*_ GET (read) (rss support)
   - [ ] /prefs/friends
   - [ ] /prefs/blocked
   - [ ] /prefs/messaging
@@ -48,34 +48,34 @@
 
 [API REFERENCE](https://www.reddit.com/dev/api#section_emoji)
 
-- [ ] /api/v1/_subreddit_/emoji.json POST (structuredstyles)
-- [ ] /api/v1/_subreddit_/emoji/_emoji_name_ DELETE (structuredstyles)
-- [ ] /api/v1/_subreddit_/emoji_asset_upload_s3.json POST (structuredstyles)
-- [ ] /api/v1/_subreddit_/emoji_asset_upload_s3.json POST (structuredstyles)
-- [ ] /api/v1/_subreddit_/emoji_custom_size POST (structuredstyles)
-- [ ] /api/v1/_subreddit_/emojis/all GET (read)
+- [ ] /api/v1/*_subreddit_*/emoji.json POST (structuredstyles)
+- [ ] /api/v1/*_subreddit_*/emoji/_emoji_name_ DELETE (structuredstyles)
+- [ ] /api/v1/*_subreddit_*/emoji_asset_upload_s3.json POST (structuredstyles)
+- [ ] /api/v1/*_subreddit_*/emoji_asset_upload_s3.json POST (structuredstyles)
+- [ ] /api/v1/*_subreddit_*/emoji_custom_size POST (structuredstyles)
+- [ ] /api/v1/*_subreddit_*/emojis/all GET (read)
 
 ## Flair
 
 [API REFERENCE](https://www.reddit.com/dev/api#section_flair)
 
-- [ ] /r/_subreddit_/api/clearflairtemplates GET (modflair)
-- [ ] /r/_subreddit_/api/deleteflair POST (modfair)
-- [ ] /r/_subreddit_/api/deleteflairtemplate POST (modflair)
-- [ ] /r/_subreddit_/api/flair POST (modflair)
-- [ ] /r/_subreddit_/api/flair_template_order PATCH (modflair)
-- [ ] /r/_subreddit_/api/flairconfig POST (modflair)
-- [ ] /r/_subreddit_/api/flaircsv POST (modflair)
-- [ ] /r/_subreddit_/api/flairlist GET (modflair)
-- [ ] /r/_subreddit_/api/flairselector GET (flair)
-- [ ] /r/_subreddit_/api/flairtemplate POST (modflair)
-- [ ] /r/_subreddit_/api/flairtemplate_v2 POST (modflair)
-- [ ] /r/_subreddit_/api/link_flair GET (flair)
-- [ ] /r/_subreddit_/api/link_flair_v2 GET (flair)
-- [ ] /r/_subreddit_/api/selectflair POST (flair)
-- [ ] /r/_subreddit_/api/setflairenabled POST (flair)
-- [ ] /r/_subreddit_/api/user_flair GET (flair)
-- [ ] /r/_subreddit_/api/user_flair_v2 GET (flair)
+- [ ] /r/*_subreddit_*/api/clearflairtemplates GET (modflair)
+- [ ] /r/*_subreddit_*/api/deleteflair POST (modfair)
+- [ ] /r/*_subreddit_*/api/deleteflairtemplate POST (modflair)
+- [ ] /r/*_subreddit_*/api/flair POST (modflair)
+- [ ] /r/*_subreddit_*/api/flair_template_order PATCH (modflair)
+- [ ] /r/*_subreddit_*/api/flairconfig POST (modflair)
+- [ ] /r/*_subreddit_*/api/flaircsv POST (modflair)
+- [ ] /r/*_subreddit_*/api/flairlist GET (modflair)
+- [ ] /r/*_subreddit_*/api/flairselector GET (flair)
+- [ ] /r/*_subreddit_*/api/flairtemplate POST (modflair)
+- [ ] /r/*_subreddit_*/api/flairtemplate_v2 POST (modflair)
+- [ ] /r/*_subreddit_*/api/link_flair GET (flair)
+- [ ] /r/*_subreddit_*/api/link_flair_v2 GET (flair)
+- [ ] /r/*_subreddit_*/api/selectflair POST (flair)
+- [ ] /r/*_subreddit_*/api/setflairenabled POST (flair)
+- [ ] /r/*_subreddit_*/api/user_flair GET (flair)
+- [ ] /r/*_subreddit_*/api/user_flair_v2 GET (flair)
 
 
 
