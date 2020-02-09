@@ -9,6 +9,10 @@ import (
 	"strings"
 )
 
+const (
+	maxDepth int = 20
+)
+
 type CommentService service
 type CommentListing struct {
 	Kind    string
@@ -66,13 +70,21 @@ type Comment struct {
 }
 
 type Replies struct {
-	Data       ReplyData `json:"data"`
-	ReplyArray []*Comment
+	Data ReplyData `json:"data"`
+	//	ReplyArray []*Comment
 }
 
 type ReplyData struct {
 	Children []RepliesArray
 }
+
+type RepliesArray struct {
+	Kind    string
+	Data    json.RawMessage `json:"data"`
+	Comment *Comment
+	More    *More
+}
+
 type More struct {
 	Count    int `json:"count"`
 	Name     string
@@ -80,12 +92,6 @@ type More struct {
 	ID       string `json:"id"`
 	Depth    int
 	Children []string
-}
-type RepliesArray struct {
-	Kind    string
-	Data    json.RawMessage `json:"data"`
-	Comment *Comment
-	More    *More
 }
 
 func (r *RepliesArray) UnmarshalJSON(b []byte) error {
@@ -140,14 +146,14 @@ func (r *Replies) UnmarshalJSON(b []byte) error {
 
 	r.Data = data
 
-	replyArray := make([]*Comment, 0)
-	for _, reply := range data.Children {
+	// replyArray := make([]*Comment, 0)
+	// for _, reply := range data.Children {
 
-		replyArray = append(replyArray, reply.Comment)
+	// 	replyArray = append(replyArray, reply.Comment)
 
-	}
+	// }
 
-	r.ReplyArray = replyArray
+	//r.ReplyArray = replyArray
 	return nil
 
 }
@@ -182,7 +188,6 @@ func (c *CommentService) GetComments(path, sort string) []CommentListing {
 	PrintHeader(resp)
 
 	c.client.savelimit(resp)
-	fmt.Println("Current Comment is ", c.client.x.used)
 	type listComment struct {
 		Kind string      `json:"kind"`
 		Data CommentData `json:"data"`
@@ -201,6 +206,7 @@ func (c *CommentService) GetComments(path, sort string) []CommentListing {
 	return commentListing
 }
 
+// Comment.GetCommentsId
 func (c *CommentService) GetCommentsId(path, comment, sort string, depth int) []*Comment {
 	u, pathErr := url.Parse(path)
 
@@ -268,6 +274,7 @@ func (c *CommentService) PostComment(thingId, text string) {
 
 // Test Remained
 // state is bool
+// Comment.SendReplies
 func (c *CommentService) SendReplies(fullname, state string) {
 	postdata := PostData{
 		"id":    fullname,
@@ -284,6 +291,7 @@ func (c *CommentService) SendReplies(fullname, state string) {
 
 // TODO(hmble): Need to add this More method to Comments and More Response
 
+// Comment.ReplaceMore
 func (c *CommentService) ReplaceMore(more *More,
 	linkId, sort, path string) []*Comment {
 	tempdata := PostData{}
@@ -350,10 +358,11 @@ func (c *CommentService) ReplaceMore(more *More,
 
 }
 
-func (c *CommentService) List(list []CommentListing, depth int, sort, path string, fetchMore bool) ([]*Comment, int) {
+// Comment.List
+func (c *CommentService) List(list []CommentListing, depth int, sort, path string, fetchMore bool) []*Comment {
 	comments := make([]*Comment, 0)
 
-	if depth > 20 {
+	if depth > maxDepth {
 		log.Fatal("Depth should be less than 8")
 	}
 
@@ -378,9 +387,8 @@ func (c *CommentService) List(list []CommentListing, depth int, sort, path strin
 			}
 		}
 	}
-	usedLimit := c.client.x.used
 
-	return comments, usedLimit
+	return comments
 
 }
 
@@ -412,4 +420,9 @@ func (c *CommentService) getAllReplies(depth int, comment *Comment, sort, path s
 	}
 
 	return moreReplies
+}
+
+func (c *CommentService) Replies(depth int, comment *Comment, sort, path string) []*Comment {
+
+	return c.getAllReplies(depth, comment, sort, path)
 }
