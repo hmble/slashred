@@ -25,7 +25,7 @@ List by Scopes
 
 ## Credits
 
-[ Api Reference] (https://www.reddit.com/dev/api/oauth#scope_creddits)
+[ Api Reference](https://www.reddit.com/dev/api/oauth#scope_creddits)
 
 - [ ] [/api/v1/gold/gild/_fullname_](#credits) POST
 - [ ] [/api/v1/gold/give/_username_](#credits) POST
@@ -33,7 +33,7 @@ List by Scopes
 
 ## Edit
 
-[ Api Reference ] (https://www.reddit.com/dev/api/oauth#scope_edit)
+[ Api Reference ](https://www.reddit.com/dev/api/oauth#scope_edit)
 
 - [ ] [/api/del](#edit) POST
 - [ ] [/api/editusertext](edit) POST
@@ -43,7 +43,7 @@ List by Scopes
 
 ## Flair
 
-[Api Reference](https://www.reddit.com/dev/api/oauth#scope_flair)
+[ Api Reference ](https://www.reddit.com/dev/api/oauth#scope_flair)
 
 - [ ] [/r/_subreddit_/api/flairselector](#flair) POST
 - [ ] [r/_subreddit_/api/link_flair](#flair) GET 
