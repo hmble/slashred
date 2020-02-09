@@ -3,19 +3,56 @@
 [ Reference ]( https://www.reddit.com/dev/api/ )
 
 
-## Account 
+List by Scopes
+## Any 
 
-[ Api Reference ](https://www.reddit.com/dev/api/#section_account)
+- [] [/api/comment](#any) POST
+- [] [/r/_subreddit_/api/friend](#any) POST
+- [] [/api/needs_captcha](#any) GET
+- [] [/r/_subreddit_/api/unfriend](#any) POST
+- [] [/api/username_available](#any) GET 
+- [] [/api/v1/me](#any) GET
+- [] [/api/v1/scopes](#any) GET
 
-- [] [/api/v1/me](#)
-- [] [/api/v1/me/blocked](#)
-- [] [/api/v1/me/friends]()
-- [] [/api/v1/me/karma]()
-- [] [/api/v1/me/prefs]()
-- [] [/prefs/blocked]()
-- [] [/prefs/friends]()
-- [] [/prefs/messaging]()
-- [] [/prefs/trusted]()
-  - [] [/prefs/_where_]()
+
+## Account
+
+[ Api Reference](https://www.reddit.com/dev/api/oauth#scope_account)
+
+- [] [/api/block_user](#account) POST
+- [] [/api/v1/me/prefs](#account) PATCH 
+
+
+## Credits
+
+[ Api Reference] (https://www.reddit.com/dev/api/oauth#scope_creddits)
+
+- [] [/api/v1/gold/gild/_fullname_](#credits) POST
+- [] [/api/v1/gold/give/_username_](#credits) POST
+
+
+## Edit
+
+[ Api Reference ] (https://www.reddit.com/dev/api/oauth#scope_edit)
+
+- [] [/api/del](#edit) POST
+- [] [/api/editusertext](edit) POST
+- [] [/api/live/_thread_/delete_update](#edit) POST
+- [] [/api/live/_thread_/strike_update](#edit) POST
+- [] [/api/sendreplies](#edit) POST
+
+## Flair
+
+[Api Reference](https://www.reddit.com/dev/api/oauth#scope_flair)
+
+- [] [/r/_subreddit_/api/flairselector](#flair) POST
+- [] [r/_subreddit_/api/link_flair](#flair) GET 
+- [] [r/_subreddit_/api/link_flair_v2](#flair) GET 
+- [] [/r/_subreddit_/api/selectflair](#flair) POST
+- [] [/r/_subreddit_/api/setflairenabled](#flair) POST
+
+
+
+
 
 
