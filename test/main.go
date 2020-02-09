@@ -6,19 +6,18 @@ import (
 	"os"
 
 	"github.com/hmble/slashred"
-//	"github.com/hmble/slashred/internal"
 	_ "github.com/joho/godotenv/autoload"
 	"golang.org/x/oauth2"
 )
 
 func main() {
 
-	authenticator := &Authenticator{
+	authenticator := &slashred.Authenticator{
 		Config: &oauth2.Config{
 			ClientID:     os.Getenv("CLIENT_ID"),
 			ClientSecret: os.Getenv("CLIENT_SECRET"),
 			Scopes:       slashred.Scopes,
-			Endpoint:     Endpoint,
+			Endpoint:     slashred.Endpoint,
 			RedirectURL:  "https://example.com/auth",
 		},
 		Useragent: os.Getenv("USER_AGENT"),
@@ -39,31 +38,26 @@ func main() {
 
 	var c *slashred.Client = u.UserClient(token)
 
-	//	path := "https://www.reddit.com/r/memes/comments/exkw6j/its_the_thought_that_counts/"
+	path := "https://www.reddit.com/r/memes/comments/exkw6j/its_the_thought_that_counts/"
 
 	//path := "https://www.reddit.com/r/dailyprogrammer/comments/dv0231/20191111_challenge_381_easy_yahtzee_upper_section"
-	path := "https://www.reddit.com/r/golang/comments/7pnw2e/fun_golang_projects/"
+	//	path := "https://www.reddit.com/r/golang/comments/7pnw2e/fun_golang_projects/"
 	commentsList := c.Comment.GetComments(path, "best")
-	comments, usedLimit := c.Comment.List(commentsList, 20, "best", path, true)
 
-	deleteCount := 0
-	validCount := 0
-	for _, comment := range comments {
+	for _, list := range commentsList {
 
-		fmt.Println(comment.Author)
+		if list.Comment != nil {
+			fmt.Printf("%s \n", list.Comment.Author)
 
-		if comment.Author == "[deleted]" {
-			deleteCount++
+			replies := c.Comment.Replies(0, list.Comment, "best", path)
+
+			for _, reply := range replies {
+
+				fmt.Printf("\t%s\n", reply.Author)
+			}
+
 		} else {
-
-			validCount++
+			fmt.Println("More count is ", list.More.Count)
 		}
-
 	}
-
-	fmt.Println("Got total comments ", len(comments))
-	fmt.Println("Total delete count is ", deleteCount)
-	fmt.Println("Total valid comment count is ", validCount)
-	fmt.Println("Used limit is ", usedLimit)
-
 }
