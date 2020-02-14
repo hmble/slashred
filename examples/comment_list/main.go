@@ -6,18 +6,19 @@ import (
 	"os"
 
 	"github.com/hmble/slashred"
+	"github.com/hmble/slashred/internal"
 	_ "github.com/joho/godotenv/autoload"
 	"golang.org/x/oauth2"
 )
 
 func main() {
 
-	authenticator := &slashred.Authenticator{
+	authenticator := &internal.Authenticator{
 		Config: &oauth2.Config{
 			ClientID:     os.Getenv("CLIENT_ID"),
 			ClientSecret: os.Getenv("CLIENT_SECRET"),
 			Scopes:       slashred.Scopes,
-			Endpoint:     slashred.Endpoint,
+			Endpoint:     internal.Endpoint,
 			RedirectURL:  "https://example.com/auth",
 		},
 		Useragent: os.Getenv("USER_AGENT"),
@@ -37,27 +38,19 @@ func main() {
 	u.UpdateToken(token)
 
 	var c *slashred.Client = u.UserClient(token)
+	//commentsList := c.Comment.GetComments("golang", "ex18cx", "best")
 
 	path := "https://www.reddit.com/r/memes/comments/exkw6j/its_the_thought_that_counts/"
-
-	//path := "https://www.reddit.com/r/dailyprogrammer/comments/dv0231/20191111_challenge_381_easy_yahtzee_upper_section"
-	//	path := "https://www.reddit.com/r/golang/comments/7pnw2e/fun_golang_projects/"
 	commentsList := c.Comment.GetComments(path, "best")
 
-	for _, list := range commentsList {
+	// Use Depth as 0 for top level comment
+	comments := c.Comment.List(commentsList, 1, "best", true)
 
-		if list.Comment != nil {
-			fmt.Printf("%s \n", list.Comment.Author)
+	fmt.Println(len(comments))
 
-			replies := c.Comment.Replies(0, list.Comment, "best", path)
-
-			for _, reply := range replies {
-
-				fmt.Printf("\t%s\n", reply.Author)
-			}
-
-		} else {
-			fmt.Println("More count is ", list.More.Count)
-		}
+	for _, item := range comments {
+		//fmt.Println(item.Author, "  ", item.Parent)
+		fmt.Printf("%s\tId[%s]\tParent[%s]\n", item.Author, item.Id, item.Parent)
 	}
+
 }

@@ -10,15 +10,36 @@ import (
 	"strings"
 
 	"golang.org/x/oauth2"
-
-	"github.com/hmble/slashred/internal"
-	_ "github.com/joho/godotenv/autoload"
+	//_ "github.com/joho/godotenv/autoload"
 )
 
+var Scopes = []string{
+	"edit",
+	"flair",
+	"history",
+	"identity",
+	"modconfig",
+	"modflair",
+	"modlog",
+	"modposts",
+	"modwiki",
+	"mysubreddits",
+	"privatemessages",
+	"read",
+	"report",
+	"save",
+	"submit",
+	"subscribe",
+	"vote",
+	"wikiedit",
+	"wikiread",
+}
+
 type User struct {
-	Name        string
-	ProfileUrl  string
-	IsPermanent bool
+	Name          string
+	ProfileUrl    string
+	IsPermanent   bool
+	Authenticator *Authenticator
 }
 
 const (
@@ -35,12 +56,11 @@ const (
 	AwardPrefix     = "t6_"
 )
 
-// TODO : Make token a member of client so that we don't need
-// to pass token as parameter for every request we make.
 type Client struct {
 	Http      *http.Client
 	Useragent string
 	Token     *oauth2.Token
+	x         ratelimit
 
 	common service // Reuse same struct instead of creating
 
@@ -56,6 +76,11 @@ type Client struct {
 	Users      *UsersService
 }
 
+type ratelimit struct {
+	used      int
+	remaining int
+	reset     int
+}
 type service struct {
 	client *Client
 }
@@ -64,12 +89,12 @@ var NoAuthClient = &Client{
 	Http: new(http.Client),
 }
 
-var auth *internal.Authenticator = internal.DefaultClient
+//var defaultAuth *internal.Authenticator = internal.DefaultClient
 
 func (u *User) UserClient(token *oauth2.Token) *Client {
 	c := &Client{
-		Http:      auth.Config.Client(oauth2.NoContext, token),
-		Useragent: auth.Useragent,
+		Http:      u.Authenticator.Config.Client(oauth2.NoContext, token),
+		Useragent: u.Authenticator.Useragent,
 		Token:     token,
 	}
 
@@ -91,37 +116,37 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 func (u *User) Authenticate() (*oauth2.Token, error) {
 
 	fmt.Println("Authentication starts from here:  ")
-	fmt.Printf("Visit the url given below and paste the code given in url : \n %s", internal.AuthUrl(u.IsPermanent))
+	fmt.Printf("Visit the url given below and paste the code given in url : \n %s", AuthUrl(true, u.Authenticator))
 
 	fmt.Println("\n Enter the code here : ")
 
 	var code string
 	fmt.Scan(&code)
 
-	token, err := internal.GetToken(code)
+	token, err := GetToken(code, u.Authenticator)
 
 	if err != nil {
 		log.Fatal("Error in getting token")
 		return nil, err
 	}
 
-	SaveToken("token.json", token)
+	u.SaveToken("token.json", token)
 
 	return token, nil
 
 }
 
-func SaveToken(path string, token *oauth2.Token) {
-	internal.SaveToken(path, token)
+func (u *User) SaveToken(path string, token *oauth2.Token) {
+	SaveToken(path, token)
 }
 
-func UpdateToken(token *oauth2.Token) {
-	internal.UpdateToken(token)
+func (u *User) UpdateToken(token *oauth2.Token) {
+	UpdateToken(token, u.Authenticator)
 }
 
-func TokenFromFile(filepath string) (*oauth2.Token, error) {
-	return internal.TokenFromFile(filepath)
-}
+// func TokenFromFile(filepath string) (*oauth2.Token, error) {
+// 	return TokenFromFile(filepath)
+// }
 
 type Option map[string]string
 
@@ -141,6 +166,11 @@ func (c *Client) Get(endpoint string, opts Option) (res *http.Response, err erro
 	u.RawQuery = q.Encode()
 
 	path := u.String()
+
+	// if c.x.remaining < 10 {
+	// 	log.Fatal("---YOUR LIMIT HAS EXTENDED Wait for ", c.x.reset)
+	// }
+
 	req, err := http.NewRequest("GET", path, nil)
 
 	if err != nil {
@@ -239,4 +269,27 @@ func (c *Client) Put(endpoint string, data string) (*http.Response, error) {
 
 	return c.Http.Do(req)
 
+}
+
+func (c *Client) savelimit(resp *http.Response) {
+	used, errUser := strconv.Atoi(resp.Header.Get("X-Ratelimit-Used"))
+	if errUser != nil {
+		log.Fatal("Error in converting ratelimit used")
+	}
+
+	remaining, errRemaining := strconv.ParseFloat(resp.Header.Get("X-Ratelimit-Remaining"), 32)
+	if errRemaining != nil {
+		log.Fatal("Error in converting ratelimit remaining")
+	}
+
+	reset, errReset := strconv.Atoi(resp.Header.Get("X-Ratelimit-Reset"))
+	if errReset != nil {
+		log.Fatal("Error in converting ratelimit reset")
+	}
+
+	c.x = ratelimit{
+		used:      used,
+		remaining: int(remaining),
+		reset:     reset,
+	}
 }

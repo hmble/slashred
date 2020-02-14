@@ -31,7 +31,7 @@ func (s *SubredditService) GetBanned(subreddit string, opts Option) {
 }
 
 func (s *SubredditService) GetMuted(subreddit string, opts Option) {
-	s.aboutWhere(subreddit, API_PATH["about_banned"], "error in getting muted response", opts)
+	s.aboutWhere(subreddit, API_PATH["about_muted"], "error in getting muted response", opts)
 }
 
 func (s *SubredditService) GetWikiBanned(subreddit string, opts Option) {
