@@ -6,19 +6,18 @@ import (
 	"os"
 
 	"github.com/hmble/slashred"
-	"github.com/hmble/slashred/internal"
 	_ "github.com/joho/godotenv/autoload"
 	"golang.org/x/oauth2"
 )
 
 func main() {
 
-	authenticator := &internal.Authenticator{
+	authenticator := &slashred.Authenticator{
 		Config: &oauth2.Config{
 			ClientID:     os.Getenv("CLIENT_ID"),
 			ClientSecret: os.Getenv("CLIENT_SECRET"),
 			Scopes:       slashred.Scopes,
-			Endpoint:     internal.Endpoint,
+			Endpoint:     slashred.Endpoint,
 			RedirectURL:  "https://example.com/auth",
 		},
 		Useragent: os.Getenv("USER_AGENT"),
@@ -44,7 +43,7 @@ func main() {
 	commentsList := c.Comment.GetComments(path, "best")
 
 	// Use Depth as 0 for top level comment
-	comments := c.Comment.List(commentsList, 1, "best", true)
+	comments := c.Comment.List(commentsList, 1, "best", path, true)
 
 	fmt.Println(len(comments))
 
