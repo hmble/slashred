@@ -159,7 +159,7 @@ func (r *Replies) UnmarshalJSON(b []byte) error {
 }
 
 // Methods
-func (c *CommentService) GetComments(path, sort string) []CommentListing {
+func (c *CommentService) GetComments(path, sort string, save bool) []CommentListing {
 	u, pathErr := url.Parse(path)
 
 	if pathErr != nil {
@@ -187,6 +187,16 @@ func (c *CommentService) GetComments(path, sort string) []CommentListing {
 
 	PrintHeader(resp)
 
+	if save {
+		SaveResponse(resp.Body, "test_data/com3.json")
+
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("Recoverd from panic due to saveresponse")
+				fmt.Println("http.Response.Body is of type io.ReadCloser and can be read only once. Response is saved now.\n Please rerun this method again with save as false")
+			}
+		}()
+	}
 	c.client.savelimit(resp)
 	type listComment struct {
 		Kind string      `json:"kind"`

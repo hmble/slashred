@@ -42,22 +42,25 @@ func main() {
 
 	//path := "https://www.reddit.com/r/dailyprogrammer/comments/dv0231/20191111_challenge_381_easy_yahtzee_upper_section"
 	//	path := "https://www.reddit.com/r/golang/comments/7pnw2e/fun_golang_projects/"
-	commentsList := c.Comment.GetComments(path, "best")
+	c.Comment.GetComments(path, "best", true)
+	commentsList := c.Comment.GetComments(path, "best", false)
+	//	c.Comment.GetComments(path, "best")
 
 	for _, list := range commentsList {
 
 		if list.Comment != nil {
 			fmt.Printf("%s \n", list.Comment.Author)
 
-			replies := c.Comment.Replies(0, list.Comment, "best", path)
+			// replies := c.Comment.Replies(0, list.Comment, "best", path)
 
-			for _, reply := range replies {
+			// for _, reply := range replies {
 
-				fmt.Printf("\t%s\n", reply.Author)
-			}
+			// 	fmt.Printf("\t%s\n", reply.Author)
+			// }
 
-		} else {
-			fmt.Println("More count is ", list.More.Count)
+			// } else {
+			// fmt.Println("More count is ", list.More.Count)
+
 		}
 	}
 }

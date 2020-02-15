@@ -3,7 +3,6 @@ package slashred
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -21,12 +20,7 @@ func PrintHeader(resp *http.Response) {
 }
 
 func SaveResponse(r io.Reader, filepath string) {
-	//var data map[string]interface{}
-	body, err := ioutil.ReadAll(r)
-	if err != nil {
-		log.Fatal("Error in reading response body")
-	}
-	//	ToFile(filepath, body)
+
 	f, err := os.Create(filepath)
 
 	if err != nil {
@@ -35,14 +29,11 @@ func SaveResponse(r io.Reader, filepath string) {
 
 	defer f.Close()
 
-	out, err := f.Write(body)
+	written, copyErr := io.Copy(f, r)
 
-	if err != nil {
+	if copyErr != nil {
 		log.Fatal("Error in writing bytes to file")
 	}
 
-	fmt.Printf("Wrote %d bytes\n", out)
-
-	//return f.Close
+	fmt.Printf("Wrote %d bytes at %s\n", written, filepath)
 }
-
