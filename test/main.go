@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+  "fmt"
 	"log"
 	"os"
 
@@ -38,29 +38,20 @@ func main() {
 
 	var c *slashred.Client = u.UserClient(token)
 
-	path := "https://www.reddit.com/r/memes/comments/exkw6j/its_the_thought_that_counts/"
+  flairs := c.Flair.UserFlair("linux")
 
-	//path := "https://www.reddit.com/r/dailyprogrammer/comments/dv0231/20191111_challenge_381_easy_yahtzee_upper_section"
-	//	path := "https://www.reddit.com/r/golang/comments/7pnw2e/fun_golang_projects/"
-	c.Comment.GetComments(path, "best", true)
-	commentsList := c.Comment.GetComments(path, "best", false)
-	//	c.Comment.GetComments(path, "best")
+  for _, flair := range flairs {
+    fmt.Println(flair.Text)
+  }
 
-	for _, list := range commentsList {
 
-		if list.Comment != nil {
-			fmt.Printf("%s \n", list.Comment.Author)
+  fmt.Println("-----Testing userflair v2")
 
-			// replies := c.Comment.Replies(0, list.Comment, "best", path)
+  flairs2 := c.Flair.UserFlairV2("linux")
 
-			// for _, reply := range replies {
+  for _, flair := range flairs2 {
+    fmt.Println(flair.BackgroundColor)
+  }
+	
 
-			// 	fmt.Printf("\t%s\n", reply.Author)
-			// }
-
-			// } else {
-			// fmt.Println("More count is ", list.More.Count)
-
-		}
-	}
 }

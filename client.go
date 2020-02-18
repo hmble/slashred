@@ -65,10 +65,11 @@ type Client struct {
 	common service // Reuse same struct instead of creating
 
 	Account    *AccountService
-	Comment    *CommentService
 	Collection *CollectionService
-	Listing    *ListingService
+	Comment    *CommentService
+	Flair      *FlairService
 	Link       *LinkService
+	Listing    *ListingService
 	Moderation *ModerationService
 	Modpost    *ModpostService
 	Report     *ReportService
@@ -102,6 +103,7 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 	c.Account = (*AccountService)(&c.common)
 	c.Comment = (*CommentService)(&c.common)
 	c.Collection = (*CollectionService)(&c.common)
+	c.Flair = (*FlairService)(&c.common)
 	c.Link = (*LinkService)(&c.common)
 	c.Listing = (*ListingService)(&c.common)
 	c.Moderation = (*ModerationService)(&c.common)
