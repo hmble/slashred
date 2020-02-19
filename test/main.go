@@ -1,7 +1,6 @@
 package main
 
 import (
-  "fmt"
 	"log"
 	"os"
 
@@ -38,20 +37,6 @@ func main() {
 
 	var c *slashred.Client = u.UserClient(token)
 
-  flairs := c.Flair.UserFlair("linux")
-
-  for _, flair := range flairs {
-    fmt.Println(flair.Text)
-  }
-
-
-  fmt.Println("-----Testing userflair v2")
-
-  flairs2 := c.Flair.UserFlairV2("linux")
-
-  for _, flair := range flairs2 {
-    fmt.Println(flair.BackgroundColor)
-  }
-	
+	c.Flair.ClearFlairTemplate("astar0n", "USER_FLAIR")
 
 }

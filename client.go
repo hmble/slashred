@@ -191,6 +191,8 @@ func (c *Client) Get(endpoint string, opts Option) (res *http.Response, err erro
 
 }
 
+type PostData map[string]string
+
 func (c *Client) Post(endpoint string, postdata PostData) (*http.Response, error) {
 	data := url.Values{}
 

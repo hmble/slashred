@@ -50,8 +50,6 @@ func (l *ListingService) ListingByID(names []string) {
 
 }
 
-type PostData map[string]string
-
 // Should provide PostData with following keys
 /*
 kind(string):    one of (link, self, image, video, videogif)

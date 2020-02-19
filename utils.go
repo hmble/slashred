@@ -37,3 +37,4 @@ func SaveResponse(r io.Reader, filepath string) {
 
 	fmt.Printf("Wrote %d bytes at %s\n", written, filepath)
 }
+

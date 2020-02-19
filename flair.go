@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+
+	"github.com/google/uuid"
 )
 
 type FlairService service
@@ -33,7 +35,7 @@ func (f *FlairService) List(subreddit string, opts Option) {
 	resp, err := f.client.Get(path, opts)
 
 	if err != nil {
-		log.Fatal("Error in getting flairlist response")
+		log.Fatalf("Error in getting response for %s : %v", path, err)
 	}
 
 	defer resp.Body.Close()
@@ -48,7 +50,7 @@ func (f *FlairService) LinkFlair(subreddit string) []*Flair {
 	resp, err := f.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("Error in getting flairlist response")
+		log.Fatalf("Error in getting response for %s : %v", path, err)
 	}
 
 	defer resp.Body.Close()
@@ -69,7 +71,7 @@ func (f *FlairService) LinkFlairV2(subreddit string) []*Flairv2 {
 	resp, err := f.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("Error in getting flairlist response")
+		log.Fatalf("Error in getting response for %s : %v", path, err)
 	}
 
 	defer resp.Body.Close()
@@ -89,7 +91,7 @@ func (f *FlairService) UserFlair(subreddit string) []*Flair {
 	resp, err := f.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("Error in getting flairlist response")
+		log.Fatalf("Error in getting response for %s : %v", path, err)
 	}
 
 	defer resp.Body.Close()
@@ -110,7 +112,7 @@ func (f *FlairService) UserFlairV2(subreddit string) []*Flairv2 {
 	resp, err := f.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("Error in getting flairlist response")
+		log.Fatalf("Error in getting response for %s : %v", path, err)
 	}
 
 	defer resp.Body.Close()
@@ -124,3 +126,182 @@ func (f *FlairService) UserFlairV2(subreddit string) []*Flairv2 {
 
 }
 
+// Post method
+
+func (f *FlairService) ClearFlairTemplate(subreddit string, flairtype string) {
+	postdata := PostData{
+
+		"flair_type": flairtype,
+	}
+
+	path := fmt.Sprintf("/r/%s/api/clearflairtemplates", subreddit)
+	resp, err := f.client.Post(path, postdata)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for %s : %v", path, err)
+	}
+
+	defer resp.Body.Close()
+
+	SaveResponse(resp.Body, "test_data/clearflairtemplates.json")
+}
+
+func (f *FlairService) DeleteFlair(subreddit string, name string) {
+	postdata := PostData{
+		"name": name,
+	}
+	path := fmt.Sprintf("/r/%s/api/deleteflair", subreddit)
+
+	resp, err := f.client.Post(path, postdata)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for %s : %v", path, err)
+	}
+
+	defer resp.Body.Close()
+}
+
+// Flair.DeleteFlairTemplate
+func (f *FlairService) DeleteFlairTemplate(subreddit string, id string) {
+	postdata := PostData{
+		"flair_template_id": id,
+	}
+	path := fmt.Sprintf("/r/%s/api/deleteflairtemplate", subreddit)
+
+	resp, err := f.client.Post(path, postdata)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for %s : %v", path, err)
+	}
+
+	defer resp.Body.Close()
+}
+
+// Flair.ApiFlair
+
+func (f *FlairService) ApiFlair(subreddit string, postdata PostData) {
+
+	path := fmt.Sprintf("/r/%s/api/deleteflairtemplate", subreddit)
+
+	resp, err := f.client.Post(path, postdata)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for %s : %v", path, err)
+	}
+
+	defer resp.Body.Close()
+}
+
+// Flair.FlairConfig
+func (f *FlairService) FlairConfig(subreddit string, postdata PostData) {
+
+	path := fmt.Sprintf("/r/%s/api/flairconfig", subreddit)
+
+	resp, err := f.client.Post(path, postdata)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for %s : %v", path, err)
+	}
+
+	defer resp.Body.Close()
+}
+
+// Flair.FlairCsv
+func (f *FlairService) FlairCsv(subreddit, flaircsv string) {
+
+	path := fmt.Sprintf("/r/%s/api/flaircsv", subreddit)
+
+	postdata := PostData{
+		"flair_csv": flaircsv,
+	}
+	resp, err := f.client.Post(path, postdata)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for %s : %v", path, err)
+	}
+
+	defer resp.Body.Close()
+}
+
+// Flair.FlairTemplate
+func (f *FlairService) FlairTemplate(subreddit string) {
+	postdata := PostData{
+		"flair_template_id": uuid.New().String(),
+		"flair_type":        "USER_FLAIR",
+		"text":              "TestFlairByMod",
+		"text_editable":     "false",
+	}
+
+	path := fmt.Sprintf("/r/%s/api/flairtemplate", subreddit)
+	resp, err := f.client.Post(path, postdata)
+	if err != nil {
+		log.Fatalf("Error in getting response for %s : %v", path, err)
+	}
+
+	defer resp.Body.Close()
+
+	SaveResponse(resp.Body, "test_data/flairtemplate.json")
+
+}
+
+func (f *FlairService) FlairTemplateV2(subreddit, postdata PostData) {
+	path := fmt.Sprintf("/r/%s/api/flairtemplate_v2", subreddit)
+	resp, err := f.client.Post(path, postdata)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for %s : %v", path, err)
+	}
+
+	defer resp.Body.Close()
+
+}
+
+// Flair.FlairSelector
+func (f *FlairService) FlairSelector(subreddit, link, name string) {
+	postdata := PostData{
+		"link": link,
+		"name": name,
+	}
+
+	path := fmt.Sprintf("/r/%s/flairselector", subreddit)
+
+	resp, err := f.client.Post(path, postdata)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for %s : %v", path, err)
+	}
+	defer resp.Body.Close()
+
+}
+
+// Flair.SelectFlair
+func (f *FlairService) SelectFlair(subreddit string, postdata PostData) {
+
+	path := fmt.Sprintf("/r/%s/selectflair", subreddit)
+
+	resp, err := f.client.Post(path, postdata)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for %s : %v", path, err)
+	}
+	defer resp.Body.Close()
+
+}
+
+// Flair.FlairEnabled
+func (f *FlairService) FlairEnabled(subreddit, flairEnabled string) {
+
+	postdata := PostData{
+		"flair_enabled": flairEnabled,
+	}
+
+	path := fmt.Sprintf("/r/%s/selectflair", subreddit)
+
+	resp, err := f.client.Post(path, postdata)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for %s : %v", path, err)
+	}
+	defer resp.Body.Close()
+
+}
