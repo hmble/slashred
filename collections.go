@@ -1,6 +1,9 @@
 package slashred
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 // This is of scope modposts
 // don't know what that is.
@@ -13,7 +16,8 @@ import "log"
 type CollectionService service
 
 func (c *CollectionService) Collection() {
-	resp, err := c.client.Get(API_PATH["collection"], NoOptions)
+	path := "/api/v1/collections/collection"
+	resp, err := c.client.Get(path, NoOptions)
 
 	if err != nil {
 		log.Fatal("Error in getting collection response")
@@ -21,5 +25,19 @@ func (c *CollectionService) Collection() {
 
 	defer resp.Body.Close()
 
+	SaveResponse(resp.Body, "test_data/collection.json")
+}
+
+func (c *CollectionService) SubredditCollection(subreddit string) {
+	path := "/api/v1/collections/subreddit_collections"
+
+	fmt.Println(SubredditPrefix + subreddit)
+	resp, err := c.client.Get(path, Option{"sr_fullname": SubredditPrefix + subreddit})
+
+	if err != nil {
+		log.Fatal("Error in getting collections response")
+	}
+
+	defer resp.Body.Close()
 	SaveResponse(resp.Body, "test_data/collection.json")
 }

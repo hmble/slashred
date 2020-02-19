@@ -65,10 +65,11 @@ type Client struct {
 	common service // Reuse same struct instead of creating
 
 	Account    *AccountService
-	Comment    *CommentService
 	Collection *CollectionService
-	Listing    *ListingService
+	Comment    *CommentService
+	Flair      *FlairService
 	Link       *LinkService
+	Listing    *ListingService
 	Moderation *ModerationService
 	Modpost    *ModpostService
 	Report     *ReportService
@@ -102,6 +103,7 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 	c.Account = (*AccountService)(&c.common)
 	c.Comment = (*CommentService)(&c.common)
 	c.Collection = (*CollectionService)(&c.common)
+	c.Flair = (*FlairService)(&c.common)
 	c.Link = (*LinkService)(&c.common)
 	c.Listing = (*ListingService)(&c.common)
 	c.Moderation = (*ModerationService)(&c.common)
@@ -188,6 +190,8 @@ func (c *Client) Get(endpoint string, opts Option) (res *http.Response, err erro
 	return c.Http.Do(req)
 
 }
+
+type PostData map[string]string
 
 func (c *Client) Post(endpoint string, postdata PostData) (*http.Response, error) {
 	data := url.Values{}
