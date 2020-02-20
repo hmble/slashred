@@ -180,22 +180,22 @@
 
 
 ## New Modmail
-- [ ] POST   /api/mod/bulk_read                                ( modmail )
-- [ ] GET    /api/mod/conversations                            ( modmail )
-- [ ] POST   /api/mod/conversations                            ( modmail )
-- [ ] GET    /api/mod/conversations/:conversation_id           ( modmail )
-- [ ] POST   /api/mod/conversations/:conversation_id           ( modmail )
-- [ ] POST   /api/mod/conversations/:conversation_id/archive   ( modmail )
-- [ ] DELETE /api/mod/conversations/:conversation_id/highlight ( modmail )
-- [ ] POST   /api/mod/conversations/:conversation_id/highlight ( modmail )
-- [ ] POST   /api/mod/conversations/:conversation_id/mute      ( modmail )
-- [ ] POST   /api/mod/conversations/:conversation_id/unarchive ( modmail )
-- [ ] POST   /api/mod/conversations/:conversation_id/unmute    ( modmail )
-- [ ] GET    /api/mod/conversations/:conversation_id/user      ( modmail )
-- [ ] POST   /api/mod/conversations/read                       ( modmail )
-- [ ] GET    /api/mod/conversations/subreddits                 ( modmail )
-- [ ] POST   /api/mod/conversations/unread                     ( modmail )
-- [ ] GET    /api/mod/conversations/unread/count               ( modmail )
+- [x] POST   /api/mod/bulk_read                                ( modmail )
+- [x] GET    /api/mod/conversations                            ( modmail )
+- [x] POST   /api/mod/conversations                            ( modmail )
+- [x] GET    /api/mod/conversations/:conversation_id           ( modmail )
+- [x] POST   /api/mod/conversations/:conversation_id           ( modmail )
+- [x] POST   /api/mod/conversations/:conversation_id/archive   ( modmail )
+- [x] DELETE /api/mod/conversations/:conversation_id/highlight ( modmail )
+- [x] POST   /api/mod/conversations/:conversation_id/highlight ( modmail )
+- [x] POST   /api/mod/conversations/:conversation_id/mute      ( modmail )
+- [x] POST   /api/mod/conversations/:conversation_id/unarchive ( modmail 
+- [x] POST   /api/mod/conversations/:conversation_id/unmute    ( modmail )
+- [x] GET    /api/mod/conversations/:conversation_id/user      ( modmail )
+- [x] POST   /api/mod/conversations/read                       ( modmail )
+- [x] GET    /api/mod/conversations/subreddits                 ( modmail )
+- [x] POST   /api/mod/conversations/unread                     ( modmail )
+- [x] GET    /api/mod/conversations/unread/count               ( modmail )
 
 
 ## Multis
