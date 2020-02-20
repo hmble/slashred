@@ -398,21 +398,61 @@ func (s *SubredditService) Default(opts Option) {
 
 }
 
-func (s *SubredditService) Unfriend(subreddit, name, reltnType string) {
-	postdata := PostData{
-		"name": name,
-		"type": reltnType,
-	}
+// Subreddit.About
+func (s *SubredditService) AboutSubreddit(subreddit string) {
+	path := fmt.Sprintf("/r/%s/about", subreddit)
 
-	endpoint := fmt.Sprintf("/r/%s/%s", subreddit, API_PATH["unfriend"])
-	resp, err := s.client.Post(endpoint, postdata)
+	resp, err := s.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("Error in unfriend subreddit")
+		respError(path)
+	}
+	defer resp.Body.Close()
 
+}
+
+// Subreddit.EditAbout
+func (s *SubredditService) EditAbout(subreddit, created, location string) {
+	path := fmt.Sprintf("/r/%s/about/edit", subreddit)
+
+	opts := Option{
+		"created":  created,
+		"location": location,
+	}
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+	defer resp.Body.Close()
+
+}
+
+func (s *SubredditService) userwhere(path string, opts Option) {
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
+}
+
+// Subreddit.UserSearch
+
+func (s *SubredditService) UserSearch(opts Option) {
+	s.userwhere("users/search", opts)
+}
+
+// Subreddit.UserPopular
+
+func (s *SubredditService) UserPopular(opts Option) {
+	s.userwhere("users/popular", opts)
+}
+
+// Subreddit.UserNew
+
+func (s *SubredditService) UserNew(opts Option) {
+	s.userwhere("users/new", opts)
 }

@@ -248,27 +248,26 @@
 - [x] POST /api/subscribe                          ( subscribe )
 - [x] POST [/r/subreddit]/api/upload_sr_img        ( modconfig )
 - [x] GET  /api/v1/subreddit/post_requirements     ( submit )
-- [ ] GET  /r/subreddit/about                      ( read )
-- [ ] GET  /r/subreddit/about/edit                 ( modconfig )
-- [ ] GET  /r/subreddit/about/rules                ( read )
-- [ ] GET  /r/subreddit/about/traffic              ( modconfig )
-- [ ] GET  [/r/subreddit]/si
-- [ ] GET  [/r/subreddit]/sticky                   ( read )
-- [ ] GET  /subreddits/mine/where                  ( mysubreddits ) ( rss support )
-  - [ ] /subreddits/mine/subscriber
-  - [ ] /subreddits/mine/contributor
-  - [ ] /subreddits/mine/moderator
-  - [ ] /subreddits/mine/streams
-- [ ] GET /subreddits/search                       ( read ) ( rss support )
-- [ ] GET /subreddits/where                        ( read ) ( rss support )
-  - [ ] /subreddits/popular
-  - [ ] /subreddits/new
-  - [ ] /subreddits/gold
-  - [ ] /subreddits/default
-- [ ] GET /users/search                            ( read ) ( rss support ) 
-- [ ] GET /users/where                             ( read ) ( rss support ) 
-  - [ ] /users/popular
-  - [ ] /users/new
+- [x] GET  /r/subreddit/about                      ( read )
+- [x] GET  /r/subreddit/about/edit                 ( modconfig )
+- [x] GET  /r/subreddit/about/rules                ( read )
+- [x] GET  /r/subreddit/about/traffic              ( modconfig )
+- [x] GET  [/r/subreddit]/sticky                   ( read )
+- [x] GET  /subreddits/mine/where                  ( mysubreddits ) ( rss support )
+  - [x] /subreddits/mine/subscriber
+  - [x] /subreddits/mine/contributor
+  - [x] /subreddits/mine/moderator
+  - [x] /subreddits/mine/streams
+- [x] GET /subreddits/search                       ( read ) ( rss support )
+- [x] GET /subreddits/where                        ( read ) ( rss support )
+  - [x] /subreddits/popular
+  - [x] /subreddits/new
+  - [x] /subreddits/gold
+  - [x] /subreddits/default
+- [x] GET /users/search                            ( read ) ( rss support ) 
+- [x] GET /users/where                             ( read ) ( rss support ) 
+  - [x] /users/popular
+  - [x] /users/new
 
 
 ## Users
