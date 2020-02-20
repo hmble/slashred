@@ -442,17 +442,17 @@ func (s *SubredditService) userwhere(path string, opts Option) {
 // Subreddit.UserSearch
 
 func (s *SubredditService) UserSearch(opts Option) {
-	s.userwhere("users/search", opts)
+	s.userwhere("/users/search", opts)
 }
 
 // Subreddit.UserPopular
 
 func (s *SubredditService) UserPopular(opts Option) {
-	s.userwhere("users/popular", opts)
+	s.userwhere("/users/popular", opts)
 }
 
 // Subreddit.UserNew
 
 func (s *SubredditService) UserNew(opts Option) {
-	s.userwhere("users/new", opts)
+	s.userwhere("/users/new", opts)
 }
