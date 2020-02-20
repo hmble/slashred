@@ -68,6 +68,7 @@ type Client struct {
 	Collection *CollectionService
 	Comment    *CommentService
 	Flair      *FlairService
+	Gold       *GoldService
 	Link       *LinkService
 	Listing    *ListingService
 	Moderation *ModerationService
@@ -104,6 +105,7 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 	c.Comment = (*CommentService)(&c.common)
 	c.Collection = (*CollectionService)(&c.common)
 	c.Flair = (*FlairService)(&c.common)
+	c.Gold = (*GoldService)(&c.common)
 	c.Link = (*LinkService)(&c.common)
 	c.Listing = (*ListingService)(&c.common)
 	c.Moderation = (*ModerationService)(&c.common)

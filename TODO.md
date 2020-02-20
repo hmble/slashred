@@ -62,8 +62,8 @@
 - [x] GET   [/r/subreddit ]/api/user_flair_v2       ( flair )
 
 ## Reddit Gold
-- [ ] POST  /api/v1/gold/gild/fullname ( creddits ) 
-- [ ] POST  /api/v1/gold/give/username ( creddits ) 
+- [x] POST  /api/v1/gold/gild/fullname ( creddits ) 
+- [x] POST  /api/v1/gold/give/username ( creddits ) 
 
 
 ## Links & Comments
