@@ -158,7 +158,7 @@
 
 
 ## Moderation
-- [ ] GET [/r/subreddit]/about/log modlog              ( rss support )
+- [x] GET [/r/subreddit]/about/log modlog              ( rss support )
 - [x] GET [/r/subreddit]/about/location                ( read )
   - [x] [/r/subreddit]/about/reports
   - [x] [/r/subreddit]/about/spam
@@ -176,7 +176,7 @@
 - [x] POST /api/show_comment                           ( modposts )
 - [x] POST /api/unignore_reports                       ( modposts )
 - [x] POST /api/unmute_message_author                  ( modcontributors )
-- [ ] GET  [/r/subreddit ]/stylesheet                  ( modconfig )
+- [x] GET  [/r/subreddit ]/stylesheet                  ( modconfig )
 
 
 ## New Modmail
