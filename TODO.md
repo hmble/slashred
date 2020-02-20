@@ -137,19 +137,19 @@
 
 
 ## Private Messages
-- [ ] POST /api/block              ( privatemessages )
-- [ ] POST /api/collapse_message   ( privatemessages )
-- [ ] POST /api/compose            ( privatemessages )
-- [ ] POST /api/del_msg            ( privatemessages )
-- [ ] POST /api/read_all_messages  ( privatemessages )
-- [ ] POST /api/read_message       ( privatemessages )
-- [ ] POST /api/unblock_subreddit  ( privatemessages )
-- [ ] POST /api/uncollapse_message ( privatemessages )
-- [ ] POST /api/unread_message     ( privatemessages )
-- [ ] GET  /message/where          ( privatemessages ) ( rss support )
-  - [ ] /message/inbox
-  - [ ] /message/unread
-  - [ ] /message/sent
+- [x] POST /api/block              ( privatemessages )
+- [x] POST /api/collapse_message   ( privatemessages )
+- [x] POST /api/compose            ( privatemessages )
+- [x] POST /api/del_msg            ( privatemessages )
+- [x] POST /api/read_all_messages  ( privatemessages )
+- [x] POST /api/read_message       ( privatemessages )
+- [x] POST /api/unblock_subreddit  ( privatemessages )
+- [x] POST /api/uncollapse_message ( privatemessages )
+- [x] POST /api/unread_message     ( privatemessages )
+- [x] GET  /message/where          ( privatemessages ) ( rss support )
+  - [x] /message/inbox
+  - [x] /message/unread
+  - [x] /message/sent
 
 
 ## Misc

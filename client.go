@@ -71,6 +71,7 @@ type Client struct {
 	Gold       *GoldService
 	Link       *LinkService
 	Listing    *ListingService
+	Message    *MessageService
 	Moderation *ModerationService
 	Modmail    *ModmailService
 	Modpost    *ModpostService
@@ -109,6 +110,7 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 	c.Gold = (*GoldService)(&c.common)
 	c.Link = (*LinkService)(&c.common)
 	c.Listing = (*ListingService)(&c.common)
+	c.Message = (*MessageService)(&c.common)
 	c.Moderation = (*ModerationService)(&c.common)
 	c.Modmail = (*ModmailService)(&c.common)
 	c.Modpost = (*ModpostService)(&c.common)
