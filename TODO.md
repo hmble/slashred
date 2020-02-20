@@ -271,27 +271,27 @@
 
 
 ## Users
-- [ ] POST   /api/block_user                   ( account )
-- [ ] POST   [/r/subreddit]/api/friend         ( any )
-- [ ] POST   /api/report_user                  ( report )
-- [ ] POST   [/r/subreddit]/api/setpermissions ( modothers )
-- [ ] POST   [/r/subreddit]/api/unfriend       ( any )
-- [ ] GET    /api/user_data_by_account_ids     ( privatemessages )
-- [ ] GET    /api/username_available           ( any )
-- [ ] DELETE /api/v1/me/friends/username       ( subscribe )
-- [ ] GET    /api/v1/me/friends/username       ( mysubreddits )
-- [ ] PUT    /api/v1/me/friends/username       ( subscribe )
-- [ ] GET    /api/v1/user/username /trophies   ( read )
-- [ ] GET    /user/username/about              ( read )
-- [ ] GET    /user/username/where history      ( rss support )
-  - [ ] /user/username/overview
-  - [ ] /user/username/submitted
-  - [ ] /user/username/comments
-  - [ ] /user/username/upvoted
-  - [ ] /user/username/downvoted
-  - [ ] /user/username/hidden
-  - [ ] /user/username/saved
-  - [ ] /user/username/gilded
+- [x] POST   /api/block_user                   ( account )
+- [x] POST   [/r/subreddit]/api/friend         ( any )
+- [x] POST   /api/report_user                  ( report )
+- [x] POST   [/r/subreddit]/api/setpermissions ( modothers )
+- [x] POST   [/r/subreddit]/api/unfriend       ( any )
+- [x] GET    /api/user_data_by_account_ids     ( privatemessages )
+- [x] GET    /api/username_available           ( any )
+- [x] DELETE /api/v1/me/friends/username       ( subscribe )
+- [x] GET    /api/v1/me/friends/username       ( mysubreddits )
+- [x] PUT    /api/v1/me/friends/username       ( subscribe )
+- [x] GET    /api/v1/user/username /trophies   ( read )
+- [x] GET    /user/username/about              ( read )
+- [x] GET    /user/username/where history      ( rss support )
+  - [x] /user/username/overview
+  - [x] /user/username/submitted
+  - [x] /user/username/comments
+  - [x] /user/username/upvoted
+  - [x] /user/username/downvoted
+  - [x] /user/username/hidden
+  - [x] /user/username/saved
+  - [x] /user/username/gilded
 
 
 ## Widgets
