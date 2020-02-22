@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/url"
 	"strings"
 )
 
@@ -314,5 +315,51 @@ func (l *LinkService) StoreVisits(links []string) {
 	}
 
 	defer resp.Body.Close()
+
+}
+
+func (l *LinkService) GetSubmission(path string) Submission {
+	u, pathErr := url.Parse(path)
+
+	if pathErr != nil {
+		panic(pathErr)
+	}
+
+	pathArray := strings.Split(u.Path, "/")
+	subreddit := pathArray[2]
+	article := pathArray[4]
+
+	endpoint := fmt.Sprintf("/r/%s/comments/%s", subreddit, article)
+
+	opt := Option{
+
+		"sort": "best",
+	}
+	resp, err := l.client.Get(endpoint, opt)
+
+	if err != nil {
+		log.Fatal("Error in getting comments response")
+	}
+	defer resp.Body.Close()
+
+	PrintHeader(resp)
+
+	type listsubmission struct {
+		Kind string
+		Data struct {
+			Children []SubmissionData
+			Before   string
+			After    string
+		}
+	}
+
+	result := make([]listsubmission, 0)
+	er := json.NewDecoder(resp.Body).Decode(&result)
+
+	if er != nil {
+		panic(er)
+	}
+
+	return result[0].Data.Children[0].Data
 
 }
