@@ -2,6 +2,7 @@ package slashred
 
 import (
 	"fmt"
+
 	"log"
 	"strconv"
 	"strings"
@@ -272,26 +273,12 @@ If an image with the specified name already exists, it will be replaced. This
 does not affect the stylesheet immediately, but will take effect the next time
 the stylesheet is saved.
 */
-func (s *SubredditService) UploadSrImg(subreddit, file, header, imgType, name,
+func (s *SubredditService) UploadSrImg(subreddit, path, name,
 	uploadType string) {
-	postdata := PostData{
-		"file":        file,
-		"header":      header,
-		"img_type":    imgType,
-		"name":        name,
-		"upload_type": uploadType,
-	}
-
-	endpoint := fmt.Sprintf("/r/%s/%s", subreddit, API_PATH["upload_sr_img"])
-	resp, err := s.client.Post(endpoint, postdata)
-	if err != nil {
-		log.Fatal("Error in uploading image to subreddit")
-	}
-
-	defer resp.Body.Close()
-
-	PrintHeader(resp)
-
+	// TODO(hmble): implement icon update
+	// I tried different methods but reddit response is IMAGE_ERROR
+	// or html page of "You Broke Reddit" image
+	log.Fatal("Subreddit.UploadSrImg method is not implimented")
 }
 
 func (s *SubredditService) about(endpoint, subreddit string) {

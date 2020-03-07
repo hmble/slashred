@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -37,26 +36,8 @@ func main() {
 	u.UpdateToken(token)
 
 	//path :=https://www.reddit.com/r/redditdev/comments/avvl7u/nodejs_snoowrap_usage_find_number_of_comment/"
-	path := "https://www.reddit.com/r/redditdev/comments/avvl7u/nodejs_snoowrap_usage_find_number_of_comment/"
-
 	var c *slashred.Client = u.UserClient(token)
 
-	// commentsList := c.Comment.GetComments(path, "best", true)
-	// comments := c.Comment.List(commentsList, 8, "best", path, true)
+	c.Subreddit.UploadSrImg("astar0n", "assets/testlogo.png", "", "icon")
 
-	// count := 0
-
-	// for _, comment := range comments {
-	// 	if comment.Author != "[deleted]" {
-	// 		count++
-	// 	}
-	// 	fmt.Printf("Author : %s ==> Parent [%s], Id [%s]\n", comment.Author, comment.Parent, comment.Id)
-	// }
-
-	// fmt.Println(len(comments))
-	// fmt.Println("Count of non deleted comments ", count)
-
-	sub := c.Link.GetSubmission(path)
-
-	fmt.Println(sub.Selftext)
 }

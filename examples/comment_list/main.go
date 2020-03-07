@@ -40,7 +40,7 @@ func main() {
 	//commentsList := c.Comment.GetComments("golang", "ex18cx", "best")
 
 	path := "https://www.reddit.com/r/memes/comments/exkw6j/its_the_thought_that_counts/"
-	commentsList := c.Comment.GetComments(path, "best")
+	commentsList := c.Comment.GetComments(path, "best", false)
 
 	// Use Depth as 0 for top level comment
 	comments := c.Comment.List(commentsList, 1, "best", path, true)
