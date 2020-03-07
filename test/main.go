@@ -35,8 +35,9 @@ func main() {
 
 	u.UpdateToken(token)
 
+	//path :=https://www.reddit.com/r/redditdev/comments/avvl7u/nodejs_snoowrap_usage_find_number_of_comment/"
 	var c *slashred.Client = u.UserClient(token)
 
-	c.Flair.ClearFlairTemplate("astar0n", "USER_FLAIR")
+	c.Subreddit.UploadSrImg("astar0n", "assets/testlogo.png", "", "icon")
 
 }

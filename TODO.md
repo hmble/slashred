@@ -62,8 +62,8 @@
 - [x] GET   [/r/subreddit ]/api/user_flair_v2       ( flair )
 
 ## Reddit Gold
-- [ ] POST  /api/v1/gold/gild/fullname ( creddits ) 
-- [ ] POST  /api/v1/gold/give/username ( creddits ) 
+- [x] POST  /api/v1/gold/gild/fullname ( creddits ) 
+- [x] POST  /api/v1/gold/give/username ( creddits ) 
 
 
 ## Links & Comments
@@ -73,20 +73,20 @@
 - [x] POST /api/event_post_time      ( modposts )
 - [x] POST /api/follow_post          ( subscribe )
 - [x] POST /api/hide                 ( report )
-- [ ] GET  [/r/subreddit ]/api/info  ( read )
+- [x] GET  [/r/subreddit]/api/info   ( read )
 - [x] POST /api/lock                 ( modposts )
 - [x] POST /api/marknsfw             ( modposts )
 - [x] GET  /api/morechildren         ( read )
 - [x] POST /api/report               ( report )
 - [x] POST /api/report_award         ( report )
 - [x] POST /api/save                 ( save )
-- [ ] GET  /api/saved_categories     ( save )
+- [x] GET  /api/saved_categories     ( save )
 - [x] POST /api/sendreplies          ( edit )
 - [x] POST /api/set_contest_mode     ( modposts )
 - [x] POST /api/set_subreddit_sticky ( modposts )
 - [x] POST /api/set_suggested_sort   ( modposts )
 - [x] POST /api/spoiler              ( modposts )
-- [ ] POST /api/store_visits         ( save )
+- [x] POST /api/store_visits         ( save )
 - [x] POST /api/submit               ( submit )
 - [x] POST /api/unhide               ( report )
 - [x] POST /api/unlock               ( modposts )
@@ -137,19 +137,19 @@
 
 
 ## Private Messages
-- [ ] POST /api/block              ( privatemessages )
-- [ ] POST /api/collapse_message   ( privatemessages )
-- [ ] POST /api/compose            ( privatemessages )
-- [ ] POST /api/del_msg            ( privatemessages )
-- [ ] POST /api/read_all_messages  ( privatemessages )
-- [ ] POST /api/read_message       ( privatemessages )
-- [ ] POST /api/unblock_subreddit  ( privatemessages )
-- [ ] POST /api/uncollapse_message ( privatemessages )
-- [ ] POST /api/unread_message     ( privatemessages )
-- [ ] GET  /message/where          ( privatemessages ) ( rss support )
-  - [ ] /message/inbox
-  - [ ] /message/unread
-  - [ ] /message/sent
+- [x] POST /api/block              ( privatemessages )
+- [x] POST /api/collapse_message   ( privatemessages )
+- [x] POST /api/compose            ( privatemessages )
+- [x] POST /api/del_msg            ( privatemessages )
+- [x] POST /api/read_all_messages  ( privatemessages )
+- [x] POST /api/read_message       ( privatemessages )
+- [x] POST /api/unblock_subreddit  ( privatemessages )
+- [x] POST /api/uncollapse_message ( privatemessages )
+- [x] POST /api/unread_message     ( privatemessages )
+- [x] GET  /message/where          ( privatemessages ) ( rss support )
+  - [x] /message/inbox
+  - [x] /message/unread
+  - [x] /message/sent
 
 
 ## Misc
@@ -158,7 +158,7 @@
 
 
 ## Moderation
-- [ ] GET [/r/subreddit]/about/log modlog              ( rss support )
+- [x] GET [/r/subreddit]/about/log modlog              ( rss support )
 - [x] GET [/r/subreddit]/about/location                ( read )
   - [x] [/r/subreddit]/about/reports
   - [x] [/r/subreddit]/about/spam
@@ -176,26 +176,26 @@
 - [x] POST /api/show_comment                           ( modposts )
 - [x] POST /api/unignore_reports                       ( modposts )
 - [x] POST /api/unmute_message_author                  ( modcontributors )
-- [ ] GET  [/r/subreddit ]/stylesheet                  ( modconfig )
+- [x] GET  [/r/subreddit ]/stylesheet                  ( modconfig )
 
 
 ## New Modmail
-- [ ] POST   /api/mod/bulk_read                                ( modmail )
-- [ ] GET    /api/mod/conversations                            ( modmail )
-- [ ] POST   /api/mod/conversations                            ( modmail )
-- [ ] GET    /api/mod/conversations/:conversation_id           ( modmail )
-- [ ] POST   /api/mod/conversations/:conversation_id           ( modmail )
-- [ ] POST   /api/mod/conversations/:conversation_id/archive   ( modmail )
-- [ ] DELETE /api/mod/conversations/:conversation_id/highlight ( modmail )
-- [ ] POST   /api/mod/conversations/:conversation_id/highlight ( modmail )
-- [ ] POST   /api/mod/conversations/:conversation_id/mute      ( modmail )
-- [ ] POST   /api/mod/conversations/:conversation_id/unarchive ( modmail )
-- [ ] POST   /api/mod/conversations/:conversation_id/unmute    ( modmail )
-- [ ] GET    /api/mod/conversations/:conversation_id/user      ( modmail )
-- [ ] POST   /api/mod/conversations/read                       ( modmail )
-- [ ] GET    /api/mod/conversations/subreddits                 ( modmail )
-- [ ] POST   /api/mod/conversations/unread                     ( modmail )
-- [ ] GET    /api/mod/conversations/unread/count               ( modmail )
+- [x] POST   /api/mod/bulk_read                                ( modmail )
+- [x] GET    /api/mod/conversations                            ( modmail )
+- [x] POST   /api/mod/conversations                            ( modmail )
+- [x] GET    /api/mod/conversations/:conversation_id           ( modmail )
+- [x] POST   /api/mod/conversations/:conversation_id           ( modmail )
+- [x] POST   /api/mod/conversations/:conversation_id/archive   ( modmail )
+- [x] DELETE /api/mod/conversations/:conversation_id/highlight ( modmail )
+- [x] POST   /api/mod/conversations/:conversation_id/highlight ( modmail )
+- [x] POST   /api/mod/conversations/:conversation_id/mute      ( modmail )
+- [x] POST   /api/mod/conversations/:conversation_id/unarchive ( modmail 
+- [x] POST   /api/mod/conversations/:conversation_id/unmute    ( modmail )
+- [x] GET    /api/mod/conversations/:conversation_id/user      ( modmail )
+- [x] POST   /api/mod/conversations/read                       ( modmail )
+- [x] GET    /api/mod/conversations/subreddits                 ( modmail )
+- [x] POST   /api/mod/conversations/unread                     ( modmail )
+- [x] GET    /api/mod/conversations/unread/count               ( modmail )
 
 
 ## Multis
@@ -246,53 +246,52 @@
 - [x] GET  /api/subreddit_autocomplete_v2          ( read )
 - [x] POST [/r/subreddit]/api/subreddit_stylesheet ( modconfig )
 - [x] POST /api/subscribe                          ( subscribe )
-- [x] POST [/r/subreddit]/api/upload_sr_img        ( modconfig )
+- [ ] POST [/r/subreddit]/api/upload_sr_img        ( modconfig )
 - [x] GET  /api/v1/subreddit/post_requirements     ( submit )
-- [ ] GET  /r/subreddit/about                      ( read )
-- [ ] GET  /r/subreddit/about/edit                 ( modconfig )
-- [ ] GET  /r/subreddit/about/rules                ( read )
-- [ ] GET  /r/subreddit/about/traffic              ( modconfig )
-- [ ] GET  [/r/subreddit]/si
-- [ ] GET  [/r/subreddit]/sticky                   ( read )
-- [ ] GET  /subreddits/mine/where                  ( mysubreddits ) ( rss support )
-  - [ ] /subreddits/mine/subscriber
-  - [ ] /subreddits/mine/contributor
-  - [ ] /subreddits/mine/moderator
-  - [ ] /subreddits/mine/streams
-- [ ] GET /subreddits/search                       ( read ) ( rss support )
-- [ ] GET /subreddits/where                        ( read ) ( rss support )
-  - [ ] /subreddits/popular
-  - [ ] /subreddits/new
-  - [ ] /subreddits/gold
-  - [ ] /subreddits/default
-- [ ] GET /users/search                            ( read ) ( rss support ) 
-- [ ] GET /users/where                             ( read ) ( rss support ) 
-  - [ ] /users/popular
-  - [ ] /users/new
+- [x] GET  /r/subreddit/about                      ( read )
+- [x] GET  /r/subreddit/about/edit                 ( modconfig )
+- [x] GET  /r/subreddit/about/rules                ( read )
+- [x] GET  /r/subreddit/about/traffic              ( modconfig )
+- [x] GET  [/r/subreddit]/sticky                   ( read )
+- [x] GET  /subreddits/mine/where                  ( mysubreddits ) ( rss support )
+  - [x] /subreddits/mine/subscriber
+  - [x] /subreddits/mine/contributor
+  - [x] /subreddits/mine/moderator
+  - [x] /subreddits/mine/streams
+- [x] GET /subreddits/search                       ( read ) ( rss support )
+- [x] GET /subreddits/where                        ( read ) ( rss support )
+  - [x] /subreddits/popular
+  - [x] /subreddits/new
+  - [x] /subreddits/gold
+  - [x] /subreddits/default
+- [x] GET /users/search                            ( read ) ( rss support ) 
+- [x] GET /users/where                             ( read ) ( rss support ) 
+  - [x] /users/popular
+  - [x] /users/new
 
 
 ## Users
-- [ ] POST   /api/block_user                   ( account )
-- [ ] POST   [/r/subreddit]/api/friend         ( any )
-- [ ] POST   /api/report_user                  ( report )
-- [ ] POST   [/r/subreddit]/api/setpermissions ( modothers )
-- [ ] POST   [/r/subreddit]/api/unfriend       ( any )
-- [ ] GET    /api/user_data_by_account_ids     ( privatemessages )
-- [ ] GET    /api/username_available           ( any )
-- [ ] DELETE /api/v1/me/friends/username       ( subscribe )
-- [ ] GET    /api/v1/me/friends/username       ( mysubreddits )
-- [ ] PUT    /api/v1/me/friends/username       ( subscribe )
-- [ ] GET    /api/v1/user/username /trophies   ( read )
-- [ ] GET    /user/username/about              ( read )
-- [ ] GET    /user/username/where history      ( rss support )
-  - [ ] /user/username/overview
-  - [ ] /user/username/submitted
-  - [ ] /user/username/comments
-  - [ ] /user/username/upvoted
-  - [ ] /user/username/downvoted
-  - [ ] /user/username/hidden
-  - [ ] /user/username/saved
-  - [ ] /user/username/gilded
+- [x] POST   /api/block_user                   ( account )
+- [x] POST   [/r/subreddit]/api/friend         ( any )
+- [x] POST   /api/report_user                  ( report )
+- [x] POST   [/r/subreddit]/api/setpermissions ( modothers )
+- [x] POST   [/r/subreddit]/api/unfriend       ( any )
+- [x] GET    /api/user_data_by_account_ids     ( privatemessages )
+- [x] GET    /api/username_available           ( any )
+- [x] DELETE /api/v1/me/friends/username       ( subscribe )
+- [x] GET    /api/v1/me/friends/username       ( mysubreddits )
+- [x] PUT    /api/v1/me/friends/username       ( subscribe )
+- [x] GET    /api/v1/user/username /trophies   ( read )
+- [x] GET    /user/username/about              ( read )
+- [x] GET    /user/username/where history      ( rss support )
+  - [x] /user/username/overview
+  - [x] /user/username/submitted
+  - [x] /user/username/comments
+  - [x] /user/username/upvoted
+  - [x] /user/username/downvoted
+  - [x] /user/username/hidden
+  - [x] /user/username/saved
+  - [x] /user/username/gilded
 
 
 ## Widgets

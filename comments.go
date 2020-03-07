@@ -146,19 +146,12 @@ func (r *Replies) UnmarshalJSON(b []byte) error {
 
 	r.Data = data
 
-	// replyArray := make([]*Comment, 0)
-	// for _, reply := range data.Children {
-
-	// 	replyArray = append(replyArray, reply.Comment)
-
-	// }
-
-	//r.ReplyArray = replyArray
 	return nil
 
 }
 
 // Methods
+
 func (c *CommentService) GetComments(path, sort string, save bool) []CommentListing {
 	u, pathErr := url.Parse(path)
 
@@ -369,7 +362,17 @@ func (c *CommentService) ReplaceMore(more *More,
 }
 
 // Comment.List
+// NOTE : Sometimes the comment count may be different than shown on post
+// becuase of following stated reasons
+// * comments were removed by a moderator.
+// * comments were removed by the author.
+// * comments were removed by automoderator.
+// * comment contained material that triggered reddit's site-wide spam filter.
+// * commenter is shadowbanned.
+// https://www.reddit.com/r/help/comments/4chm6t/why_are_there_less_comments_than_are_stated/
+//
 func (c *CommentService) List(list []CommentListing, depth int, sort, path string, fetchMore bool) []*Comment {
+
 	comments := make([]*Comment, 0)
 
 	if depth > maxDepth {

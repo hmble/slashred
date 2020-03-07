@@ -9,22 +9,6 @@ import (
 
 type UsersService service
 
-func (u *UsersService) UsersSearch(opts Option) {
-	logmsg := "Error in searching users"
-
-	u.client.getlisting(API_PATH["users_search"], logmsg, opts)
-}
-func (u *UsersService) UsersPopular(opts Option) {
-	logmsg := "Error in getting popular users"
-
-	u.client.getlisting(API_PATH["users_popular"], logmsg, opts)
-}
-func (u *UsersService) UsersNew(opts Option) {
-	logmsg := "Error in getting new users"
-
-	u.client.getlisting(API_PATH["users_new"], logmsg, opts)
-}
-
 // accountID fullname
 func (u *UsersService) Block(accountID, name string) {
 	postdata := PostData{
@@ -43,21 +27,12 @@ func (u *UsersService) Block(accountID, name string) {
 	PrintHeader(resp)
 }
 
-func (u *UsersService) Friend(banContext, message, reason, duration, name, note, reltnType string) {
-	postdata := PostData{
-		"ban_context": banContext,
-		"ban_message": message,
-		"ban_reason":  reason,
-		"duration":    duration,
-		"name":        name,
-		"note":        note,
-		"type":        reltnType,
-	}
-
-	resp, err := u.client.Post(API_PATH["friend"], postdata)
+func (u *UsersService) Friend(subreddit string, postdata PostData) {
+	path := fmt.Sprintf("/r/%s/api/friend", subreddit)
+	resp, err := u.client.Post(path, postdata)
 
 	if err != nil {
-		log.Fatal("Error in getting friend")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
@@ -65,22 +40,35 @@ func (u *UsersService) Friend(banContext, message, reason, duration, name, note,
 	PrintHeader(resp)
 }
 
-// func (u *UsersService) ReportUser(details, reason, user string) {
-// 	postdata := PostData{
-// 		"details": details,
-// 		"reason":  reason,
-// 		"user":    user,
-// 	}
+func (u *UsersService) SetPermissions(subreddit string, postdata PostData) {
+	path := fmt.Sprintf("/r/%s/api/setpermissions", subreddit)
+	resp, err := u.client.Post(path, postdata)
 
-// 	resp, err := u.client.Post(API_PATH["report_user"], postdata)
+	if err != nil {
+		respError(path)
+	}
 
-// 	if err != nil {
-// 		log.Fatal("Error in reporting user")
-// 	}
+	defer resp.Body.Close()
 
-// 	defer resp.Body.Close()
-// 	PrintHeader(resp)
-// }
+	PrintHeader(resp)
+}
+
+func (u *UsersService) ReportUser(details, reason, user string) {
+	postdata := PostData{
+		"details": details,
+		"reason":  reason,
+		"user":    user,
+	}
+
+	resp, err := u.client.Post(API_PATH["report_user"], postdata)
+
+	if err != nil {
+		log.Fatal("Error in reporting user")
+	}
+
+	defer resp.Body.Close()
+	PrintHeader(resp)
+}
 
 func (u *UsersService) Unfriend(subreddit, id, name, reltnType string) {
 	postdata := PostData{
@@ -287,4 +275,3 @@ func (u *UsersService) Gilded(ownusername string, opts Option) {
 	logmsg := "Error in getting gilded response"
 	u.getuserwhere("gilded", ownusername, logmsg, opts)
 }
-

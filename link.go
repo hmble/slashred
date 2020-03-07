@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/url"
+	"strings"
 )
 
 // Need to look at this api schema afterwords for confirmations
@@ -260,4 +262,104 @@ func (l *LinkService) ClearVote(fullname string) {
 
 func (l *LinkService) Downvote(fullname string) {
 	l.client.vote("-1", fullname)
+}
+
+// Not tested
+// Link.ApiInfo
+
+func (l *LinkService) ApiInfo(subreddit, id, url string) {
+	path := fmt.Sprintf("/r/%s/api/info", subreddit)
+
+	opts := Option{
+		"id":  id,
+		"url": url,
+	}
+
+	resp, err := l.client.Get(path, opts)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for path : %s\n", path)
+	}
+
+	defer resp.Body.Close()
+}
+
+// Link.SavedCategories
+
+func (l *LinkService) SavedCategories() {
+	path := "/api/saved_categories"
+
+	resp, err := l.client.Get(path, NoOptions)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for path : %s\n", path)
+	}
+
+	defer resp.Body.Close()
+}
+
+// Requires Premium
+// Link.StoreVisits
+
+func (l *LinkService) StoreVisits(links []string) {
+	path := "/api/store_visits"
+
+	postdata := PostData{
+		"links": strings.Join(links, ","),
+	}
+
+	resp, err := l.client.Post(path, postdata)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for path : %s\n", path)
+	}
+
+	defer resp.Body.Close()
+
+}
+
+func (l *LinkService) GetSubmission(path string) Submission {
+	u, pathErr := url.Parse(path)
+
+	if pathErr != nil {
+		panic(pathErr)
+	}
+
+	pathArray := strings.Split(u.Path, "/")
+	subreddit := pathArray[2]
+	article := pathArray[4]
+
+	endpoint := fmt.Sprintf("/r/%s/comments/%s", subreddit, article)
+
+	opt := Option{
+
+		"sort": "best",
+	}
+	resp, err := l.client.Get(endpoint, opt)
+
+	if err != nil {
+		log.Fatal("Error in getting comments response")
+	}
+	defer resp.Body.Close()
+
+	PrintHeader(resp)
+
+	type listsubmission struct {
+		Kind string
+		Data struct {
+			Children []SubmissionData
+			Before   string
+			After    string
+		}
+	}
+
+	result := make([]listsubmission, 0)
+	er := json.NewDecoder(resp.Body).Decode(&result)
+
+	if er != nil {
+		panic(er)
+	}
+
+	return result[0].Data.Children[0].Data
+
 }

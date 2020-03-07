@@ -8,6 +8,9 @@ import (
 	"os"
 )
 
+func respError(path string) {
+	log.Fatalf("Error in getting reponse from path : %s\n", path)
+}
 func PrintHeader(resp *http.Response) {
 	fmt.Println(resp.Status)
 
@@ -37,4 +40,3 @@ func SaveResponse(r io.Reader, filepath string) {
 
 	fmt.Printf("Wrote %d bytes at %s\n", written, filepath)
 }
-

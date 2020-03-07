@@ -68,9 +68,12 @@ type Client struct {
 	Collection *CollectionService
 	Comment    *CommentService
 	Flair      *FlairService
+	Gold       *GoldService
 	Link       *LinkService
 	Listing    *ListingService
+	Message    *MessageService
 	Moderation *ModerationService
+	Modmail    *ModmailService
 	Modpost    *ModpostService
 	Report     *ReportService
 	Subreddit  *SubredditService
@@ -104,9 +107,12 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 	c.Comment = (*CommentService)(&c.common)
 	c.Collection = (*CollectionService)(&c.common)
 	c.Flair = (*FlairService)(&c.common)
+	c.Gold = (*GoldService)(&c.common)
 	c.Link = (*LinkService)(&c.common)
 	c.Listing = (*ListingService)(&c.common)
+	c.Message = (*MessageService)(&c.common)
 	c.Moderation = (*ModerationService)(&c.common)
+	c.Modmail = (*ModmailService)(&c.common)
 	c.Modpost = (*ModpostService)(&c.common)
 	c.Report = (*ReportService)(&c.common)
 	c.Subreddit = (*SubredditService)(&c.common)
@@ -192,6 +198,8 @@ func (c *Client) Get(endpoint string, opts Option) (res *http.Response, err erro
 }
 
 type PostData map[string]string
+
+var NoPostdata = PostData{}
 
 func (c *Client) Post(endpoint string, postdata PostData) (*http.Response, error) {
 	data := url.Values{}

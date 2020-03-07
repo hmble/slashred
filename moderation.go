@@ -7,6 +7,20 @@ import (
 
 type ModerationService service
 
+// Moderation.Log
+func (m *ModerationService) Log(subreddit string, opts Option) {
+	path := fmt.Sprintf("/r/%s/about/log", subreddit)
+
+	resp, err := m.client.Get(path, opts)
+
+	if err != nil {
+		log.Fatalf("Error in getting response for path %s\n", path)
+
+	}
+
+	defer resp.Body.Close()
+}
+
 // Requires the "posts" moderator permission for the subreddit
 func (m *ModerationService) aboutLocation(subreddit string, opts Option) {
 	endpoint := fmt.Sprintf("/r/%s%s", subreddit, API_PATH["about_edited"])
@@ -165,8 +179,8 @@ func (m *ModerationService) ShowComment(fullname string) {
 
 // Redirect to subreddit stylesheet
 func (m *ModerationService) Stylesheet(subreddit string) {
-	endpoint := fmt.Sprintf("r/%s%s", subreddit, API_PATH["stylesheet"])
-	resp, err := m.client.Get(endpoint, NoOptions)
+	path := fmt.Sprintf("/r/%s/stylesheet", subreddit)
+	resp, err := m.client.Get(path, NoOptions)
 
 	if err != nil {
 		log.Fatal("Error in getting subreddit stylesheet")
