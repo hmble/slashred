@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"net/url"
 	"strings"
 )
 
@@ -13,7 +12,12 @@ const (
 	maxDepth int = 20
 )
 
-type CommentService service
+type CommentService struct {
+	client *Client
+	// To reuse path varaible accross vaious methods like continueThread and
+	// GetComments
+	path string
+}
 type CommentListing struct {
 	Kind    string
 	Data    json.RawMessage `json:"data"`
@@ -71,7 +75,6 @@ type Comment struct {
 
 type Replies struct {
 	Data ReplyData `json:"data"`
-	//	ReplyArray []*Comment
 }
 
 type ReplyData struct {
@@ -150,174 +153,83 @@ func (r *Replies) UnmarshalJSON(b []byte) error {
 
 }
 
-// Methods
+// Get comments for a subreddit
+func (c *CommentService) GetComments(path, commentId string) []*Comment {
+	// [/r/subreddit]/comments/article
+	c.path = path
+	split := strings.Split(path[23:], "/")
+	endpoint := fmt.Sprintf("/%s", strings.Join(split[0:4], "/"))
 
-func (c *CommentService) GetComments(path, sort string, save bool) []CommentListing {
-	u, pathErr := url.Parse(path)
-
-	if pathErr != nil {
-		panic(pathErr)
+	options := Option{
+		"depth": "8",
+		"limit": "100",
+		"sort":  "best",
+		// Reusing get comments to get continue thread
+		"comment": commentId,
 	}
 
-	pathArray := strings.Split(u.Path, "/")
-	subreddit := pathArray[2]
-	article := pathArray[4]
-
-	endpoint := fmt.Sprintf("/r/%s/comments/%s", subreddit, article)
-
-	opt := Option{
-		"limit":   "100",
-		"context": "100",
-		"sort":    sort,
-		"depth":   "8",
-	}
-	resp, err := c.client.Get(endpoint, opt)
+	resp, err := c.client.Get(endpoint, options)
 
 	if err != nil {
-		log.Fatal("Error in getting comments response")
+		respError(endpoint)
 	}
+
 	defer resp.Body.Close()
 
 	PrintHeader(resp)
 
-	if save {
-		SaveResponse(resp.Body, "test_data/com3.json")
-
-		defer func() {
-			if r := recover(); r != nil {
-				fmt.Println("Recoverd from panic due to saveresponse")
-				fmt.Println("http.Response.Body is of type io.ReadCloser and can be read only once. Response is saved now.\n Please rerun this method again with save as false")
-			}
-		}()
-	}
-	c.client.savelimit(resp)
 	type listComment struct {
 		Kind string      `json:"kind"`
 		Data CommentData `json:"data"`
 	}
-
 	// https://coderwall.com/p/4c2zig/decode-top-level-json-array-into-a-slice-of-structs-in-golang
 	result := make([]listComment, 0)
-	er := json.NewDecoder(resp.Body).Decode(&result)
 
-	if er != nil {
-		panic(er)
+	if err = json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		log.Fatal("Error in decoding json response")
 	}
-
-	commentListing := result[1].Data.Children
-
-	return commentListing
-}
-
-// Comment.GetCommentsId
-func (c *CommentService) GetCommentsId(path, comment, sort string, depth int) []*Comment {
-	u, pathErr := url.Parse(path)
-
-	if pathErr != nil {
-		panic(pathErr)
-	}
-
-	pathArray := strings.Split(u.Path, "/")
-
-	subreddit := pathArray[2]
-	article := pathArray[4]
-
-	endpoint := fmt.Sprintf("/r/%s/comments/%s", subreddit, article)
-
-	options := Option{
-		"comment": comment,
-		"depth":   "8",
-		"limit":   "100",
-		"sort":    sort,
-		"context": "100",
-	}
-	resp, err := c.client.Get(endpoint, options)
-
-	if err != nil {
-		log.Fatal("Error in getting comments response")
-	}
-	defer resp.Body.Close()
-
-	//SaveResponse(resp.Body, "test_data/commeny_by_id.json")
-	//PrintHeader(resp)
-
-	c.client.savelimit(resp)
-	type ListSub struct {
-		Kind string      `json:"kind"`
-		Data CommentData `json:"data"`
-	}
-
-	result := make([]ListSub, 0)
-	er := json.NewDecoder(resp.Body).Decode(&result)
-
-	if er != nil {
-		panic(er)
-	}
-
-	commentArray := result[1].Data.Children
 
 	comments := make([]*Comment, 0)
-	for _, comment := range commentArray {
+	commentListing := result[1].Data.Children
+	for _, item := range commentListing {
 
-		if comment.Comment != nil {
-			comments = append(comments, comment.Comment)
+		if item.Comment != nil {
+			comments = append(comments, item.Comment)
 
-			replies := c.getAllReplies(depth, comment.Comment, sort, path)
+			comments = append(comments, c.getReplies(item.Comment, 8)...)
 
-			comments = append(comments, replies...)
+		} else {
+
+			comments = append(comments, c.getMore(item.More, split[3])...)
+
 		}
+
 	}
 
 	return comments
 
 }
-func (c *CommentService) PostComment(thingId, text string) {
-	c.client.edit(API_PATH["comment"], thingId, text)
-}
 
-// Test Remained
-// state is bool
-// Comment.SendReplies
-func (c *CommentService) SendReplies(fullname, state string) {
+func (c *CommentService) getMore(more *More, linkId string) []*Comment {
+
+	comments := make([]*Comment, 0)
+	endpoint := "/api/morechildren"
+
 	postdata := PostData{
-		"id":    fullname,
-		"state": state,
-	}
-	resp, err := c.client.Post(API_PATH["sendreplies"], postdata)
-
-	if err != nil {
-		log.Fatal("Error in sendreplies")
+		"children":       strings.Join(more.Children, ","),
+		"depth":          "100",
+		"limit_children": "false",
+		"link_id":        linkId,
 	}
 
-	defer resp.Body.Close()
-}
+	resp, err := c.client.Post(endpoint, postdata)
 
-// TODO(hmble): Need to add this More method to Comments and More Response
-
-// Comment.ReplaceMore
-func (c *CommentService) ReplaceMore(more *More,
-	linkId, sort, path string) []*Comment {
-	tempdata := PostData{}
-
-	tempdata["children"] = strings.Join(more.Children, ",")
-	tempdata["link_id"] = linkId
-	// false option gives more object in response after ReplaceMore method
-	// true option limits that more object on parent node
-	tempdata["limit_children"] = "false"
-	tempdata["depth"] = "8"
-	tempdata["sort"] = sort
-
-	resp, err := c.client.Post(API_PATH["morechildren"], tempdata)
-
-	c.client.savelimit(resp)
 	if err != nil {
-		log.Fatal("Error in getting more response")
-
+		respError(endpoint)
 	}
 	defer resp.Body.Close()
 
-	//SaveResponse(resp.Body, "test_data/MemesResponse.json")
-	type moreReplies struct {
+	var moreReplies struct {
 		Json struct {
 			Data struct {
 				Things []CommentListing `json:"things"`
@@ -325,117 +237,61 @@ func (c *CommentService) ReplaceMore(more *More,
 		} `json:"json"`
 	}
 
-	var response moreReplies
-	moreErr := json.NewDecoder(resp.Body).Decode(&response)
-
-	if moreErr != nil {
-		log.Fatal("Error in getting more replies response")
+	if err := json.NewDecoder(resp.Body).Decode(&moreReplies); err != nil {
+		log.Fatal("Error in getting more response")
 	}
 
-	comments := response.Json.Data.Things
+	commentsArr := moreReplies.Json.Data.Things
 
-	commentsArray := make([]*Comment, 0)
-	for _, comment := range comments {
-
+	for _, comment := range commentsArr {
 		if comment.Comment != nil {
-			commentsArray = append(commentsArray, comment.Comment)
-
+			comments = append(comments, comment.Comment)
 		} else {
-
 			if comment.More.Count != 0 {
-				moreArray := c.ReplaceMore(comment.More, linkId, sort, path)
-				commentsArray = append(commentsArray, moreArray...)
+				comments = append(comments, c.getMore(comment.More, linkId)...)
+
 			} else {
-				// count 0 case will go here
-				continueParent := strings.Split(comment.More.ParentID, "_")
-
-				contComments := c.GetCommentsId(path, continueParent[1], sort, 8)
-
-				commentsArray = append(commentsArray, contComments...)
+				// To get continue thread we need to get comment by id.
+				comments = append(comments, c.continueThread(comment.More.ID)...)
 			}
-
 		}
+
 	}
 
-	return commentsArray
+	return comments
+}
+
+// To use with continue thread.
+func (c *CommentService) continueThread(comment string) []*Comment {
+
+	return c.GetComments(c.path, comment)
 
 }
 
-// Comment.List
-// NOTE : Sometimes the comment count may be different than shown on post
-// becuase of following stated reasons
-// * comments were removed by a moderator.
-// * comments were removed by the author.
-// * comments were removed by automoderator.
-// * comment contained material that triggered reddit's site-wide spam filter.
-// * commenter is shadowbanned.
-// https://www.reddit.com/r/help/comments/4chm6t/why_are_there_less_comments_than_are_stated/
-//
-func (c *CommentService) List(list []CommentListing, depth int, sort, path string, fetchMore bool) []*Comment {
+// here comment is Parent whose replies we are getting
+func (c *CommentService) getReplies(comment *Comment, depth int) []*Comment {
 
 	comments := make([]*Comment, 0)
+	replies := comment.Replies.Data.Children
 
-	if depth > maxDepth {
-		log.Fatal("Depth should be less than 8")
-	}
+	if depth >= 0 {
+		for _, reply := range replies {
 
-	var linkId string
-	for _, item := range list {
+			if reply.Comment != nil {
+				comments = append(comments, reply.Comment)
 
-		if item.Comment != nil {
-			linkId = item.Comment.LinkID
-			comments = append(comments, item.Comment)
+				comments = append(comments, c.getReplies(reply.Comment, depth-1)...)
 
-			temp := c.getAllReplies(depth-1, item.Comment, sort, path)
+			} else {
+				// getmore comments
 
-			comments = append(comments, temp...)
-		}
-		if fetchMore {
-			if item.More != nil {
-
-				moreComment := c.ReplaceMore(item.More, linkId, sort, path)
-
-				comments = append(comments, moreComment...)
-
+				comments = append(comments, c.getMore(reply.More, comment.LinkID)...)
+				//c.getMore(reply.More, comment.LinkID)
+				//fmt.Println("from nested reply ", reply.More.Count)
 			}
 		}
 	}
 
 	return comments
 
-}
-
-func (c *CommentService) getAllReplies(depth int, comment *Comment, sort, path string) []*Comment {
-	moreReplies := make([]*Comment, 0)
-
-	replies := comment.Replies.Data.Children
-	if depth >= 0 {
-		for _, reply := range replies {
-
-			if reply.Comment != nil {
-				moreReplies = append(moreReplies, reply.Comment)
-				tempReply := c.getAllReplies(depth-1, reply.Comment, sort, path)
-
-				moreReplies = append(moreReplies, tempReply...)
-			} else {
-				fetchedMore := c.ReplaceMore(reply.More, comment.LinkID, sort, path)
-
-				for _, item := range fetchedMore {
-					moreReplies = append(moreReplies, item)
-
-					itemReplies := c.getAllReplies(depth-1, item, sort, path)
-
-					moreReplies = append(moreReplies, itemReplies...)
-				}
-			}
-		}
-
-	}
-
-	return moreReplies
-}
-
-func (c *CommentService) Replies(depth int, comment *Comment, sort, path string) []*Comment {
-
-	return c.getAllReplies(depth, comment, sort, path)
 }

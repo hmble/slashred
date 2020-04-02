@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"golang.org/x/oauth2"
-	//_ "github.com/joho/godotenv/autoload"
 )
 
 var Scopes = []string{
@@ -104,7 +103,9 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 
 	c.common.client = c
 	c.Account = (*AccountService)(&c.common)
-	c.Comment = (*CommentService)(&c.common)
+	// here we can't use service struct because we included `path` member in
+	// CommentService
+	c.Comment = &CommentService{client: c}
 	c.Collection = (*CollectionService)(&c.common)
 	c.Flair = (*FlairService)(&c.common)
 	c.Gold = (*GoldService)(&c.common)

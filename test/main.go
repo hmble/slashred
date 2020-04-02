@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -35,9 +36,26 @@ func main() {
 
 	u.UpdateToken(token)
 
-	//path :=https://www.reddit.com/r/redditdev/comments/avvl7u/nodejs_snoowrap_usage_find_number_of_comment/"
-	var c *slashred.Client = u.UserClient(token)
+	c := u.UserClient(token)
 
-	c.Subreddit.UploadSrImg("astar0n", "assets/testlogo.png", "", "icon")
+	// FIXME(hmble): This link is archived a good example for test
+	// but somehow I couldn't get all comments from this thread. Maybe there is
+	// some edge cases that I need to consider. As of now IMO issue is getting
+	// parent article's more children array.
+	path := "https://www.reddit.com/r/learnprogramming/comments/bs6466/why_study_programming_when_you_can_just_play_an/"
+	comments := c.Comment.GetComments(path, "")
+
+	for _, comment := range comments {
+		fmt.Println("-----------------  ", comment.Author)
+		if len(comment.Body) < 50 {
+			fmt.Println(comment.Body)
+		} else {
+			fmt.Println(comment.Body[:50])
+		}
+
+		fmt.Println("-----------------")
+	}
+
+	fmt.Printf("Comments length is %d\n", len(comments))
 
 }
