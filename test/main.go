@@ -38,10 +38,6 @@ func main() {
 
 	c := u.UserClient(token)
 
-	// FIXME(hmble): This link is archived a good example for test
-	// but somehow I couldn't get all comments from this thread. Maybe there is
-	// some edge cases that I need to consider. As of now IMO issue is getting
-	// parent article's more children array.
 	path := "https://www.reddit.com/r/learnprogramming/comments/bs6466/why_study_programming_when_you_can_just_play_an/"
 	comments := c.Comment.GetComments(path, "")
 
