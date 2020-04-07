@@ -200,7 +200,7 @@ func (c *CommentService) GetComments(path, commentId string) []*Comment {
 
 		} else {
 
-			comments = append(comments, c.getMore(item.More, "t3_"+split[3])...)
+			comments = append(comments, c.getMore(item.More, split[3])...)
 
 		}
 
@@ -210,7 +210,6 @@ func (c *CommentService) GetComments(path, commentId string) []*Comment {
 
 }
 
-// here linkId should be fullname of any link or comment
 func (c *CommentService) getMore(more *More, linkId string) []*Comment {
 
 	comments := make([]*Comment, 0)
