@@ -1,6 +1,7 @@
 package slashred
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -234,6 +235,7 @@ func (u *UsersService) getuserwhere(where, username, logmsg string, opts Option)
 
 	defer resp.Body.Close()
 	PrintHeader(resp)
+	//SaveResponse(resp.Body, "test_data/upvoted.json")
 
 }
 
@@ -252,9 +254,26 @@ func (u *UsersService) Comments(ownusername string, opts Option) {
 	u.getuserwhere("comments", ownusername, logmsg, opts)
 }
 
-func (u *UsersService) Upvoted(ownusername string, opts Option) {
-	logmsg := "Error in getting upvoted response"
-	u.getuserwhere("upvoted", ownusername, logmsg, opts)
+func (u *UsersService) Upvoted(ownusername string, opts Option) []SubmissionData {
+	endpoint := fmt.Sprintf("/user/%s/%s", ownusername, "upvoted")
+
+	resp, err := u.client.Get(endpoint, opts)
+
+	if err != nil {
+		respError(endpoint)
+	}
+
+	defer resp.Body.Close()
+	PrintHeader(resp)
+	// listSub is defined in link.go
+	er := json.NewDecoder(resp.Body).Decode(&listSub)
+
+	if er != nil {
+		log.Fatal(er)
+	}
+
+	return listSub.Data.Children
+
 }
 
 func (u *UsersService) Downvoted(ownusername string, opts Option) {
