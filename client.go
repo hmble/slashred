@@ -192,8 +192,6 @@ func (c *Client) Get(endpoint string, opts Option) (res *http.Response, err erro
 	str := fmt.Sprintf("bearer %s", c.Token.AccessToken)
 	req.Header.Add("Authorization", str)
 
-	fmt.Println(req.Header)
-
 	return c.Http.Do(req)
 
 }
