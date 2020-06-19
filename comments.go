@@ -14,7 +14,7 @@ const (
 
 type CommentService struct {
 	client *Client
-	// To reuse path varaible accross vaious methods like continueThread and
+	// To reuse path varaible accross various methods like continueThread and
 	// GetComments
 	path string
 }
@@ -153,7 +153,8 @@ func (r *Replies) UnmarshalJSON(b []byte) error {
 
 }
 
-// Get comments for a subreddit
+// Get comments for a subreddit post
+// Intially here commentId for whole post should be empty : ""
 func (c *CommentService) GetComments(path, commentId string) []*Comment {
 	// [/r/subreddit]/comments/article
 	c.path = path
@@ -165,6 +166,8 @@ func (c *CommentService) GetComments(path, commentId string) []*Comment {
 		"limit": "100",
 		"sort":  "best",
 		// Reusing get comments to get continue thread
+		// here we use CommentId to reuse the GetComments method for continue-thread
+		// case
 		"comment": commentId,
 	}
 
@@ -200,6 +203,7 @@ func (c *CommentService) GetComments(path, commentId string) []*Comment {
 
 		} else {
 
+			// Fetch more
 			comments = append(comments, c.getMore(item.More, "t3_"+split[3])...)
 
 		}
