@@ -279,6 +279,7 @@ func (u *UsersService) Upvoted(ownusername string, opts Option) []SubmissionData
 func (u *UsersService) Downvoted(ownusername string, opts Option) {
 	logmsg := "Error in getting downvoted response"
 	u.getuserwhere("downvoted", ownusername, logmsg, opts)
+
 }
 
 func (u *UsersService) Hidden(ownusername string, opts Option) {

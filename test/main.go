@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -38,20 +37,6 @@ func main() {
 
 	c := u.UserClient(token)
 
-	path := "https://www.reddit.com/r/learnprogramming/comments/bs6466/why_study_programming_when_you_can_just_play_an/"
-	comments := c.Comment.GetComments(path, "")
-
-	for _, comment := range comments {
-		fmt.Println("-----------------  ", comment.Author)
-		if len(comment.Body) < 50 {
-			fmt.Println(comment.Body)
-		} else {
-			fmt.Println(comment.Body[:50])
-		}
-
-		fmt.Println("-----------------")
-	}
-
-	fmt.Printf("Comments length is %d\n", len(comments))
+	c.Subreddit.UploadSrImg("astar0n", "./chemistry.png", "icon")
 
 }

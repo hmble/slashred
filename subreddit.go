@@ -1,6 +1,7 @@
 package slashred
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"log"
@@ -242,6 +243,7 @@ func (s *SubredditService) Subscribe(action, skipDefaults string, sr_names []str
 	defer resp.Body.Close()
 
 	PrintHeader(resp)
+
 }
 
 /*
@@ -272,13 +274,47 @@ consumed.
 If an image with the specified name already exists, it will be replaced. This
 does not affect the stylesheet immediately, but will take effect the next time
 the stylesheet is saved.
+
+
+Image should of size 256 x 256
 */
-func (s *SubredditService) UploadSrImg(subreddit, path, name,
+func (s *SubredditService) UploadSrImg(subreddit, path,
 	uploadType string) {
 	// TODO(hmble): implement icon update
 	// I tried different methods but reddit response is IMAGE_ERROR
 	// or html page of "You Broke Reddit" image
-	log.Fatal("Subreddit.UploadSrImg method is not implimented")
+
+	endpoint := fmt.Sprintf("/r/%s/api/upload_sr_img", subreddit)
+
+	resp, err := s.client.PostImageUpload(endpoint, PostData{
+		"upload_type": uploadType,
+		"img_type":    "png",
+	}, path)
+
+	if err != nil {
+		log.Fatal("Error in getting UplaodImg response")
+	}
+	defer resp.Body.Close()
+
+	//PrintHeader(resp)
+
+	var image_response struct {
+		Errors       []string `json:"errors"`
+		Img_src      string   `json:"img_src"`
+		Error_values string   `json:"error_values"`
+	}
+	// buf := new(bytes.Buffer)
+	// buf.ReadFrom(resp.Body)
+	// newStr := buf.String()
+
+	// fmt.Printf(newStr)
+
+	if err := json.NewDecoder(resp.Body).Decode(&image_response); err != nil {
+		log.Fatal("Error in reading response body response ", err)
+	}
+
+	fmt.Println(image_response)
+
 }
 
 func (s *SubredditService) about(endpoint, subreddit string) {
@@ -293,7 +329,6 @@ func (s *SubredditService) about(endpoint, subreddit string) {
 
 	PrintHeader(resp)
 	//	SaveResponse(resp.Body, "test_data/astar0n_about.json")
-
 }
 
 func (s *SubredditService) About(subreddit string) {

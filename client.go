@@ -3,9 +3,12 @@ package slashred
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 
@@ -224,6 +227,57 @@ func (c *Client) Post(endpoint string, postdata PostData) (*http.Response, error
 
 }
 
+// Reference
+// https://astaxie.gitbooks.io/build-web-application-with-golang/content/en/04.5.html
+func (c *Client) PostImageUpload(endpoint string, postdata PostData, filename string) (*http.Response, error) {
+
+	fullurl := BaseAuthURL + endpoint
+
+	bodyBuf := &bytes.Buffer{}
+	bodyWriter := multipart.NewWriter(bodyBuf)
+
+	for k, v := range postdata {
+		bodyWriter.WriteField(k, v)
+	}
+
+	fileWriter, err := bodyWriter.CreateFormFile("file", filename)
+
+	if err != nil {
+		log.Fatal("error in writing to buffer from fileWriter:  ", err)
+
+		return nil, err
+
+	}
+
+	fh, err := os.Open(filename)
+
+	if err != nil {
+		log.Fatal("Error in openeing file ", err)
+	}
+	defer fh.Close()
+
+	_, err = io.Copy(fileWriter, fh)
+	if err != nil {
+		return nil, err
+	}
+
+	contentType := bodyWriter.FormDataContentType()
+	bodyWriter.Close()
+	body := bytes.NewBufferString(bodyBuf.String())
+	req, err := http.NewRequest(http.MethodPost, fullurl, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("User-Agent", c.Useragent)
+	req.Header.Add("Content-Type", contentType)
+	str := fmt.Sprintf("bearer %s", c.Token.AccessToken)
+	req.Header.Add("Authorization", str)
+
+	return c.Http.Do(req)
+
+}
 func (c *Client) Delete(endpoint string, opts Option) (res *http.Response, err error) {
 
 	temp := BaseAuthURL + endpoint
