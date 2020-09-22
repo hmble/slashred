@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -38,10 +37,5 @@ func main() {
 
 	c := u.UserClient(token)
 
-	multis := c.Multis.Mine()
-
-	for _, multi := range multis {
-		fmt.Printf("Name: %s \tDesicription: %s\n", multi.Name, multi.DescriptionMd)
-	}
-
+	c.Users.AddFriend("testastar0n", "")
 }

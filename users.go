@@ -120,10 +120,7 @@ func (u *UsersService) UsernameAvailable(username string) {
 	defer resp.Body.Close()
 
 	PrintHeader(resp)
-
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	fmt.Println(string(body))
+	printBytes(resp.Body)
 }
 
 func (u *UsersService) DeleteFriend(ownusername, id string) {
@@ -162,27 +159,32 @@ func (u *UsersService) FriendInfo(ownusername, id string) {
 	PrintHeader(resp)
 }
 
-func (u *UsersService) AddFriend(ownusername, name string) {
+// In order to use note authenticated user should have Reddit Gold.
+func (u *UsersService) AddFriend(name, note string) {
 
-	//data := fmt.Sprintf(`{"name": "%s", "note": "%s"}`, name, note)
-	data := fmt.Sprintf(`{"name": "%s"}`, name)
+	// name in json field is optional
+	// https://github.com/reddit-archive/reddit/blob/753b17407e9a9dca09558526805922de24133d53/r2/r2/controllers/apiv1/user.py#L164
+	data := ""
+	if note == "" {
 
-	fmt.Println(data)
-	endpoint := fmt.Sprintf("%s/%s", API_PATH["friend_v1"], ownusername)
-	fmt.Println("------url: ", endpoint)
-	resp, err := u.client.Put(endpoint, data)
+		data = fmt.Sprintf(`{"name": "%s"}`, name)
+	} else {
+		data = fmt.Sprintf(`{"name": "%s", "note": "%s"}`, name, note)
+	}
+
+	path := fmt.Sprintf("/api/v1/me/friends/%s", name)
+	resp, err := u.client.Put(path, PostData{
+		"json": data,
+	})
 
 	if err != nil {
-		log.Fatal("Error in making friends")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
 	PrintHeader(resp)
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	fmt.Println(string(body))
-
+	printBytes(resp.Body)
 }
 
 func (u *UsersService) GetUserTrophies(ownusername, id string) {
