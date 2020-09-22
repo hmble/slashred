@@ -211,12 +211,12 @@
 - [ ] PUT    `/api/multi/multipath`             ( subscribe )
   - [ ] `/api/filter/filterpath`
 - [ ] GET    `/api/multi/multipath/description` ( read )
-- [ ] PUT    `/api/multi/multipath/description` ( read )
+- [x] PUT    `/api/multi/multipath/description` ( read )
 - [x] DELETE `/api/multi/multipath/r/srname`    ( subscribe )
   - [ ] `/api/filter/filterpath`
 - [ ] GET    `/api/multi/multipath/r/srname`    ( read )
   - [ ] `/api/filter/filterpath`
-- [ ] PUT    `/api/multi/multipath/r/srname`    ( subscribe )
+- [x] PUT    `/api/multi/multipath/r/srname`    ( subscribe )
   - [ ] `/api/filter/filterpath`
 
 

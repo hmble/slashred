@@ -79,3 +79,43 @@ func (m *MultisService) DeleteSr(multipath string, subreddit string) {
 	PrintHeader(resp)
 
 }
+
+func (m *MultisService) AddSr(multipath string, subreddit string) {
+
+	path := fmt.Sprintf("/api/multi/%s/r/%s", multipath, subreddit)
+
+	model := fmt.Sprintf(`{"name": "%s"}`, subreddit)
+	resp, err := m.client.Put(path, PostData{
+		"multipath": multipath,
+		"srname":    subreddit,
+		"model":     model,
+	})
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	PrintHeader(resp)
+	printBytes(resp.Body)
+}
+
+func (m *MultisService) UpdateDescription(multipath, description string) {
+	path := fmt.Sprintf("/api/multi/%s/description", multipath)
+
+	model := fmt.Sprintf(`{"body_md": "%s"}`, description)
+	resp, err := m.client.Put(path, PostData{
+		"multipath": multipath,
+		"model":     model,
+	})
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	PrintHeader(resp)
+	printBytes(resp.Body)
+}
