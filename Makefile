@@ -1,4 +1,4 @@
 run:
-	go run test/main.go
+	@go run test/main.go
 
  
