@@ -10,7 +10,6 @@ import (
 	"net/url"
 	"os"
 	"strconv"
-	"strings"
 
 	"golang.org/x/oauth2"
 )
@@ -66,6 +65,7 @@ type Client struct {
 
 	common service // Reuse same struct instead of creating
 
+	Print      bool
 	Account    *AccountService
 	Collection *CollectionService
 	Comment    *CommentService
@@ -105,6 +105,7 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 		Token:     token,
 	}
 
+	c.Print = false
 	c.common.client = c
 	c.Account = (*AccountService)(&c.common)
 	// here we can't use service struct because we included `path` member in
@@ -310,18 +311,18 @@ func (c *Client) Delete(endpoint string, opts Option) (res *http.Response, err e
 
 }
 
-func (c *Client) Put(endpoint string, data string) (*http.Response, error) {
-	//data := url.Values{}
-
+func (c *Client) Put(endpoint string, postdata PostData) (*http.Response, error) {
 	fullurl := BaseAuthURL + endpoint
-	////data.Set("api_type", "json")
 
-	//for k, v := range postdata {
-	//	data.Set(k, v)
-	//}
-	//body := bytes.NewBufferString(data.Encode())
+	data := url.Values{}
 
-	body := strings.NewReader(data)
+	data.Set("api_type", "json")
+
+	for k, v := range postdata {
+		data.Set(k, v)
+	}
+	body := bytes.NewBufferString(data.Encode())
+
 	req, err := http.NewRequest(http.MethodPut, fullurl, body)
 
 	if err != nil {
@@ -330,6 +331,7 @@ func (c *Client) Put(endpoint string, data string) (*http.Response, error) {
 
 	req.Header.Add("User-Agent", c.Useragent)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
 	req.Header.Add("Content-Length", strconv.Itoa(len(data)))
 
 	return c.Http.Do(req)
@@ -356,5 +358,11 @@ func (c *Client) savelimit(resp *http.Response) {
 		used:      used,
 		remaining: int(remaining),
 		reset:     reset,
+	}
+}
+
+func (c *Client) SetPrint() {
+	if !c.Print {
+		c.Print = true
 	}
 }
