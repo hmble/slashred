@@ -200,7 +200,7 @@
 
 ## Multis
 - [ ] POST   `/api/multi/copy`                  ( subscribe )
-- [ ] GET    `/api/multi/mine`                  ( read )
+- [x] GET    `/api/multi/mine`                  ( read )
 - [ ] GET    `/api/multi/user/username`         ( read )
 - [ ] DELETE `/api/multi/multipath`             ( subscribe )
   - [ ] `/api/filter/filterpath`
@@ -212,7 +212,7 @@
   - [ ] `/api/filter/filterpath`
 - [ ] GET    `/api/multi/multipath/description` ( read )
 - [ ] PUT    `/api/multi/multipath/description` ( read )
-- [ ] DELETE `/api/multi/multipath/r/srname`    ( subscribe )
+- [x] DELETE `/api/multi/multipath/r/srname`    ( subscribe )
   - [ ] `/api/filter/filterpath`
 - [ ] GET    `/api/multi/multipath/r/srname`    ( read )
   - [ ] `/api/filter/filterpath`

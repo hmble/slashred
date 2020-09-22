@@ -77,6 +77,7 @@ type Client struct {
 	Moderation *ModerationService
 	Modmail    *ModmailService
 	Modpost    *ModpostService
+	Multis     *MultisService
 	Report     *ReportService
 	Subreddit  *SubredditService
 	Users      *UsersService
@@ -118,6 +119,7 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 	c.Moderation = (*ModerationService)(&c.common)
 	c.Modmail = (*ModmailService)(&c.common)
 	c.Modpost = (*ModpostService)(&c.common)
+	c.Multis = (*MultisService)(&c.common)
 	c.Report = (*ReportService)(&c.common)
 	c.Subreddit = (*SubredditService)(&c.common)
 	c.Users = (*UsersService)(&c.common)
@@ -303,8 +305,6 @@ func (c *Client) Delete(endpoint string, opts Option) (res *http.Response, err e
 
 	str := fmt.Sprintf("bearer %s", c.Token.AccessToken)
 	req.Header.Add("Authorization", str)
-
-	fmt.Println(req.Header)
 
 	return c.Http.Do(req)
 
