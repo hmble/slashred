@@ -1,13 +1,30 @@
 package slashred
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 )
 
 type MultisService service
 
+type Multi struct {
+	CanEdit        bool      `json:"can_edit"`
+	Name           string    `json:"name"`
+	NumSubscribers int       `json:"num_subscribers"`
+	Subreddits     []Multisr `json:"subreddits"`
+	Path           string    `json:"path"`
+	Owner          string    `json:"owner"`
+	DescriptionMd  string    `json:"description_md"`
+	IsFavorited    bool      `json:"is_favorited"`
+}
+
+type Multisr struct {
+	Name string
+}
+
 // Get subreddit subscriber multis of subreddit
-func (m *MultisService) Mine() {
+func (m *MultisService) Mine() []Multi {
 
 	path := fmt.Sprintf("/api/multi/mine")
 
@@ -19,9 +36,23 @@ func (m *MultisService) Mine() {
 
 	defer resp.Body.Close()
 
-	// TODO(hmble): Make struct field of multis to parse
-	printBytes(resp.Body)
+	type labeledMulti struct {
+		Kind string
+		Data Multi
+	}
 
+	result := make([]labeledMulti, 0)
+
+	if err = json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		log.Fatal("Error in decoding json response in MultisService")
+	}
+
+	var multis []Multi
+	for _, item := range result {
+		multis = append(multis, item.Data)
+	}
+
+	return multis
 }
 
 // Delete subreddit multis

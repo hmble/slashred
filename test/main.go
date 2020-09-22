@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -37,6 +38,10 @@ func main() {
 
 	c := u.UserClient(token)
 
-	c.Multis.Mine()
+	multis := c.Multis.Mine()
+
+	for _, multi := range multis {
+		fmt.Printf("Name: %s \tDesicription: %s\n", multi.Name, multi.DescriptionMd)
+	}
 
 }
