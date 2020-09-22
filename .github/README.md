@@ -14,3 +14,7 @@ This library is heavily inspired by [PRAW](https://github.com/praw-dev/praw)
 Also thanks to its maintainer [bboe](https://github.com/bboe) to help me out in
 doubts about reddit api.
 
+
+Attribute for Icon used for test subreddit
+
+Icons made by [smalllikeart](https://www.flaticon.com/authors/smalllikeart) from [flaticon](https://www.flaticon.com/)
