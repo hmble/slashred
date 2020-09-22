@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -56,7 +55,6 @@ func SaveToken(path string, token *oauth2.Token) {
 	}
 	defer f.Close()
 	json.NewEncoder(f).Encode(token)
-	fmt.Printf("Token has been saved to path %s\n", path)
 
 }
 
@@ -157,9 +155,5 @@ func UpdateToken(token *oauth2.Token, authenticator *Authenticator) {
 
 		SaveToken("token.json", token)
 
-	} else {
-
-		fmt.Println("Token is valid now no need to update")
 	}
-
 }
