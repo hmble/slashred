@@ -3,11 +3,22 @@ package slashred
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 )
 
+func printBytes(body io.Reader) {
+
+	bodyBytes, err := ioutil.ReadAll(body)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(string(bodyBytes))
+}
 func respError(path string) {
 	log.Fatalf("Error in getting reponse from path : %s\n", path)
 }

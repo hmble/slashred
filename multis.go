@@ -1,6 +1,8 @@
 package slashred
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type MultisService service
 
@@ -17,7 +19,8 @@ func (m *MultisService) Mine() {
 
 	defer resp.Body.Close()
 
-	SaveResponse(resp.Body, "test_data/multis.json")
+	// TODO(hmble): Make struct field of multis to parse
+	printBytes(resp.Body)
 
 }
 

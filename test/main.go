@@ -37,8 +37,6 @@ func main() {
 
 	c := u.UserClient(token)
 
-	c.Multis.DeleteSr("/user/astar0n/m/list/", "programming")
-
 	c.Multis.Mine()
 
 }
