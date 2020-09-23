@@ -210,7 +210,7 @@
   - [ ] `/api/filter/filterpath`
 - [x] PUT    `/api/multi/multipath`             ( subscribe )
   - [ ] `/api/filter/filterpath`
-- [ ] GET    `/api/multi/multipath/description` ( read )
+- [x] GET    `/api/multi/multipath/description` ( read )
 - [x] PUT    `/api/multi/multipath/description` ( read )
 - [x] DELETE `/api/multi/multipath/r/srname`    ( subscribe )
   - [ ] `/api/filter/filterpath`

@@ -120,6 +120,24 @@ func (m *MultisService) UpdateDescription(multipath, description string) {
 	printBytes(resp.Body)
 }
 
+// Get multi description
+func (m *MultisService) GetDescription(multipath string) {
+	path := fmt.Sprintf("/api/multi/%s/description", multipath)
+
+	resp, err := m.client.Get(path, Option{
+		"multipath": multipath,
+	})
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+
+}
+
 // Create multi.
 // TODO(hmble): Add more parameters to create data string ?
 // TODO(hmble): Add doc for json data string.

@@ -37,11 +37,6 @@ func main() {
 
 	c := u.UserClient(token)
 
-	c.Multis.UpdateMulti("astar0n", "test", `{
-    "description_md": "This is test description to check update multi",
-    "subreddits": [
-    {"name": "test"}
-    ]
-  }`)
+	c.Multis.GetDescription("/user/astar0n/m/test")
 
 }
