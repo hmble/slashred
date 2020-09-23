@@ -221,7 +221,7 @@
 
 
 ## Search
-- [ ] GET `[/r/subreddit]/search`             ( read ) ( rss support ) 
+- [x] GET `[/r/subreddit]/search`             ( read ) ( rss support ) 
 
 
 ## Subreddits
@@ -246,7 +246,7 @@
 - [x] GET  `/api/subreddit_autocomplete_v2`          ( read )
 - [x] POST `[/r/subreddit]/api/subreddit_stylesheet` ( modconfig )
 - [x] POST `/api/subscribe`                          ( subscribe )
-- [ ] POST `[/r/subreddit]/api/upload_sr_img`        ( modconfig )
+- [x] POST `[/r/subreddit]/api/upload_sr_img`        ( modconfig )
 - [x] GET  `/api/v1/subreddit/post_requirements`     ( submit )
 - [x] GET  `/r/subreddit/about`                      ( read )
 - [x] GET  `/r/subreddit/about/edit`                 ( modconfig )
