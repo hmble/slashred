@@ -83,6 +83,7 @@ type Client struct {
 	Report     *ReportService
 	Subreddit  *SubredditService
 	Users      *UsersService
+	Wiki       *WikiService
 }
 
 type ratelimit struct {
@@ -126,6 +127,7 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 	c.Report = (*ReportService)(&c.common)
 	c.Subreddit = (*SubredditService)(&c.common)
 	c.Users = (*UsersService)(&c.common)
+	c.Wiki = (*WikiService)(&c.common)
 
 	return c
 }
