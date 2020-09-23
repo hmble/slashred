@@ -316,4 +316,5 @@
 - [x] GET  `[/r/subreddit]/wiki/revisions/page`      ( wikiread )
 - [ ] GET  `[/r/subreddit]/wiki/settings/page`       ( modwiki )
 - [ ] POST `[/r/subreddit]/wiki/settings/page`       ( modwiki )
--
+- [x] GET  `[/r/subreddit]/wiki/page`                ( wikiread )
+

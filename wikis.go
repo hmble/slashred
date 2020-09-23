@@ -65,3 +65,25 @@ func (w *WikiService) GetPageRevision(subreddit, page string) {
 
 	printBytes(resp.Body)
 }
+
+// Return the content of a wiki page
+
+// If v is given, show the wiki page as it was at that version If both v and v2 are given, show a diff of the two
+func (w *WikiService) GetWikiContent(subreddit, page, v, v2 string) {
+	path := fmt.Sprintf("/r/%s/wiki/%s", subreddit, page)
+
+	opts := Option{
+		"v":    v,
+		"v2":   v2,
+		"page": page,
+	}
+	resp, err := w.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}

@@ -37,6 +37,6 @@ func main() {
 
 	c := u.UserClient(token)
 
-	c.Wiki.GetPageRevision("astar0n", "index")
+	c.Wiki.GetWikiContent("astar0n", "index", "c0664a18-fdb4-11ea-af5b-0e270d522a15", "")
 
 }
