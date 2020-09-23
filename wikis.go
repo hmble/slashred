@@ -88,6 +88,7 @@ func (w *WikiService) GetWikiContent(subreddit, page, v, v2 string) {
 	printBytes(resp.Body)
 }
 
+// Retrieve the current permission settings for page
 func (w *WikiService) GetPageSettings(subreddit, page string) {
 	path := fmt.Sprintf("/r/%s/wiki/settings/%s", subreddit, page)
 
@@ -95,6 +96,26 @@ func (w *WikiService) GetPageSettings(subreddit, page string) {
 		"page": page,
 	}
 	resp, err := w.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}
+
+//Update the permissions and visibility of wiki page
+//
+// listed	boolean value
+// page	the name of an existing wiki page
+// permlevel	an integer
+
+func (w *WikiService) UpdatePageSettings(subreddit, postdata PostData) {
+	path := fmt.Sprintf("/r/%s/api/wiki/hide", subreddit)
+
+	resp, err := w.client.Post(path, postdata)
 
 	if err != nil {
 		respError(path)
@@ -114,6 +135,63 @@ func (w *WikiService) AllowEditor(subreddit, act, username, page string) {
 		"page":     page,
 		"username": username,
 	}
+	resp, err := w.client.Post(path, postdata)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}
+
+// Edit a wiki page
+//
+// content  page content
+// page	    the name of an existing page or a new page to create
+
+// previous	the starting point revision for this edit
+// reason	a string up to 256 characters long, consisting of printable characters.
+func (w *WikiService) WikiEdit(subreddit, postdata PostData) {
+	path := fmt.Sprintf("/r/%s/api/wiki/edit", subreddit)
+
+	resp, err := w.client.Post(path, postdata)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}
+
+// Toggle the public visibility of a wiki page revision
+//
+// page	    the name of an existing wiki page
+// revision	a wiki revision ID
+func (w *WikiService) WikiHide(subreddit, postdata PostData) {
+	path := fmt.Sprintf("/r/%s/api/wiki/hide", subreddit)
+
+	resp, err := w.client.Post(path, postdata)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}
+
+//Revert a wiki page to revision
+//
+// page	    the name of an existing wiki page
+// revision	a wiki revision ID
+func (w *WikiService) WikiRevert(subreddit, postdata PostData) {
+	path := fmt.Sprintf("/r/%s/api/wiki/hide", subreddit)
+
 	resp, err := w.client.Post(path, postdata)
 
 	if err != nil {
