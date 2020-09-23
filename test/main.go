@@ -37,6 +37,6 @@ func main() {
 
 	c := u.UserClient(token)
 
-	c.Multis.GetSingleMultiData("/user/astar0n/m/languages")
+	c.Multis.GetSrData("/user/astar0n/m/languages", "rust")
 
 }

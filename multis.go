@@ -241,3 +241,23 @@ func (m *MultisService) GetSingleMultiData(multipath string) {
 
 	printBytes(resp.Body)
 }
+
+// Get data about subreddit in a multi
+
+func (m *MultisService) GetSrData(multipath, srname string) {
+
+	path := fmt.Sprintf("/api/multi/%s/r/srname", multipath)
+
+	resp, err := m.client.Get(path, Option{
+		"multipath": multipath,
+		"srname":    srname,
+	})
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}
