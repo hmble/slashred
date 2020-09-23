@@ -37,6 +37,6 @@ func main() {
 
 	c := u.UserClient(token)
 
-	c.Multis.GetDescription("/user/astar0n/m/test")
+	c.Multis.FetchPublicMultis("bboe")
 
 }

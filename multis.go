@@ -182,3 +182,21 @@ func (m *MultisService) UpdateMulti(user, name string, data string) {
 	printBytes(resp.Body)
 
 }
+
+// Fetch a list of public multis belonging to a username
+
+func (m *MultisService) FetchPublicMultis(username string) {
+	path := fmt.Sprintf("/api/multi/user/%s", username)
+
+	resp, err := m.client.Get(path, Option{
+		"username": username,
+	})
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}
