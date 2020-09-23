@@ -199,7 +199,7 @@
 
 
 ## Multis
-- [ ] POST   `/api/multi/copy`                  ( subscribe )
+- [x] POST   `/api/multi/copy`                  ( subscribe )
 - [x] GET    `/api/multi/mine`                  ( read )
 - [x] GET    `/api/multi/user/username`         ( read )
 - [x] DELETE `/api/multi/multipath`             ( subscribe )

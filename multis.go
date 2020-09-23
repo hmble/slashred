@@ -261,3 +261,25 @@ func (m *MultisService) GetSrData(multipath, srname string) {
 
 	printBytes(resp.Body)
 }
+
+// Copy a multi
+func (m *MultisService) CopyMulti(from, to, description, displayName string) {
+	path := "/api/multi/copy"
+
+	postdata := PostData{
+		"from":           from,
+		"to":             to,
+		"description_md": description,
+		"display_name":   displayName,
+	}
+
+	resp, err := m.client.Post(path, postdata)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}

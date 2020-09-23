@@ -37,6 +37,6 @@ func main() {
 
 	c := u.UserClient(token)
 
-	c.Multis.GetSrData("/user/astar0n/m/languages", "rust")
+	c.Multis.CopyMulti("/user/bboe/m/bboe/", "/user/astar0n/m/redditapi/", "Collection of posts about Reddit API", "Reddit API")
 
 }
