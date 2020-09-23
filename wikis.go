@@ -87,3 +87,40 @@ func (w *WikiService) GetWikiContent(subreddit, page, v, v2 string) {
 
 	printBytes(resp.Body)
 }
+
+func (w *WikiService) GetPageSettings(subreddit, page string) {
+	path := fmt.Sprintf("/r/%s/wiki/settings/%s", subreddit, page)
+
+	opts := Option{
+		"page": page,
+	}
+	resp, err := w.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}
+
+// Allow/deny username to edit this wiki page
+func (w *WikiService) AllowEditor(subreddit, act, username, page string) {
+	path := fmt.Sprintf("/r/%s/api/wiki/alloweditor/%s", subreddit, act)
+
+	postdata := PostData{
+		"act":      act,
+		"page":     page,
+		"username": username,
+	}
+	resp, err := w.client.Post(path, postdata)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}

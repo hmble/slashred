@@ -304,9 +304,9 @@
 
 
 ## Wiki
-- [ ] POST `[/r/subreddit]/api/wiki/alloweditor/act` ( modwiki )
-  - [ ] `[/r/subreddit]/api/wiki/alloweditor/`       ( del )
-  - [ ] `[/r/subreddit]/api/wiki/alloweditor/`       ( add )
+- [x] POST `[/r/subreddit]/api/wiki/alloweditor/act` ( modwiki )
+  - [x] `[/r/subreddit]/api/wiki/alloweditor/`       ( del )
+  - [x] `[/r/subreddit]/api/wiki/alloweditor/`       ( add )
 - [ ] POST `[/r/subreddit]/api/wiki/edit`            ( wikiedit )
 - [ ] POST `[/r/subreddit]/api/wiki/hide`            ( modwiki )
 - [ ] POST `[/r/subreddit]/api/wiki/revert`          ( modwiki )
