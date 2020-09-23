@@ -49,3 +49,19 @@ func (w *WikiService) GetRevision(subreddit string, opts Option) {
 
 	printBytes(resp.Body)
 }
+
+//Retrieve a list of revisions of this wiki page
+// TODO(hmble): add Option parameter ?
+func (w *WikiService) GetPageRevision(subreddit, page string) {
+	path := fmt.Sprintf("/r/%s/wiki/discussions/%s", subreddit, page)
+
+	resp, err := w.client.Get(path, NoOptions)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}
