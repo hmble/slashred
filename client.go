@@ -57,6 +57,8 @@ const (
 	AwardPrefix     = "t6_"
 )
 
+// TODO(hmble): Add authenticated user info to client so that we can use it
+// along different methods.
 type Client struct {
 	Http      *http.Client
 	Useragent string
