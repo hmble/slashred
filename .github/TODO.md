@@ -206,7 +206,7 @@
   - [ ] `/api/filter/filterpath`
 - [ ] GET    `/api/multi/multipath`             ( read )
   - [ ] `/api/filter/filterpath`
-- [ ] POST   `/api/multi/multipath`             ( subscribe )
+- [x] POST   `/api/multi/multipath`             ( subscribe )
   - [ ] `/api/filter/filterpath`
 - [ ] PUT    `/api/multi/multipath`             ( subscribe )
   - [ ] `/api/filter/filterpath`

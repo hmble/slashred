@@ -37,5 +37,14 @@ func main() {
 
 	c := u.UserClient(token)
 
-	c.Users.AddFriend("testastar0n", "")
+	c.Multis.CreateMulti("astar0n", "test", `{
+    "description_md": "This is a test multi",
+    "display_name": "Test Multi",
+    "subreddits": [
+    {"name": "test"},
+    {"name": "vim"}
+    ],
+    "visibility": "private"
+  }`)
+
 }
