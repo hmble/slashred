@@ -37,6 +37,6 @@ func main() {
 
 	c := u.UserClient(token)
 
-	c.Wiki.GetWikiPages("astar0n")
+	c.Wiki.GetRevision("astar0n", slashred.NoOptions)
 
 }
