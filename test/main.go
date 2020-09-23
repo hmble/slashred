@@ -37,6 +37,6 @@ func main() {
 
 	c := u.UserClient(token)
 
-	c.Wiki.GetRevision("astar0n", slashred.NoOptions)
+	c.Wiki.GetPageDiscussion("astar0n", "config/description")
 
 }
