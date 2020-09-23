@@ -120,9 +120,9 @@ func (m *MultisService) UpdateDescription(multipath, description string) {
 	printBytes(resp.Body)
 }
 
-// Create or update a multi.
+// Create multi.
 // TODO(hmble): Add more parameters to create data string ?
-// TODO(hmble): Add doc for json data string
+// TODO(hmble): Add doc for json data string.
 func (m *MultisService) CreateMulti(user, name string, data string) {
 	// api/multi/user/{user}/m/{multi}/
 	path := fmt.Sprintf("/api/multi/user/%s/m/%s", user, name)
@@ -132,6 +132,28 @@ func (m *MultisService) CreateMulti(user, name string, data string) {
 		"multipath": fmt.Sprintf("/user/%s/m/%s", user, name),
 	}
 	resp, err := m.client.Post(path, postdata)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+
+}
+
+// Update a multi
+
+func (m *MultisService) UpdateMulti(user, name string, data string) {
+	// api/multi/user/{user}/m/{multi}/
+	path := fmt.Sprintf("/api/multi/user/%s/m/%s", user, name)
+
+	postdata := PostData{
+		"model":     data,
+		"multipath": fmt.Sprintf("/user/%s/m/%s", user, name),
+	}
+	resp, err := m.client.Put(path, postdata)
 
 	if err != nil {
 		respError(path)
