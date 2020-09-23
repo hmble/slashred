@@ -200,3 +200,25 @@ func (m *MultisService) FetchPublicMultis(username string) {
 
 	printBytes(resp.Body)
 }
+
+// Delete a multi
+
+// TODO(hmble): Accept only multi name ?
+// Update this todo once we add global user info to client. Also do the same for
+// other methods in this file.
+// multipath is /user/{user}/m/{multi}/
+func (m *MultisService) DeleteMulti(multipath string) {
+	path := fmt.Sprintf("/api/multi/%s", multipath)
+
+	resp, err := m.client.Delete(path, Option{
+		"multipath": multipath,
+	})
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}

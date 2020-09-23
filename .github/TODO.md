@@ -202,7 +202,7 @@
 - [ ] POST   `/api/multi/copy`                  ( subscribe )
 - [x] GET    `/api/multi/mine`                  ( read )
 - [x] GET    `/api/multi/user/username`         ( read )
-- [ ] DELETE `/api/multi/multipath`             ( subscribe )
+- [x] DELETE `/api/multi/multipath`             ( subscribe )
   - [ ] `/api/filter/filterpath`
 - [ ] GET    `/api/multi/multipath`             ( read )
   - [ ] `/api/filter/filterpath`
