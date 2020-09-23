@@ -37,6 +37,6 @@ func main() {
 
 	c := u.UserClient(token)
 
-	c.Multis.DeleteMulti("/user/astar0n/m/test_multi/")
+	c.Multis.GetSingleMultiData("/user/astar0n/m/languages")
 
 }

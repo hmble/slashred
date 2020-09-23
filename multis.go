@@ -222,3 +222,22 @@ func (m *MultisService) DeleteMulti(multipath string) {
 
 	printBytes(resp.Body)
 }
+
+// Fetch a multis data and subreddit's name
+
+func (m *MultisService) GetSingleMultiData(multipath string) {
+
+	path := fmt.Sprintf("/api/multi/%s", multipath)
+
+	resp, err := m.client.Get(path, Option{
+		"multipath": multipath,
+	})
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body)
+}

@@ -204,7 +204,7 @@
 - [x] GET    `/api/multi/user/username`         ( read )
 - [x] DELETE `/api/multi/multipath`             ( subscribe )
   - [ ] `/api/filter/filterpath`
-- [ ] GET    `/api/multi/multipath`             ( read )
+- [x] GET    `/api/multi/multipath`             ( read )
   - [ ] `/api/filter/filterpath`
 - [x] POST   `/api/multi/multipath`             ( subscribe )
   - [ ] `/api/filter/filterpath`
