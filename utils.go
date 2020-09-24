@@ -9,15 +9,22 @@ import (
 	"os"
 )
 
-func printBytes(body io.Reader) {
+func printBytes(body io.Reader, client *Client) {
 
-	bodyBytes, err := ioutil.ReadAll(body)
+	if client.Print {
+		bodyBytes, err := ioutil.ReadAll(body)
 
-	if err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println(string(bodyBytes))
+	} else {
+		fmt.Println(`client Print setting is not set to true, set it to true by using method
+      client.SetPrint()
+    `)
 	}
 
-	fmt.Println(string(bodyBytes))
 }
 func respError(path string) {
 	log.Fatalf("Error in getting reponse from path : %s\n", path)

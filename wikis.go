@@ -16,7 +16,7 @@ func (w *WikiService) GetWikiPages(subreddit string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, w.client)
 }
 
 // Retrieve a list of discussions about this wiki page
@@ -32,7 +32,7 @@ func (w *WikiService) GetPageDiscussion(subreddit, page string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, w.client)
 }
 
 // Retrieve a list of wiki pages in this subreddit
@@ -47,7 +47,7 @@ func (w *WikiService) GetRevision(subreddit string, opts Option) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, w.client)
 }
 
 //Retrieve a list of revisions of this wiki page
@@ -63,7 +63,7 @@ func (w *WikiService) GetPageRevision(subreddit, page string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, w.client)
 }
 
 // Return the content of a wiki page
@@ -85,7 +85,7 @@ func (w *WikiService) GetWikiContent(subreddit, page, v, v2 string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, w.client)
 }
 
 func (w *WikiService) GetPageSettings(subreddit, page string) {
@@ -102,7 +102,7 @@ func (w *WikiService) GetPageSettings(subreddit, page string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, w.client)
 }
 
 // Allow/deny username to edit this wiki page
@@ -122,5 +122,5 @@ func (w *WikiService) AllowEditor(subreddit, act, username, page string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, w.client)
 }

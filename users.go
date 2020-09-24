@@ -120,7 +120,7 @@ func (u *UsersService) UsernameAvailable(username string) {
 	defer resp.Body.Close()
 
 	PrintHeader(resp)
-	printBytes(resp.Body)
+	printBytes(resp.Body, u.client)
 }
 
 func (u *UsersService) DeleteFriend(ownusername, id string) {
@@ -184,7 +184,7 @@ func (u *UsersService) AddFriend(name, note string) {
 	defer resp.Body.Close()
 
 	PrintHeader(resp)
-	printBytes(resp.Body)
+	printBytes(resp.Body, u.client)
 }
 
 func (u *UsersService) GetUserTrophies(ownusername, id string) {

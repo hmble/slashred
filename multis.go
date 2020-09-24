@@ -98,7 +98,7 @@ func (m *MultisService) AddSr(multipath string, subreddit string) {
 	defer resp.Body.Close()
 
 	PrintHeader(resp)
-	printBytes(resp.Body)
+	printBytes(resp.Body, m.client)
 }
 
 func (m *MultisService) UpdateDescription(multipath, description string) {
@@ -117,7 +117,7 @@ func (m *MultisService) UpdateDescription(multipath, description string) {
 	defer resp.Body.Close()
 
 	PrintHeader(resp)
-	printBytes(resp.Body)
+	printBytes(resp.Body, m.client)
 }
 
 // Get multi description
@@ -134,7 +134,7 @@ func (m *MultisService) GetDescription(multipath string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, m.client)
 
 }
 
@@ -157,7 +157,7 @@ func (m *MultisService) CreateMulti(user, name string, data string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, m.client)
 
 }
 
@@ -179,7 +179,7 @@ func (m *MultisService) UpdateMulti(user, name string, data string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, m.client)
 
 }
 
@@ -198,7 +198,7 @@ func (m *MultisService) FetchPublicMultis(username string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, m.client)
 }
 
 // Delete a multi
@@ -220,7 +220,7 @@ func (m *MultisService) DeleteMulti(multipath string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, m.client)
 }
 
 // Fetch a multis data and subreddit's name
@@ -239,7 +239,7 @@ func (m *MultisService) GetSingleMultiData(multipath string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, m.client)
 }
 
 // Get data about subreddit in a multi
@@ -259,7 +259,7 @@ func (m *MultisService) GetSrData(multipath, srname string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, m.client)
 }
 
 // Copy a multi
@@ -281,5 +281,5 @@ func (m *MultisService) CopyMulti(from, to, description, displayName string) {
 
 	defer resp.Body.Close()
 
-	printBytes(resp.Body)
+	printBytes(resp.Body, m.client)
 }
