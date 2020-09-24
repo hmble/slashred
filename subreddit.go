@@ -13,40 +13,177 @@ import (
 
 type SubredditService service
 
-func (s *SubredditService) aboutWhere(subreddit, endpoint, logmsg string, opts Option) {
-	url := fmt.Sprintf("/r/%s%s", subreddit, endpoint)
+func (s *SubredditService) aboutWhere(subreddit, path string, opts Option) {
 
-	resp, err := s.client.Get(url, opts)
+	resp, err := s.client.Get(path, opts)
 
 	if err != nil {
-		log.Fatal(logmsg)
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
+	printBytes(resp.Body, s.client)
 
 }
+
+// This endpoint is a listing
+// This returns a list of banned persons in a subreddit
+//
+// Option fields
+// Note: Option is map[string]string
+//       All fields key values should be string
+// Example:
+//      opts := Option{
+//          "count": "2",
+//          "limit": "25",
+//          "show": "alll",
+//      }
+//
+// Key              Value
+// ================================================
+// after        fullname of thing
+// before       fullname of thing
+// count        a positive integer
+// limit        a maximum number of items desired (default: 25, max: 100)
+// show         (optional) the string all
+// sr_detail    (optional) expand subreddits
+// username     A valid, existing username
 
 func (s *SubredditService) GetBanned(subreddit string, opts Option) {
-	s.aboutWhere(subreddit, API_PATH["about_banned"], "Error in getting banned response", opts)
+	path := fmt.Sprintf("/r/%s/about/banned", subreddit)
+	s.aboutWhere(subreddit, path, opts)
 }
+
+// This endpoint is a listing
+// This returns a list of banned persons in a subreddit
+//
+// Option fields
+// Note: Option is map[string]string
+//       All fields key values should be string
+// Example:
+//      opts := Option{
+//          "count": "2",
+//          "limit": "25",
+//          "show": "alll",
+//      }
+// Key              Value
+// ================================================
+// after       fullname of a thing
+// before      fullname of a thing
+// count       a positive integer (default: 0)
+// limit       the maximum number of items desired (default: 25, maximum: 100)
+// show        (optional) the string all
+// sr_detail   (optional) expand subreddits
+// user        A valid, existing reddit username
 
 func (s *SubredditService) GetMuted(subreddit string, opts Option) {
-	s.aboutWhere(subreddit, API_PATH["about_muted"], "error in getting muted response", opts)
+	path := fmt.Sprintf("/r/%s/about/muted", subreddit)
+	s.aboutWhere(subreddit, path, opts)
 }
 
+// This endpoint is a listing
+// This returns a list of banned persons in a subreddit
+//
+// Option fields
+// Note: Option is map[string]string
+//       All fields key values should be string
+// Example:
+//      opts := Option{
+//          "count": "2",
+//          "limit": "25",
+//          "show": "alll",
+//      }
+// Key              Value
+// ================================================
+// after       fullname of a thing
+// before      fullname of a thing
+// count       a positive integer (default: 0)
+// limit       the maximum number of items desired (default: 25, maximum: 100)
+// show        (optional) the string all
+// sr_detail   (optional) expand subreddits
+// user        A valid, existing reddit username
 func (s *SubredditService) GetWikiBanned(subreddit string, opts Option) {
-	s.aboutWhere(subreddit, API_PATH["about_wikibanned"], "Error in getting wiki banned response", opts)
+	path := fmt.Sprintf("/r/%s/about/wikibanned", subreddit)
+	s.aboutWhere(subreddit, path, opts)
 }
+
+// This endpoint is a listing
+// This returns a list of banned persons in a subreddit
+//
+// Option fields
+// Note: Option is map[string]string
+//       All fields key values should be string
+// Example:
+//      opts := Option{
+//          "count": "2",
+//          "limit": "25",
+//          "show": "alll",
+//      }
+// Key              Value
+// ================================================
+// after       fullname of a thing
+// before      fullname of a thing
+// count       a positive integer (default: 0)
+// limit       the maximum number of items desired (default: 25, maximum: 100)
+// show        (optional) the string all
+// sr_detail   (optional) expand subreddits
+// user        A valid, existing reddit username
 func (s *SubredditService) GetContributor(subreddit string, opts Option) {
-	s.aboutWhere(subreddit, API_PATH["about_contributors"], "Error in getting cotributors response", opts)
+	path := fmt.Sprintf("/r/%s/about/contributors", subreddit)
+	s.aboutWhere(subreddit, path, opts)
 }
+
+// This endpoint is a listing
+// This returns a list of banned persons in a subreddit
+//
+// Option fields
+// Note: Option is map[string]string
+//       All fields key values should be string
+// Example:
+//      opts := Option{
+//          "count": "2",
+//          "limit": "25",
+//          "show": "alll",
+//      }
+// Key              Value
+// ================================================
+// after       fullname of a thing
+// before      fullname of a thing
+// count       a positive integer (default: 0)
+// limit       the maximum number of items desired (default: 25, maximum: 100)
+// show        (optional) the string all
+// sr_detail   (optional) expand subreddits
+// user        A valid, existing reddit username
 func (s *SubredditService) GetWikiContributor(subreddit string, opts Option) {
-	s.aboutWhere(subreddit, API_PATH["about_wikicontributors"], "Error in getting wikicontributors response", opts)
+	path := fmt.Sprintf("/r/%s/about/wikicontributors", subreddit)
+	s.aboutWhere(subreddit, path, opts)
 }
+
+// This endpoint is a listing
+// This returns a list of banned persons in a subreddit
+//
+// Option fields
+// Note: Option is map[string]string
+//       All fields key values should be string
+// Example:
+//      opts := Option{
+//          "count": "2",
+//          "limit": "25",
+//          "show": "alll",
+//      }
+// Key              Value
+// ================================================
+// after       fullname of a thing
+// before      fullname of a thing
+// count       a positive integer (default: 0)
+// limit       the maximum number of items desired (default: 25, maximum: 100)
+// show        (optional) the string all
+// sr_detail   (optional) expand subreddits
+// user        A valid, existing reddit username
 func (s *SubredditService) GetModerators(subreddit string, opts Option) {
-	s.aboutWhere(subreddit, API_PATH["about_moderators"], "Error in getting moderators response", opts)
+	path := fmt.Sprintf("/r/%s/about/moderators", subreddit)
+	s.aboutWhere(subreddit, path, opts)
 }
 
 func (s *SubredditService) deleteSrWhere(endpoint, logmsg string) {
