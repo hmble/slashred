@@ -255,10 +255,26 @@ func (s *SubredditService) DeleteSrImg(subreddit, imgName string) {
 	printBytes(resp.Body, s.client)
 }
 
-// query should be 50 characters long
-// https://www.reddit.com/dev/api/#GET_api_search_reddit_names
 // Some option parameter have been excluded
-func (s *SubredditService) SearchSrNames(exact, over18, query string) {
+
+// List subreddit names that begin with a query string.
+
+// Subreddits whose names begin with query will be returned. If include_over_18
+// is false, subreddits with over-18 content restrictions will be filtered from
+// the results.
+//
+// Reference: https://www.reddit.com/dev/api/#GET_api_search_reddit_names
+//
+//  Key                 Value
+// ===========================================
+// exact                boolean value
+// include_over_18      boolean value
+// query                a string up to 50 characters long,
+//                      consisting of printable characters.
+
+func (s *SubredditService) SearchSrNames(exact, includeOver18, query string) {
+
+	path := "/api/search_reddit_names"
 
 	if len(query) > 50 {
 		log.Fatal("Query length should be less than 50 characters")
@@ -266,84 +282,118 @@ func (s *SubredditService) SearchSrNames(exact, over18, query string) {
 	}
 	opts := Option{
 		"exact":           exact,
-		"over_18":         over18,
+		"include_over_18": includeOver18,
 		"query":           query,
 		"search_query_id": uuid.New().String(),
 	}
 
-	resp, err := s.client.Get(API_PATH["search_reddit_names"], opts)
+	resp, err := s.client.Get(path, opts)
 
 	if err != nil {
-		log.Fatal("Error in getting searched results for given query")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
+	printBytes(resp.Body, s.client)
 
-	PrintHeader(resp)
 }
 
-// See https://www.reddit.com/dev/api/#POST_api_site_admin
-// For option visit above link and make options as user like
-//
 // NOTE : This endpoint expects all options on every request
-// TODO : An easier way to create postdata for site_admin
-// Although this method is used only once in while as it only
+//
+// An easier way is to pass postdata for site_admin by user because
+// this method is used only once in while as it
 // creates a subreddit and edit its options.
+//
+// For list of options see reference
+//
+// Reference: https://www.reddit.com/dev/api/#POST_api_site_admin
 //
 
 func (s *SubredditService) SiteAdmin(postdata PostData) {
-	resp, err := s.client.Post(API_PATH["site_admin"], postdata)
+	path := "/api/site_admin"
+	resp, err := s.client.Post(path, postdata)
 
 	if err != nil {
-		log.Fatal("Error in creating or editing subreddit")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
+	printBytes(resp.Body, s.client)
 
 }
 
+// Get the submission text for the subreddit.
+
+// This text is set by the subreddit moderators and intended to be displayed on
+// the submission form.
+//
+// Reference: https://www.reddit.com/dev/api/#GET_api_submit_text
 func (s *SubredditService) SubmitText(subreddit string) {
 
-	endpoint := fmt.Sprintf("/r/%s/%s", subreddit, API_PATH["submit_text"])
-	resp, err := s.client.Get(endpoint, NoOptions)
+	path := fmt.Sprintf("/r/%s/api/submit_text", subreddit)
+	resp, err := s.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("Error in getting submit text")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
+	printBytes(resp.Body, s.client)
 
 }
 
-func (s *SubredditService) GetAutocomplete(over18, includeProfiles, query string) {
+// Return a list of subreddits and data for subreddits whose names start with 'query'.
+// Key                   Value
+// ========================================
+// include_over_18      boolean value
+// include_profiles     boolean value
+// query                a string up to 25 characters long,
+//                      consisting of printable characters.
 
+func (s *SubredditService) GetAutocomplete(includeOver18, includeProfiles, query string) {
+
+	path := "/api/subreddit_autocomplete"
 	if len(query) > 50 {
 		log.Fatal("Query length should be less than 50")
 		return
 	}
 	opts := Option{
-		"include_over_18":  over18,
+		"include_over_18":  includeOver18,
 		"include_profiles": includeProfiles,
 		"query":            query,
 	}
 
-	resp, err := s.client.Get(API_PATH["subreddit_autocomplete"], opts)
+	resp, err := s.client.Get(path, opts)
 
 	if err != nil {
-		log.Fatal("Error in getting autocomplete results")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
+	printBytes(resp.Body, s.client)
 }
 
-// limit should be between 1 to 10
+// Typeahead provides exact matches, typo correction, fuzzy matching and boosts
+// subreddits to the top that the user is subscribed to.
+//
+// Key                     Value
+// =============================================
+// include_over_18      boolean value
+// include_profiles     boolean value
+// limit                an integer between 1 and 10 (default: 5)
+// query                a string up to 25 characters long,
+//                      consisting of printable characters.
+// search_query_id      a uuid
+// typeahead_active     boolean value or None
+//
+// Reference: https://www.reddit.com/dev/api/#GET_api_subreddit_autocomplete_v2
+
 func (s *SubredditService) GetAutocompleteV2(includeCategories, over18, includeProfiles, query string, limit int) {
+
+	path := "/api/subreddit_autocomplete_v2"
 	if limit >= 1 && limit <= 10 || len(query) < 50 {
 		log.Fatal("Limit should be between 1 to 10 and query length less than 50")
 	}
@@ -357,42 +407,70 @@ func (s *SubredditService) GetAutocompleteV2(includeCategories, over18, includeP
 		"search_query_id":    uuid.New().String(),
 	}
 
-	resp, err := s.client.Get(API_PATH["subreddit_autocomplete"], opts)
+	resp, err := s.client.Get(path, opts)
 
 	if err != nil {
-		log.Fatal("Error in getting autocomplete results")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
+	printBytes(resp.Body, s.client)
 
 }
 
+// Update a subreddit's stylesheet.
+// op should be save to update the contents of the stylesheet.
+//
+// Key                         Value
+// ==================================================
+// op                       one of (save, preview)
+// reason                   a string up to 256 characters long,
+//                          consisting of printable characters.
+// stylesheet_contents      the new stylesheet content
+//
+// Reference : https://www.reddit.com/dev/api/#POST_api_subreddit_stylesheet
+
 func (s *SubredditService) SubmitStylesheet(subreddit, op, reason, content string) {
+	path := fmt.Sprintf("/r/%s/api/subreddit_stylesheet", subreddit)
 	postdata := PostData{
 		"op":                 op,
 		"reason":             reason,
 		"stylesheet_content": content,
 	}
 
-	endpoint := fmt.Sprintf("/r/%s/%s", subreddit, API_PATH["subreddit_stylesheet"])
-	resp, err := s.client.Post(endpoint, postdata)
+	resp, err := s.client.Post(path, postdata)
 
 	if err != nil {
-		log.Fatal("Error in submitting stylesheet")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
+	printBytes(resp.Body, s.client)
 }
 
-// action : one of (sub, unsub)
-// Note : skipped option of sr fullname instead used sr_name
-// for simplicity
+// Subscribe to or unsubscribe from a subreddit.
+
+// To subscribe, action should be sub. To unsubscribe, action should be unsub. The
+// user must have access to the subreddit to be able to subscribe to it.
+
+// The skip_initial_defaults param can be set to True to prevent automatically
+// subscribing the user to the current set of defaults when they take their first
+// subscription action. Attempting to set it for an unsubscribe action will result
+// in an error.
+//
+// Key                         Value
+// ==================================================
+// action                   one of (sub, unsub)
+// skip_initial_defaults    boolean value
+// sr_name                  A comma-separated list of subreddit names.
+//
+// Reference : https://www.reddit.com/dev/api/#POST_api_subscribe
+
 func (s *SubredditService) Subscribe(action, skipDefaults string, sr_names []string) {
 
+	path := "/api/subscribe"
 	srname := strings.Join(sr_names, ",")
 	postdata := PostData{
 		"action":               action,
@@ -400,15 +478,15 @@ func (s *SubredditService) Subscribe(action, skipDefaults string, sr_names []str
 		"sr_name":              srname,
 	}
 
-	resp, err := s.client.Post(API_PATH["subscribe"], postdata)
+	resp, err := s.client.Post(path, postdata)
 
 	if err != nil {
-		log.Fatal("Error in subscribing/unsubscribing to subreddit")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
+	printBytes(resp.Body, s.client)
 
 }
 
@@ -446,10 +524,6 @@ Image should of size 256 x 256
 */
 func (s *SubredditService) UploadSrImg(subreddit, path,
 	uploadType string) {
-	// TODO(hmble): implement icon update
-	// I tried different methods but reddit response is IMAGE_ERROR
-	// or html page of "You Broke Reddit" image
-
 	endpoint := fmt.Sprintf("/r/%s/api/upload_sr_img", subreddit)
 
 	resp, err := s.client.PostImageUpload(endpoint, PostData{
@@ -458,7 +532,7 @@ func (s *SubredditService) UploadSrImg(subreddit, path,
 	}, path)
 
 	if err != nil {
-		log.Fatal("Error in getting UplaodImg response")
+		respError(path)
 	}
 	defer resp.Body.Close()
 
@@ -469,11 +543,6 @@ func (s *SubredditService) UploadSrImg(subreddit, path,
 		Img_src      string   `json:"img_src"`
 		Error_values string   `json:"error_values"`
 	}
-	// buf := new(bytes.Buffer)
-	// buf.ReadFrom(resp.Body)
-	// newStr := buf.String()
-
-	// fmt.Printf(newStr)
 
 	if err := json.NewDecoder(resp.Body).Decode(&image_response); err != nil {
 		log.Fatal("Error in reading response body response ", err)
@@ -483,110 +552,305 @@ func (s *SubredditService) UploadSrImg(subreddit, path,
 
 }
 
-func (s *SubredditService) about(endpoint, subreddit string) {
-	url := fmt.Sprintf("/r/%s/%s", subreddit, endpoint)
-	resp, err := s.client.Get(url, NoOptions)
+func (s *SubredditService) about(path, subreddit string) {
+	resp, err := s.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("Error in getting about of subreddit")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
-	//	SaveResponse(resp.Body, "test_data/astar0n_about.json")
+	printBytes(resp.Body, s.client)
 }
 
+// Return information about the subreddit.
+// Data includes the subscriber count, description, and header image.
 func (s *SubredditService) About(subreddit string) {
-	s.about(API_PATH["about_subreddit"], subreddit)
+	path := fmt.Sprintf("/r/%s/about", subreddit)
+	s.about(path, subreddit)
 }
+
+// Get the rules for the current subreddit
 func (s *SubredditService) AboutRules(subreddit string) {
-	s.about(API_PATH["rules"], subreddit)
-
+	path := fmt.Sprintf("/r/%s/about/rules", subreddit)
+	s.about(path, subreddit)
 }
-func (s *SubredditService) Traffic(subreddit string) {
-	s.about(API_PATH["traffic"], subreddit)
-
+func (s *SubredditService) AboutTraffic(subreddit string) {
+	path := fmt.Sprintf("/r/%s/about/traffic", subreddit)
+	s.about(path, subreddit)
 }
-func (s *SubredditService) Sidebar(subreddit string) {
-	s.about(API_PATH["sidebar"], subreddit)
 
+// Get the sidebar for the current subreddit
+func (s *SubredditService) AboutSidebar(subreddit string) {
+	path := fmt.Sprintf("/r/%s/about/sidebar", subreddit)
+	s.about(path, subreddit)
 }
 
 // num : default int between 1 and 2
-func (s *SubredditService) Sticky(subreddit, num string) {
-	// TODO: check for num
-	url := fmt.Sprintf("/r/%s/%s", subreddit, API_PATH["sticky"])
+
+// Redirect to one of the posts stickied in the current subreddit
+
+// The "num" argument can be used to select a specific sticky, and will default to
+// 1 (the top sticky) if not specified. Will 404 if there is not currently a sticky
+// post in this subreddit.
+// Reference : https://www.reddit.com/dev/api/#GET_sticky
+
+// TODO(hmble): Check how this endpoint works. Also check what happens if we
+// pass num value more than 2
+func (s *SubredditService) AboutSticky(subreddit, num string) {
+	// TODO: check for num ?
+
+	path := fmt.Sprintf("/r/%s/about/sticky", subreddit)
 	opts := Option{
 		"num": num,
 	}
-	resp, err := s.client.Get(url, opts)
+	resp, err := s.client.Get(path, opts)
 
 	if err != nil {
-		log.Fatal("Error in getting about of subreddit")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
+	printBytes(resp.Body, s.client)
 
 }
 
+// Get subreddits the user is subscribed to
+//
+// Key              Value
+// ================================================
+// after       fullname of a thing
+// before      fullname of a thing
+// count       a positive integer (default: 0)
+// limit       the maximum number of items desired (default: 25, maximum: 100)
+// show        (optional) the string all
+// sr_detail   (optional) expand subreddits
 func (s *SubredditService) MineSubscriber(opts Option) {
-	logmsg := "Error in getting mine subscriber"
-	s.client.getlisting(API_PATH["mine_subscriber"], logmsg, opts)
+	path := "/subreddits/mind/subscriber"
+
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body, s.client)
 }
 
+// Get subreddits the user is approved user in
+// Key              Value
+// ================================================
+// after       fullname of a thing
+// before      fullname of a thing
+// count       a positive integer (default: 0)
+// limit       the maximum number of items desired (default: 25, maximum: 100)
+// show        (optional) the string all
+// sr_detail   (optional) expand subreddits
 func (s *SubredditService) MineContributor(opts Option) {
-	logmsg := "Error in getting mine contributor"
-	s.client.getlisting(API_PATH["mine_contributor"], logmsg, opts)
+	path := "/subreddits/mind/contributor"
+
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body, s.client)
 }
 
+// Get subreddits the user is moderator of
+// Key              Value
+// ================================================
+// after       fullname of a thing
+// before      fullname of a thing
+// count       a positive integer (default: 0)
+// limit       the maximum number of items desired (default: 25, maximum: 100)
+// show        (optional) the string all
+// sr_detail   (optional) expand subreddits
 func (s *SubredditService) MineModerator(opts Option) {
-	logmsg := "Error in getting mine moderator"
-	s.client.getlisting(API_PATH["mine_moderator"], logmsg, opts)
+	path := "/subreddits/mind/moderator"
+
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body, s.client)
 }
+
+// Get subscribed to subreddits that contain hosted video links
+// Key              Value
+// ================================================
+// after       fullname of a thing
+// before      fullname of a thing
+// count       a positive integer (default: 0)
+// limit       the maximum number of items desired (default: 25, maximum: 100)
+// show        (optional) the string all
+// sr_detail   (optional) expand subreddits
 func (s *SubredditService) MineStreams(opts Option) {
-	logmsg := "Error in getting mine streams"
-	s.client.getlisting(API_PATH["mine_streams"], logmsg, opts)
+	path := "/subreddits/mind/streams"
+
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body, s.client)
 }
+
+// Search subreddits by title and description.
+//
+// This endpoint is a listing
+//
+// Key                     Value
+// ==================================================
+// after                fullname of a thing
+// before               fullname of a thing
+// count                a positive integer (default: 0)
+// limit                the maximum number of items desired (default: 25, maximum: 100)
+// q                    a search query
+// search_query_id      a uuid
+// show                 (optional) the string all
+// show_users           boolean value
+// sort                 one of (relevance, activity)
+// sr_detail            (optional) expand subreddits
+// typeahead_active     boolean value or None
+//
+// Reference : https://www.reddit.com/dev/api/#GET_subreddits_search
 
 func (s *SubredditService) Search(opts Option) {
-	logmsg := "Error in subreddit search"
+	path := "/subreddits/search"
 
-	s.client.getlisting(API_PATH["subreddit_search"], logmsg, opts)
+	resp, err := s.client.Get(path, opts)
 
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body, s.client)
 }
 
+// Get all subreddits by sort category popular
+//
+// Key                     Value
+// ==================================================
+// after                fullname of a thing
+// before               fullname of a thing
+// count                a positive integer (default: 0)
+// limit                the maximum number of items desired (default: 25, maximum: 100)
+// show                 (optional) the string all
+// sr_detail            (optional) expand subreddits
+
+// Reference: https://www.reddit.com/dev/api/#GET_subreddits_{where}
 func (s *SubredditService) Popular(opts Option) {
-	logmsg := "Error in getting subreddit popular"
+	path := "/subreddits/popular"
 
-	s.client.getlisting(API_PATH["subreddit_popular"], logmsg, opts)
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body, s.client)
 
 }
 
+// Get all subreddits by sort category gold
+//
+// Key                     Value
+// ==================================================
+// after                fullname of a thing
+// before               fullname of a thing
+// count                a positive integer (default: 0)
+// limit                the maximum number of items desired (default: 25, maximum: 100)
+// show                 (optional) the string all
+// sr_detail            (optional) expand subreddits
+// Reference: https://www.reddit.com/dev/api/#GET_subreddits_{where}
 func (s *SubredditService) Gold(opts Option) {
-	logmsg := "Error in getting subreddit gold"
+	path := "/subreddits/gold"
 
-	s.client.getlisting(API_PATH["subreddit_gold"], logmsg, opts)
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body, s.client)
 
 }
 
+// Get all subreddits by sort category new
+//
+// Key                     Value
+// ==================================================
+// after                fullname of a thing
+// before               fullname of a thing
+// count                a positive integer (default: 0)
+// limit                the maximum number of items desired (default: 25, maximum: 100)
+// show                 (optional) the string all
+// sr_detail            (optional) expand subreddits
+// Reference: https://www.reddit.com/dev/api/#GET_subreddits_{where}
 func (s *SubredditService) New(opts Option) {
-	logmsg := "Error in getting subreddit New"
+	path := "/subreddits/new"
 
-	s.client.getlisting(API_PATH["subreddit_new"], logmsg, opts)
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body, s.client)
 
 }
 
+// Get all subreddits by sort category default
+//
+// Key                     Value
+// ==================================================
+// after                fullname of a thing
+// before               fullname of a thing
+// count                a positive integer (default: 0)
+// limit                the maximum number of items desired (default: 25, maximum: 100)
+// show                 (optional) the string all
+// sr_detail            (optional) expand subreddits
+// Reference: https://www.reddit.com/dev/api/#GET_subreddits_{where}
 func (s *SubredditService) Default(opts Option) {
-	logmsg := "Error in getting subreddit default "
+	path := "/subreddits/default"
 
-	s.client.getlisting(API_PATH["subreddit_default"], logmsg, opts)
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
+
+	printBytes(resp.Body, s.client)
 
 }
 
-// Subreddit.About
+// Return information about the subreddit.
+// Data includes the subscriber count, description, and header image.
 func (s *SubredditService) AboutSubreddit(subreddit string) {
 	path := fmt.Sprintf("/r/%s/about", subreddit)
 
@@ -599,7 +863,7 @@ func (s *SubredditService) AboutSubreddit(subreddit string) {
 
 }
 
-// Subreddit.EditAbout
+// Get the current settings of a subreddit.
 func (s *SubredditService) EditAbout(subreddit, created, location string) {
 	path := fmt.Sprintf("/r/%s/about/edit", subreddit)
 
@@ -627,20 +891,74 @@ func (s *SubredditService) userwhere(path string, opts Option) {
 
 }
 
-// Subreddit.UserSearch
-
+// Search user profiles by title and description.
+//
+// This endpoint is a listing
+//
+// Key                     Value
+// ==================================================
+// after                fullname of a thing
+// before               fullname of a thing
+// count                a positive integer (default: 0)
+// limit                the maximum number of items desired (default: 25, maximum: 100)
+// q                    a search query
+// search_query_id      a uuid
+// show                 (optional) the string all
+// show_users           boolean value
+// sort                 one of (relevance, activity)
+// sr_detail            (optional) expand subreddits
+// typeahead_active     boolean value or None
 func (s *SubredditService) UserSearch(opts Option) {
-	s.userwhere("/users/search", opts)
+	path := "/users/search"
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
 }
 
-// Subreddit.UserPopular
-
+// Get all users subreddits by category popular
+// This endpoint is a listing
+//
+// Key                     Value
+// ==================================================
+// after                fullname of a thing
+// before               fullname of a thing
+// count                a positive integer (default: 0)
+// limit                the maximum number of items desired (default: 25, maximum: 100)
+// show                 (optional) the string all
+// sr_detail            (optional) expand subreddits
 func (s *SubredditService) UserPopular(opts Option) {
-	s.userwhere("/users/popular", opts)
+	path := "/users/popular"
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
 }
 
-// Subreddit.UserNew
-
+// Get all users subreddits by category new
+// This endpoint is a listing
+//
+// Key                     Value
+// ==================================================
+// after                fullname of a thing
+// before               fullname of a thing
+// count                a positive integer (default: 0)
+// limit                the maximum number of items desired (default: 25, maximum: 100)
+// show                 (optional) the string all
+// sr_detail            (optional) expand subreddits
 func (s *SubredditService) UserNew(opts Option) {
-	s.userwhere("/users/new", opts)
+	path := "/users/new"
+	resp, err := s.client.Get(path, opts)
+
+	if err != nil {
+		respError(path)
+	}
+
+	defer resp.Body.Close()
 }
