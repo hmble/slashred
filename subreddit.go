@@ -186,44 +186,73 @@ func (s *SubredditService) GetModerators(subreddit string, opts Option) {
 	s.aboutWhere(subreddit, path, opts)
 }
 
-func (s *SubredditService) deleteSrWhere(endpoint, logmsg string) {
+func (s *SubredditService) deleteSrWhere(path string) {
 
-	postdata := PostData{}
-
-	resp, err := s.client.Post(endpoint, postdata)
+	resp, err := s.client.Post(path, NoPostdata)
 
 	if err != nil {
-		log.Fatal(logmsg)
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
+	printBytes(resp.Body, s.client)
 }
-func (s *SubredditService) DeleteSrBanner() {
-	s.deleteSrWhere(API_PATH["delete_sr_banner"], "Error in deleting banner")
-}
-func (s *SubredditService) DeleteSrHeader() {
-	s.deleteSrWhere(API_PATH["delete_sr_header"], "Error in deleting header")
-}
-func (s *SubredditService) DeleteSrIcon() {
-	s.deleteSrWhere(API_PATH["delete_sr_icon"], "Error in deleting icon")
-}
-func (s *SubredditService) DeleteSrImg(imgName string) {
-	postdata := PostData{
 
+// Remove the subreddit's custom mobile banner.
+//
+// See also method UploadSrImg
+//
+// Reference: https://www.reddit.com/dev/api/#POST_api_delete_sr_banner
+func (s *SubredditService) DeleteSrBanner(subreddit string) {
+	path := fmt.Sprintf("/r/%s/api/delete_sr_banner", subreddit)
+	s.deleteSrWhere(path)
+}
+
+// Remove the subreddit's custom header image.
+//
+// The sitewide-default header image will be shown again after this call.
+//
+// Reference: https://www.reddit.com/dev/api/#POST_api_delete_sr_header
+func (s *SubredditService) DeleteSrHeader(subreddit string) {
+	path := fmt.Sprintf("/r/%s/api/delete_sr_header", subreddit)
+	s.deleteSrWhere(path)
+}
+
+// Remove the subreddit's custom mobile icon.
+//
+// See also method UploadSrImg
+//
+// Reference: https://www.reddit.com/dev/api/#POST_api_delete_sr_icon
+func (s *SubredditService) DeleteSrIcon(subreddit string) {
+	path := fmt.Sprintf("/r/%s/api/delete_sr_icon", subreddit)
+	s.deleteSrWhere(path)
+}
+
+// Remove an image from the subreddit's custom image set.
+
+// The image will no longer count against the subreddit's image limit. However,
+// the actual image data may still be accessible for an unspecified amount of
+// time. If the image is currently referenced by the subreddit's stylesheet,
+// that stylesheet will no longer validate and won't be editable until the image
+// reference is removed.
+//
+// Reference: https://www.reddit.com/dev/api/#POST_api_delete_sr_img
+func (s *SubredditService) DeleteSrImg(subreddit, imgName string) {
+	path := fmt.Sprintf("/r/%s/api/delete_sr_img", subreddit)
+	postdata := PostData{
 		"img_name": imgName,
 	}
 
-	resp, err := s.client.Post(API_PATH["delete_sr_img"], postdata)
+	resp, err := s.client.Post(path, postdata)
 
 	if err != nil {
-		log.Fatal("Error in deleting image")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
+	printBytes(resp.Body, s.client)
 }
 
 // query should be 50 characters long
