@@ -84,12 +84,15 @@ type Preferences struct {
 // PRECAUSTION : DO NOT USE THIS METHODS FOR NOW
 //
 
+// Return the preference settings of the logged in user
+//
+// Reference: https://www.reddit.com/dev/api/#GET_api_v1_me_prefs
 func (a *AccountService) GetMyPreferences() (*Preferences, error) {
-	resp, err := a.client.Get(API_PATH["preferences"], NoOptions)
+	path := "/api/v1/me/prefs"
+	resp, err := a.client.Get(path, NoOptions)
 
 	if err != nil {
-
-		log.Fatal("Error in getting preferences response")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
@@ -106,82 +109,145 @@ func (a *AccountService) GetMyPreferences() (*Preferences, error) {
 	return &preferences, nil
 }
 
-func (a *AccountService) PrefsFriends() {
+// Key              Value
+// ================================================
+// after        fullname of thing
+// before       fullname of thing
+// count        a positive integer
+// limit        a maximum number of items desired (default: 25, max: 100)
+// show         (optional) the string all
+// sr_detail    (optional) expand subreddits
 
-	resp, err := a.client.Get(API_PATH["prefs_friends"], NoOptions)
+func (a *AccountService) PrefsFriends() {
+	path := "/prefs/friends"
+	resp, err := a.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("error in getting prefs friends response")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	SaveResponse(resp.Body, "test_data/prefs_friends.json")
+	printBytes(resp.Body, a.client)
 
 }
+
+// Key              Value
+// ================================================
+// after        fullname of thing
+// before       fullname of thing
+// count        a positive integer
+// limit        a maximum number of items desired (default: 25, max: 100)
+// show         (optional) the string all
+// sr_detail    (optional) expand subreddits
 
 func (a *AccountService) PrefsBlocked() {
 
-	resp, err := a.client.Get(API_PATH["prefs_blocked"], NoOptions)
+	path := "/prefs/blocked"
+	resp, err := a.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("error in getting prefs/blocked response")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	SaveResponse(resp.Body, "test_data/prefs_blocked.json")
+	printBytes(resp.Body, a.client)
 }
+
+// Key              Value
+// ================================================
+// after        fullname of thing
+// before       fullname of thing
+// count        a positive integer
+// limit        a maximum number of items desired (default: 25, max: 100)
+// show         (optional) the string all
+// sr_detail    (optional) expand subreddits
+
 func (a *AccountService) PrefsMessaging() {
 
-	resp, err := a.client.Get(API_PATH["prefs_messaging"], NoOptions)
+	path := "/prefs/messaging"
+	resp, err := a.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("error in getting prefs/messaging response")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	SaveResponse(resp.Body, "test_data/prefs_messaging.json")
+	printBytes(resp.Body, a.client)
 
 }
+
+// Key              Value
+// ================================================
+// after        fullname of thing
+// before       fullname of thing
+// count        a positive integer
+// limit        a maximum number of items desired (default: 25, max: 100)
+// show         (optional) the string all
+// sr_detail    (optional) expand subreddits
+
 func (a *AccountService) PrefsTrusted() {
 
-	resp, err := a.client.Get(API_PATH["prefs_trusted"], NoOptions)
+	path := "/prefs/trusted"
+	resp, err := a.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("error in getting prefs/trusted response")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	SaveResponse(resp.Body, "test_data/prefs_trusted.json")
+	printBytes(resp.Body, a.client)
 
 }
+
+// Key              Value
+// ================================================
+// after        fullname of thing
+// before       fullname of thing
+// count        a positive integer
+// limit        a maximum number of items desired (default: 25, max: 100)
+// show         (optional) the string all
+// sr_detail    (optional) expand subreddits
+
 func (a *AccountService) MeFriends() {
 
-	resp, err := a.client.Get(API_PATH["me_friends"], NoOptions)
+	path := "/api/v1/me/friends"
+
+	resp, err := a.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("error in getting me_friends response")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	SaveResponse(resp.Body, "test_data/me_friends.json")
+	printBytes(resp.Body, a.client)
 
 }
+
+// Key              Value
+// ================================================
+// after        fullname of thing
+// before       fullname of thing
+// count        a positive integer
+// limit        a maximum number of items desired (default: 25, max: 100)
+// show         (optional) the string all
+// sr_detail    (optional) expand subreddits
+
 func (a *AccountService) MeBlocked() {
 
-	resp, err := a.client.Get(API_PATH["me_blocked"], NoOptions)
+	path := "/api/v1/me/blocked"
+	resp, err := a.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("error in getting me_blocked response")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
-	SaveResponse(resp.Body, "test_data/me_blocked.json")
+	printBytes(resp.Body, a.client)
 
 }
-
