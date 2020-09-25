@@ -2,15 +2,16 @@ package slashred
 
 import (
 	"fmt"
-	"log"
 )
 
 type GoldService service
 
-// Post Methods
+// TODO(hmble): This endpoint is not tested as it requires premium subscription
+//
+// Key              Value
+// ==============================
+// fullname	    fullname of a thing
 
-// This endpoint is not tested as it requires premium subscription
-// Gold.Gild
 func (g *GoldService) Gild(fullname string) {
 	path := fmt.Sprintf("/api/v1/gold/gild/%s", fullname)
 
@@ -21,15 +22,20 @@ func (g *GoldService) Gild(fullname string) {
 	resp, err := g.client.Post(path, postdata)
 
 	if err != nil {
-		log.Fatalf("Error in getting resonse from %s : %v", path, err)
+		respError(path)
 	}
 
 	defer resp.Body.Close()
 
 }
 
-// This endpoint is not tested as it requires premium subscription
-// Gold.Give
+// TODO(hmble): This endpoint is not tested as it requires premium subscription
+
+// Key                 Value
+// =============================================
+// months      an integer between 1 and 36
+// username    A valid, existing reddit username
+
 func (g *GoldService) Give(username, months string) {
 	path := fmt.Sprintf("/api/v1/gold/gild/%s", username)
 
@@ -41,7 +47,7 @@ func (g *GoldService) Give(username, months string) {
 	resp, err := g.client.Post(path, postdata)
 
 	if err != nil {
-		log.Fatalf("Error in getting resonse from %s : %v", path, err)
+		respError(path)
 	}
 
 	defer resp.Body.Close()
