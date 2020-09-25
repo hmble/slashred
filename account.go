@@ -2,10 +2,10 @@ package slashred
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 )
 
+// TODO(hmble): Remove some unnecessary fields ?
 type AccountService service
 type Account struct {
 	CommentKarma int     `json:"comment_karma"`
@@ -67,22 +67,19 @@ type Account struct {
 	SuspensionExpirationUtc int    `json:"suspension_expiration_utc"`
 }
 
-// GetMe retrieves the user account for the currently authenticated user. Requires the 'identity' OAuth scope.
+// Returns the identity of the user.
 func (a *AccountService) GetMe() (*Account, error) {
+	path := "/api/v1/me"
 
-	//url := fmt.Sprintf("%s/api/v1/me", BaseAuthURL)
-
-	resp, err := a.client.Get(API_PATH["me"], NoOptions)
+	resp, err := a.client.Get(path, NoOptions)
 	if err != nil {
-		log.Fatal(err, "Error in response Do")
+		respError(path)
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	PrintHeader(resp)
 	var account Account
 
-	//SaveResponse(resp.Body, "account.json")
 	err = json.NewDecoder(resp.Body).Decode(&account)
 	if err != nil {
 		log.Fatal("Error while decoding Account response")
@@ -98,15 +95,16 @@ type Karma struct {
 	Subreddit    string `json:"sr"`
 }
 
+// Return a breakdown of subreddit karma.
 func (a *AccountService) GetKarma() ([]Karma, error) {
-	resp, err := a.client.Get(API_PATH["karma"], NoOptions)
+	path := "/api/v1/me/karma"
+	resp, err := a.client.Get(path, NoOptions)
 
 	if err != nil {
-		log.Fatal("Error in getting karma response from /api/v1/me/karma")
+		respError(path)
 	}
 
 	defer resp.Body.Close()
-	PrintHeader(resp)
 
 	var karmaListing struct {
 		Kind      string  `json:"kind"`
@@ -119,8 +117,5 @@ func (a *AccountService) GetKarma() ([]Karma, error) {
 		return nil, err
 	}
 
-	fmt.Println(karmaListing.Kind)
-
 	return karmaListing.KarmaList, nil
 }
-
