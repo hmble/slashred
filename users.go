@@ -207,12 +207,12 @@ func (u *UsersService) GetUserTrophies(ownusername, id string) {
 	fmt.Println(string(body))
 }
 
-func (u *UsersService) About(ownusername string) {
+func (u *UsersService) About(username string) {
 	opts := Option{
-		"username": ownusername,
+		"username": username,
 	}
 
-	endpoint := fmt.Sprintf("/user/%s/about", ownusername)
+	endpoint := fmt.Sprintf("/user/%s/about", username)
 
 	resp, err := u.client.Get(endpoint, opts)
 
@@ -223,7 +223,7 @@ func (u *UsersService) About(ownusername string) {
 	defer resp.Body.Close()
 
 	PrintHeader(resp)
-	SaveResponse(resp.Body, "test_data/workpcinfo.json")
+	SaveResponse(resp.Body, "test_data/userinfo.json")
 }
 
 func (u *UsersService) getuserwhere(where, username, logmsg string, opts Option) {
@@ -238,6 +238,7 @@ func (u *UsersService) getuserwhere(where, username, logmsg string, opts Option)
 	defer resp.Body.Close()
 	PrintHeader(resp)
 	//SaveResponse(resp.Body, "test_data/upvoted.json")
+	printBytes(resp.Body, u.client)
 
 }
 

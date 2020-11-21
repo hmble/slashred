@@ -1,0 +1,23 @@
+- [x] account.go
+- [ ] authenticator.go
+- [ ] client.go
+- [ ] collections.go
+- [ ] comments.go
+- [ ] endpoint.go
+- [ ] flair.go
+- [x] gold.go
+- [ ] link.go
+- [ ] listings.go
+- [ ] message.go
+- [x] moderation.go
+- [ ] modmail.go
+- [ ] modposts.go
+- [ ] multis.go
+- [x] preferences.go
+- [ ] report.go
+- [x] subreddit.go
+- [ ] testlogo.png
+- [ ] trophy.go
+- [ ] users.go
+- [ ] utils.go
+- [ ] wikis.go

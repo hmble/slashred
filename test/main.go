@@ -37,6 +37,12 @@ func main() {
 
 	c := u.UserClient(token)
 
-	c.Wiki.AllowEditor("astar0n", "del", "workspc04", "index")
+	c.SetPrint()
+
+	c.Users.Saved("astar0n", slashred.Option{
+		"t":        "day",
+		"username": "astar0n",
+		"sort":     "new",
+	})
 
 }
