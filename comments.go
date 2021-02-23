@@ -153,9 +153,14 @@ func (r *Replies) UnmarshalJSON(b []byte) error {
 
 }
 
-// Get comments for a subreddit post
-// Intially here commentId for whole post should be empty : ""
-func (c *CommentService) GetComments(path, commentId string) []*Comment {
+
+// GetComments returns the list of comments 
+// Intially here commentID for whole post should be empty : ""
+// 
+// NOTE: Comment count can be different from websites count because of reddit comment not
+// updating with removed or deleted comments
+// For more info see https://old.reddit.com/r/redditdev/comments/l9kwvk/praw_comments_seems_to_be_returning_less_comments/
+func (c *CommentService) GetComments(path, commentID string) []*Comment {
 	// [/r/subreddit]/comments/article
 	c.path = path
 	split := strings.Split(path[23:], "/")
@@ -166,11 +171,10 @@ func (c *CommentService) GetComments(path, commentId string) []*Comment {
 		"limit": "100",
 		"sort":  "best",
 		// Reusing get comments to get continue thread
-		// here we use CommentId to reuse the GetComments method for continue-thread
+		// here we use commentID to reuse the GetComments method for continue-thread
 		// case
-		"comment": commentId,
+		"comment": commentID,
 	}
-
 	resp, err := c.client.Get(endpoint, options)
 
 	if err != nil {
@@ -195,9 +199,16 @@ func (c *CommentService) GetComments(path, commentId string) []*Comment {
 	comments := make([]*Comment, 0)
 	commentListing := result[1].Data.Children
 	for _, item := range commentListing {
-
 		if item.Comment != nil {
-			comments = append(comments, item.Comment)
+			// For continue thread we when the end children gives id as t1__
+			// We need to fetch previous comment again. This logic prevents from adding
+			// previous comment again to the commentList
+			if commentID != "" && item.Comment.Id == commentID {
+				fmt.Printf("%s = %s \n", commentID, item.Comment.Id)
+			} else {
+				comments = append(comments, item.Comment)
+
+			}
 
 			comments = append(comments, c.getReplies(item.Comment, 8)...)
 
@@ -209,7 +220,6 @@ func (c *CommentService) GetComments(path, commentId string) []*Comment {
 		}
 
 	}
-
 	return comments
 
 }
@@ -256,8 +266,7 @@ func (c *CommentService) getMore(more *More, linkId string) []*Comment {
 				comments = append(comments, c.getMore(comment.More, linkId)...)
 
 			} else {
-				// To get continue thread we need to get comment by id.
-				comments = append(comments, c.continueThread(comment.More.ID)...)
+				comments = append(comments, c.continueThread(comment.More.ParentID[3:])...)
 			}
 		}
 
@@ -268,9 +277,8 @@ func (c *CommentService) getMore(more *More, linkId string) []*Comment {
 
 // To use with continue thread.
 func (c *CommentService) continueThread(comment string) []*Comment {
-
+	fmt.Printf("In continue thread %s\n", comment)
 	return c.GetComments(c.path, comment)
-
 }
 
 // here comment is Parent whose replies we are getting

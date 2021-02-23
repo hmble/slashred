@@ -37,11 +37,11 @@ func main() {
 	u.UpdateToken(token)
 
 	var c *slashred.Client = u.UserClient(token)
-	//commentsList := c.Comment.GetComments("golang", "ex18cx", "best")
+	// commentsList := c.Comment.GetComments("golang", "ex18cx", "best")
 
-	path := "https://www.reddit.com/r/memes/comments/exkw6j/its_the_thought_that_counts/"
+	path := "https://old.reddit.com/r/typescript/comments/aofcik/38_of_bugs_at_airbnb_could_have_been_prevented_by"
 	comments := c.Comment.GetComments(path, "")
-
+	
 	fmt.Println(len(comments))
 
 	for _, item := range comments {
