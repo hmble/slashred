@@ -6,9 +6,13 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"os"
 )
 
+func PrintBytes(body io.Reader) {
+	printBytes(body)
+}
 func printBytes(body io.Reader) {
 
 	bodyBytes, err := ioutil.ReadAll(body)
@@ -18,6 +22,13 @@ func printBytes(body io.Reader) {
 	}
 
 	fmt.Println(string(bodyBytes))
+}
+func dumpHeader(req *http.Request) {
+	requestDump, err := httputil.DumpRequest(req, true)
+if err != nil {
+  fmt.Println(err)
+}
+fmt.Println(string(requestDump))
 }
 func respError(path string) {
 	log.Fatalf("Error in getting reponse from path : %s\n", path)

@@ -2,6 +2,8 @@ package slashred
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -10,8 +12,9 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
 
-	"golang.org/x/oauth2"
+	"github.com/google/go-querystring/query"
 )
 
 var Scopes = []string{
@@ -43,9 +46,14 @@ type User struct {
 	Authenticator *Authenticator
 }
 
+type Response struct {
+	*http.Response
+
+	// later more field will be added
+}
 const (
-	BaseAuthURL = "https://oauth.reddit.com"
-	BaseURL     = "http://reddit.com"
+	BaseAuthURL = "https://oauth.reddit.com/"
+	BaseURL     = "http://reddit.com/"
 )
 
 const (
@@ -60,9 +68,10 @@ const (
 // TODO(hmble): Add authenticated user info to client so that we can use it
 // along different methods.
 type Client struct {
-	Http      *http.Client
-	Useragent string
-	Token     *oauth2.Token
+	client      *http.Client
+	UserAgent string
+	// Token     *oauth2.Token
+	
 	x         ratelimit
 
 	common service // Reuse same struct instead of creating
@@ -95,20 +104,18 @@ type service struct {
 	client *Client
 }
 
-var NoAuthClient = &Client{
-	Http: new(http.Client),
-}
-
 //var defaultAuth *internal.Authenticator = internal.DefaultClient
 
-func (u *User) UserClient(token *oauth2.Token) *Client {
-	c := &Client{
-		Http:      u.Authenticator.Config.Client(oauth2.NoContext, token),
-		Useragent: u.Authenticator.Useragent,
-		Token:     token,
+func NewClient(httpClient *http.Client, userAgent string) *Client {
+	if httpClient == nil {
+		// Default NoAuthClient
+		httpClient = &http.Client{}
+		
 	}
-
-	c.Print = false
+	c := &Client{
+		client: httpClient,
+		UserAgent: userAgent,
+	}
 	c.common.client = c
 	c.Account = (*AccountService)(&c.common)
 	// here we can't use service struct because we included `path` member in
@@ -132,45 +139,99 @@ func (u *User) UserClient(token *oauth2.Token) *Client {
 	return c
 }
 
-func (u *User) Authenticate() (*oauth2.Token, error) {
-
-	fmt.Println("Authentication starts from here:  ")
-	fmt.Printf("Visit the url given below and paste the code given in url : \n %s", AuthUrl(true, u.Authenticator))
-
-	fmt.Println("\n Enter the code here : ")
-
-	var code string
-	fmt.Scan(&code)
-
-	token, err := GetToken(code, u.Authenticator)
-
-	if err != nil {
-		log.Fatal("Error in getting token")
-		return nil, err
-	}
-
-	u.SaveToken("token.json", token)
-
-	return token, nil
-
-}
-
-func (u *User) SaveToken(path string, token *oauth2.Token) {
-	SaveToken(path, token)
-}
-
-func (u *User) UpdateToken(token *oauth2.Token) {
-	UpdateToken(token, u.Authenticator)
-}
-
-// func TokenFromFile(filepath string) (*oauth2.Token, error) {
-// 	return TokenFromFile(filepath)
-// }
-
 type Option map[string]string
 
 var NoOptions Option = Option{}
 
+func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
+	baseURL,_:= url.Parse(BaseAuthURL)
+
+	u, err := baseURL.Parse(urlStr)
+
+	if err != nil {
+		return nil, err
+	}
+	var buf io.Reader
+	if body != nil {
+		v, err := query.Values(body)
+		
+		if err != nil {
+			return nil, err
+		}
+		v.Add("raw_json", "1")
+
+		buf = strings.NewReader(v.Encode())
+	}
+
+	fmt.Println("The URL string is ", u.String())
+	if buf == nil {
+		fmt.Println("Its a get method")
+	}
+	req, err := http.NewRequest(method, u.String(), buf)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if body != nil {
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	}
+
+	token,err := c.Token()
+	if err != nil {
+		return nil, errors.New("slashred: token not found")
+	}
+	str := fmt.Sprintf("bearer %s", token.AccessToken)
+	req.Header.Add("Authorization", str)
+
+
+		return req, nil
+	}
+
+	func (c *Client) BareDo(req *http.Request) (*Response, error) {
+		// Later we will do more things here 
+		resp, err := c.client.Do(req)
+
+		if err != nil {
+			log.Println("From BareDO ")
+			defer resp.Body.Close()
+			return nil, err
+		}
+
+		response := newResponse(resp)
+		return response, nil
+		
+	}
+	func (c *Client) Do(req *http.Request, v interface{}) (*Response, error){
+		resp, err := c.BareDo(req)
+
+		if err != nil {
+			log.Println("From Do")
+			return resp, err
+		}
+		defer resp.Body.Close()
+
+		switch v := v.(type) {
+		case nil:
+		case io.Writer:
+						_, err = io.Copy(v, resp.Body)
+		default:
+						decErr := json.NewDecoder(resp.Body).Decode(v)
+						if decErr == io.EOF {
+							decErr = nil // ignore EOF errors caused by empty response body
+						}
+						if decErr != nil {
+							err = decErr
+						}
+	}
+		return resp, err
+	}
+
+	func newResponse(r *http.Response) *Response {
+		response := &Response{Response: r}
+
+		return response
+	}
 func (c *Client) Get(endpoint string, opts Option) (res *http.Response, err error) {
 
 	temp := BaseAuthURL + endpoint
@@ -197,12 +258,15 @@ func (c *Client) Get(endpoint string, opts Option) (res *http.Response, err erro
 		return nil, err
 	}
 
-	req.Header.Add("User-Agent", c.Useragent)
-
-	str := fmt.Sprintf("bearer %s", c.Token.AccessToken)
+	// req.Header.Add("User-Agent", c.Useragent)
+	token,err := c.Token()
+	if err != nil {
+		return nil, errors.New("slashred: token not found")
+	}
+	str := fmt.Sprintf("bearer %s", token.AccessToken)
 	req.Header.Add("Authorization", str)
 
-	return c.Http.Do(req)
+	return c.client.Do(req)
 
 }
 
@@ -226,11 +290,11 @@ func (c *Client) Post(endpoint string, postdata PostData) (*http.Response, error
 		return nil, err
 	}
 
-	req.Header.Add("User-Agent", c.Useragent)
+	// req.Header.Add("User-Agent", c.Useragent)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 
-	return c.Http.Do(req)
+	return c.client.Do(req)
 
 }
 
@@ -277,12 +341,16 @@ func (c *Client) PostImageUpload(endpoint string, postdata PostData, filename st
 		return nil, err
 	}
 
-	req.Header.Add("User-Agent", c.Useragent)
+	// req.Header.Add("User-Agent", c.Useragent)
 	req.Header.Add("Content-Type", contentType)
-	str := fmt.Sprintf("bearer %s", c.Token.AccessToken)
+	token,err := c.Token()
+	if err != nil {
+		return nil, errors.New("slashred: token not found")
+	}
+	str := fmt.Sprintf("bearer %s", token.AccessToken)
 	req.Header.Add("Authorization", str)
 
-	return c.Http.Do(req)
+	return c.client.Do(req)
 
 }
 func (c *Client) Delete(endpoint string, opts Option) (res *http.Response, err error) {
@@ -306,12 +374,16 @@ func (c *Client) Delete(endpoint string, opts Option) (res *http.Response, err e
 		return nil, err
 	}
 
-	req.Header.Add("User-Agent", c.Useragent)
+	// req.Header.Add("User-Agent", c.Useragent)
 
-	str := fmt.Sprintf("bearer %s", c.Token.AccessToken)
+	token,err := c.Token()
+	if err != nil {
+		return nil, errors.New("slashred: token not found")
+	}
+	str := fmt.Sprintf("bearer %s", token.AccessToken)
 	req.Header.Add("Authorization", str)
 
-	return c.Http.Do(req)
+	return c.client.Do(req)
 
 }
 
@@ -333,12 +405,12 @@ func (c *Client) Put(endpoint string, postdata PostData) (*http.Response, error)
 		return nil, err
 	}
 
-	req.Header.Add("User-Agent", c.Useragent)
+	// req.Header.Add("User-Agent", c.Useragent)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	req.Header.Add("Content-Length", strconv.Itoa(len(data)))
 
-	return c.Http.Do(req)
+	return c.client.Do(req)
 
 }
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 )
 
 type AccountService service
@@ -68,28 +69,21 @@ type Account struct {
 }
 
 // GetMe retrieves the user account for the currently authenticated user. Requires the 'identity' OAuth scope.
-func (a *AccountService) GetMe() (*Account, error) {
+func (a *AccountService) GetMe() (*Account,*Response, error) {
 
 	//url := fmt.Sprintf("%s/api/v1/me", BaseAuthURL)
+	url := "api/v1/me"
+	req, err := a.client.NewRequest(http.MethodGet, url, nil)
 
-	resp, err := a.client.Get(API_PATH["me"], NoOptions)
+	account := new(Account)
+	resp, err := a.client.Do(req, account)
+	
 	if err != nil {
-		log.Fatal(err, "Error in response Do")
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	PrintHeader(resp)
-	var account Account
-
-	//SaveResponse(resp.Body, "account.json")
-	err = json.NewDecoder(resp.Body).Decode(&account)
-	if err != nil {
-		log.Fatal("Error while decoding Account response")
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &account, nil
+
+	return account, resp, nil
 }
 
 type Karma struct {

@@ -131,7 +131,7 @@ func (r *rfToken) RoundTrip(req *http.Request) (*http.Response, error) {
 func UpdateToken(token *oauth2.Token, authenticator *Authenticator) {
 
 	client := &http.Client{
-		Transport: &rfToken{
+		Transport: &uaSetterTransport{
 			config:    authenticator.Config,
 			useragent: authenticator.Useragent,
 		},
